@@ -1,10 +1,7 @@
 package com.karmperis.webinars_app.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,14 +24,15 @@ public abstract class AbstractEntity {
     private Long id;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME2")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
-    @Column(name ="updated_at", nullable = false, columnDefinition = "DATETIME2")
+    @Column(name ="updated_at", nullable = false)
     private Instant updatedAt;
 
-    @Column(name = "deleted_at", columnDefinition = "DATETIME2")
+    @Column(name = "deleted_at")
+    @Setter(AccessLevel.PROTECTED)
     private Instant deletedAt;
 
     /**
