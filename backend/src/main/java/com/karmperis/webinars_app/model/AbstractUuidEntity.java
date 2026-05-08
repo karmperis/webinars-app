@@ -39,7 +39,6 @@ public abstract class AbstractUuidEntity extends AbstractEntity {
     /**
      * Equality is based on the {@code uuid} field. Two entities are considered
      * equal when their UUIDs are equal.
-     *
      * @param o the object to compare
      * @return {@code true} if the given object is an {@code AbstractUuidEntity}
      *         with the same UUID, otherwise {@code false}
