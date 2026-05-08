@@ -23,12 +23,14 @@ public abstract class AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //Explicit columnDefinition is omitted to remain database-agnostic.
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    //Explicit columnDefinition is omitted to remain database-agnostic.
     @LastModifiedDate
-    @Column(name ="updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
     @Column(name = "deleted_at")
