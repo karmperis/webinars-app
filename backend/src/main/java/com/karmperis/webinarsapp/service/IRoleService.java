@@ -22,8 +22,7 @@ public interface IRoleService {
      * @throws EntityAlreadyExistsException if a non-deleted role with the same unique data already exists
      * @throws EntityInvalidArgumentException if the provided role data is invalid
      */
-    RoleReadOnlyDTO saveRole(RoleInsertDTO dto)
-    throws EntityAlreadyExistsException, EntityInvalidArgumentException;
+    RoleReadOnlyDTO saveRole(RoleInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException;
 
     /**
      * Retrieve all non-deleted roles ordered by name. (ReadAll)
@@ -37,8 +36,7 @@ public interface IRoleService {
      * @return the matching role
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
-    RoleReadOnlyDTO findRoleByUuid(UUID uuid)
-            throws EntityNotFoundException;
+    RoleReadOnlyDTO findRoleByUuid(UUID uuid) throws EntityNotFoundException;
 
     /**
      * Update an existing role. (Update)
@@ -47,11 +45,12 @@ public interface IRoleService {
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
 
-    void updateRole(UUID uuid, RoleEditDTO dto)
-            throws EntityNotFoundException;
+    void updateRole(UUID uuid, RoleEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException;
     /**
      * Soft-delete a role by setting its deleted timestamp. (Delete)
      * @param uuid role UUID
+     * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
+     * @throws EntityAlreadyExistsException if the new name is already taken by another role
      */
-    void softDeleteRoleByUuid(UUID uuid);
+    void softDeleteRoleByUuid(UUID uuid) throws EntityNotFoundException;
 }
