@@ -1,4 +1,4 @@
-package com.karmperis.webinars_app.core.exceptions;
+package com.karmperis.webinarsapp.core.exceptions;
 
 /**
  * Exception thrown when an expected entity cannot be found.

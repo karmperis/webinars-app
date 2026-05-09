@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.14'
+	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -24,7 +24,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-sqlserver'
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+	// TODO: Fix Swagger conflict after entities implementation.
+	// Current issue: BeanDefinitionOverrideException with Spring Boot 3.4.5
+	//implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
 	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

@@ -1,8 +1,8 @@
-package com.karmperis.webinars_app.core;
+package com.karmperis.webinarsapp.core;
 
-import com.karmperis.webinars_app.core.exceptions.*;
-import com.karmperis.webinars_app.dto.ErrorResponseDTO;
-import com.karmperis.webinars_app.dto.ValidationErrorResponseDTO;
+import com.karmperis.webinarsapp.core.exceptions.*;
+import com.karmperis.webinarsapp.dto.ErrorResponseDTO;
+import com.karmperis.webinarsapp.dto.ValidationErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;

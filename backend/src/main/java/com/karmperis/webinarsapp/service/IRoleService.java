@@ -1,11 +1,11 @@
-package com.karmperis.webinars_app.service;
+package com.karmperis.webinarsapp.service;
 
-import com.karmperis.webinars_app.core.exceptions.EntityAlreadyExistsException;
-import com.karmperis.webinars_app.core.exceptions.EntityInvalidArgumentException;
-import com.karmperis.webinars_app.core.exceptions.EntityNotFoundException;
-import com.karmperis.webinars_app.dto.RoleEditDTO;
-import com.karmperis.webinars_app.dto.RoleInsertDTO;
-import com.karmperis.webinars_app.dto.RoleReadOnlyDTO;
+import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
+import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
+import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
+import com.karmperis.webinarsapp.dto.RoleEditDTO;
+import com.karmperis.webinarsapp.dto.RoleInsertDTO;
+import com.karmperis.webinarsapp.dto.RoleReadOnlyDTO;
 
 import java.util.List;
 import java.util.UUID;

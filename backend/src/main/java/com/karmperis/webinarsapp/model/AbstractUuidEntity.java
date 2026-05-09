@@ -1,4 +1,4 @@
-package com.karmperis.webinars_app.model;
+package com.karmperis.webinarsapp.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;

@@ -1,9 +1,9 @@
-package com.karmperis.webinars_app.mapper;
+package com.karmperis.webinarsapp.mapper;
 
-import com.karmperis.webinars_app.dto.RoleEditDTO;
-import com.karmperis.webinars_app.dto.RoleInsertDTO;
-import com.karmperis.webinars_app.dto.RoleReadOnlyDTO;
-import com.karmperis.webinars_app.model.Role;
+import com.karmperis.webinarsapp.dto.RoleEditDTO;
+import com.karmperis.webinarsapp.dto.RoleInsertDTO;
+import com.karmperis.webinarsapp.dto.RoleReadOnlyDTO;
+import com.karmperis.webinarsapp.model.Role;
 import org.springframework.stereotype.Component;
 
 /**

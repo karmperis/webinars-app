@@ -1,6 +1,6 @@
-package com.karmperis.webinars_app.repository;
+package com.karmperis.webinarsapp.repository;
 
-import com.karmperis.webinars_app.model.Role;
+import com.karmperis.webinarsapp.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

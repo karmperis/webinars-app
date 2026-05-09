@@ -1,4 +1,4 @@
-package com.karmperis.webinars_app.dto;
+package com.karmperis.webinarsapp.dto;
 
 /**
  * DTO used to return a standardized error response.

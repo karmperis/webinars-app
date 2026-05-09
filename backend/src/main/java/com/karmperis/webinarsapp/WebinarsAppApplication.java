@@ -1,4 +1,4 @@
-package com.karmperis.webinars_app;
+package com.karmperis.webinarsapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

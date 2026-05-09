@@ -1,4 +1,4 @@
-package com.karmperis.webinars_app.dto;
+package com.karmperis.webinarsapp.dto;
 
 import java.util.Map;
 

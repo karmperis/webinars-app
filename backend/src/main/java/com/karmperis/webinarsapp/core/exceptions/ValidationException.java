@@ -1,4 +1,4 @@
-package com.karmperis.webinars_app.core.exceptions;
+package com.karmperis.webinarsapp.core.exceptions;
 
 import lombok.Getter;
 import org.springframework.validation.BindingResult;
