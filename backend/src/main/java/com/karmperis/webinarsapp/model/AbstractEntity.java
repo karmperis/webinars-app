@@ -23,17 +23,17 @@ public abstract class AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //Explicit columnDefinition is omitted to remain database-agnostic.
+    //Explicitly align with SQL Server schema (DATETIME2(6)) to satisfy ddl-auto=validate.
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME2(6)")
     private Instant createdAt;
 
-    //Explicit columnDefinition is omitted to remain database-agnostic.
+    //Explicitly align with SQL Server schema (DATETIME2(6)) to satisfy ddl-auto=validate.
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME2(6)")
     private Instant updatedAt;
 
-    @Column(name = "deleted_at")
+    @Column(name = "deleted_at", columnDefinition = "DATETIME2(6)")
     @Setter(AccessLevel.PROTECTED)
     private Instant deletedAt;
 
