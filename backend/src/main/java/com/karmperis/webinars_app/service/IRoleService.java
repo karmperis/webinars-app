@@ -1,5 +1,8 @@
 package com.karmperis.webinars_app.service;
 
+import com.karmperis.webinars_app.core.exceptions.EntityAlreadyExistsException;
+import com.karmperis.webinars_app.core.exceptions.EntityInvalidArgumentException;
+import com.karmperis.webinars_app.core.exceptions.EntityNotFoundException;
 import com.karmperis.webinars_app.dto.RoleEditDTO;
 import com.karmperis.webinars_app.dto.RoleInsertDTO;
 import com.karmperis.webinars_app.dto.RoleReadOnlyDTO;
@@ -16,8 +19,11 @@ public interface IRoleService {
      * Create and persist a new role. (Create)
      * @param dto data used to create the role
      * @return a read-only representation of the persisted role
+     * @throws EntityAlreadyExistsException if a non-deleted role with the same unique data already exists
+     * @throws EntityInvalidArgumentException if the provided role data is invalid
      */
-    RoleReadOnlyDTO saveRole(RoleInsertDTO dto);
+    RoleReadOnlyDTO saveRole(RoleInsertDTO dto)
+    throws EntityAlreadyExistsException, EntityInvalidArgumentException;
 
     /**
      * Retrieve all non-deleted roles ordered by name. (ReadAll)
@@ -29,16 +35,20 @@ public interface IRoleService {
      * Retrieve a non-deleted role by its UUID. (ReadOne)
      * @param uuid role UUID
      * @return the matching role
+     * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
-    RoleReadOnlyDTO findRoleByUuid(UUID uuid);
+    RoleReadOnlyDTO findRoleByUuid(UUID uuid)
+            throws EntityNotFoundException;
 
     /**
      * Update an existing role. (Update)
      * @param uuid the UUID of the role to update
      * @param dto  the data to apply
+     * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
 
-    void updateRole(UUID uuid, RoleEditDTO dto);
+    void updateRole(UUID uuid, RoleEditDTO dto)
+            throws EntityNotFoundException;
     /**
      * Soft-delete a role by setting its deleted timestamp. (Delete)
      * @param uuid role UUID
