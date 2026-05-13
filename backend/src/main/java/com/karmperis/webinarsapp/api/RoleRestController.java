@@ -156,27 +156,28 @@ public class RoleRestController {
      * @param uuid the role UUID
      * @param roleEditDTO the request payload containing updated role data
      * @param bindingResult bean validation results
-     * @return HTTP 204 if updated successfully
+     * @return HTTP 200 with the updated role DTO
      * @throws ValidationException if request payload validation fails (HTTP 400)
      * @throws EntityNotFoundException if the role does not exist (HTTP 404)
      * @throws EntityAlreadyExistsException if the new role name conflicts with an existing role (HTTP 409)
+     * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
     @Operation(
             summary = "Update an existing role",
             description = "Updates the name of an existing role."
     )
     @PutMapping("/{uuid}")
-    public ResponseEntity<Void> updateRole(@PathVariable UUID uuid,
+    public ResponseEntity<RoleReadOnlyDTO> updateRole(@PathVariable UUID uuid,
                                            @Valid @RequestBody RoleEditDTO roleEditDTO,
                                            BindingResult bindingResult)
-            throws ValidationException, EntityNotFoundException, EntityAlreadyExistsException {
+            throws ValidationException, EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException("Role", "Invalid role update data", bindingResult);
         }
 
-        roleService.updateRole(uuid, roleEditDTO);
-        return ResponseEntity.noContent().build();
+        RoleReadOnlyDTO updatedRoleDto = roleService.updateRole(uuid, roleEditDTO);
+        return ResponseEntity.ok(updatedRoleDto);
     }
 
     /**
