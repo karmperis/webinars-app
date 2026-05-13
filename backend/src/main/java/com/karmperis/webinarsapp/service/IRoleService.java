@@ -42,11 +42,14 @@ public interface IRoleService {
      * Update an existing role. (Update)
      * @param uuid the UUID of the role to update
      * @param dto  the data to apply
+     * @return a read-only representation of the updated role
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      * @throws EntityAlreadyExistsException if the new name is already taken by another non-deleted role
+     * @throws EntityInvalidArgumentException if the provided role data is invalid
      */
 
-    void updateRole(UUID uuid, RoleEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException;
+    RoleReadOnlyDTO updateRole(UUID uuid, RoleEditDTO dto)
+            throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
     /**
      * Soft-delete a role by setting its deleted timestamp. (Delete)
      * @param uuid role UUID
