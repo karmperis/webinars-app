@@ -30,7 +30,7 @@ public class CapabilityMapper {
      * @param capability the Capability entity to map
      * @return a read-only DTO representation of the given capability
      */
-    public CapabilityReadOnlyDTO mapToCapabilityReadOnly(Capability capability){
+    public CapabilityReadOnlyDTO mapToCapabilityReadOnlyDTO(Capability capability){
         return new CapabilityReadOnlyDTO(
                 capability.getUuid(),
                 capability.getName(),
@@ -43,7 +43,7 @@ public class CapabilityMapper {
      * @param capability the Capability entity to update
      * @param dto        the DTO containing the updated values
      */
-    public void mapToCapabilityEdit(Capability capability, CapabilityEditDTO dto){
+    public void mapToCapabilityEditDTO(Capability capability, CapabilityEditDTO dto){
         capability.setName(dto.name());
         capability.setDescription(dto.description());
     }
