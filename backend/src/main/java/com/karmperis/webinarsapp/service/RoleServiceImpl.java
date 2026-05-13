@@ -103,25 +103,39 @@ public class RoleServiceImpl implements IRoleService{
      * Update an existing non-deleted role.
      * @param uuid role UUID
      * @param dto updated role data
+     * @return the updated role mapped to a read-only DTO
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      * @throws EntityAlreadyExistsException if the new name conflicts with another non-deleted role
+     * @throws EntityInvalidArgumentException if the provided role data is invalid
      */
     @Override
-    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class})
-    public void updateRole(UUID uuid, RoleEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException {
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
+    public RoleReadOnlyDTO updateRole(UUID uuid, RoleEditDTO dto)
+            throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
         log.info("Updating role with UUID: {}", uuid);
+
+        if (dto == null || dto.name() == null || dto.name().isBlank()) {
+            throw new EntityInvalidArgumentException("Role", "Role name cannot be blank");
+        }
+
+        int nameLength = dto.name().trim().length();
+        if (nameLength < 4 || nameLength > 50) {
+            throw new EntityInvalidArgumentException("Role", "Role name must contain between 4 and 50 characters");
+        }
 
         Role role = roleRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("Role", "Role not found"));
 
-        if (!role.getName().equals(dto.name()) &&
+        if (!role.getName().equalsIgnoreCase(dto.name()) &&
                 roleRepository.findByNameAndDeletedAtIsNull(dto.name()).isPresent()) {
             throw new EntityAlreadyExistsException("Role", "Role with name " + dto.name() + " already exists");
         }
 
         roleMapper.mapToRoleEditDTO(role, dto);
-        roleRepository.save(role);
+        Role updatedRole = roleRepository.save(role);
         log.info("Role with UUID {} updated successfully", uuid);
+
+        return roleMapper.mapToRoleReadOnlyDTO(updatedRole);
     }
 
     /**
