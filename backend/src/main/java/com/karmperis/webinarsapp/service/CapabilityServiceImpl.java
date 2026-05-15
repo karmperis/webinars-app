@@ -68,14 +68,36 @@ public class CapabilityServiceImpl implements ICapabilityService{
         }
     }
 
+    /**
+     * Retrieve all non-deleted capabilities sorted by name.
+     * @return list of active capabilities mapped to read-only DTOs
+     */
     @Override
+    @Transactional(readOnly = true)
     public List<CapabilityReadOnlyDTO> findAllCapabilitiesSortedByName() {
-        return List.of();
+        log.info("Fetching all active capabilities sorted by name");
+        return capabilityRepository.findAllByDeletedAtIsNullOrderByNameAsc()
+                .stream()
+                .map(capabilityMapper::mapToCapabilityReadOnlyDTO)
+                .toList();
     }
 
+    /**
+     * Retrieve a non-deleted capability by UUID.
+     * @param uuid capability UUID
+     * @return the matching capability mapped to a read-only DTO
+     * @throws EntityNotFoundException if no non-deleted capability with the given UUID exists
+     */
     @Override
+    @Transactional(readOnly = true)
     public CapabilityReadOnlyDTO findCapabilityByUuid(UUID uuid) throws EntityNotFoundException {
-        return null;
+        log.info("Searching for capability with UUID {}", uuid);
+        return capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .map(capabilityMapper::mapToCapabilityReadOnlyDTO)
+                .orElseThrow(() -> {
+                   log.warn("Capability with UUID {} not found", uuid);
+                   return new EntityNotFoundException("Capability", "Capability with UUID " + uuid + " not found");
+                });
     }
 
     @Override
@@ -83,8 +105,21 @@ public class CapabilityServiceImpl implements ICapabilityService{
         return null;
     }
 
+    /**
+     * Soft-delete a capability by setting its deleted timestamp.
+     * @param uuid capability UUID
+     * @throws EntityNotFoundException if no non-deleted capability with the given UUID exists
+     */
     @Override
+    @Transactional(rollbackFor = EntityNotFoundException.class)
     public void softDeleteCapabilityByUuid(UUID uuid) throws EntityNotFoundException {
+            log.info("Performing soft delete for capability with UUID: {}", uuid);
 
+            Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
+                    .orElseThrow(() -> new EntityNotFoundException("Capability","Capability not found"));
+
+            capability.softDelete();
+            capabilityRepository.save(capability);
+            log.info("Capability with UUID {} soft deleted successfully", uuid);
     }
 }
