@@ -100,9 +100,42 @@ public class CapabilityServiceImpl implements ICapabilityService{
                 });
     }
 
+    /**
+     * Update an existing non-deleted capability.
+     * @param uuid capability UUID
+     * @param dto updated capability data
+     * @return the updated capability mapped to a read-only DTO
+     * @throws EntityNotFoundException if no non-deleted capability with the given UUID exists
+     * @throws EntityAlreadyExistsException if the new name conflicts with another non-deleted capability
+     * @throws EntityInvalidArgumentException if the provided capability data is invalid
+     */
     @Override
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public CapabilityReadOnlyDTO editCapability(UUID uuid, CapabilityEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
-        return null;
+            log.info("Updating capability with UUID: {}", uuid);
+
+            if (dto == null || dto.name() == null || dto.name().isBlank()) {
+                throw new EntityInvalidArgumentException("Capability", "Capability name cannot be blank");
+            }
+
+            int nameLength = dto.name().trim().length();
+            if (nameLength < 4 || nameLength > 50) {
+                throw new EntityInvalidArgumentException("Capability", "Capability name must contain between 4 and 50 characters");
+            }
+
+            Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
+                    .orElseThrow(() -> new EntityNotFoundException("Capability", "Capability not found"));
+
+            if (!capability.getName().equalsIgnoreCase(dto.name()) &&
+                    capabilityRepository.findByNameAndDeletedAtIsNull(dto.name()).isPresent()) {
+                throw new EntityAlreadyExistsException("Capability", "Capability with name " + dto.name() + " already exists");
+            }
+
+            capabilityMapper.mapToCapabilityEditDTO(capability, dto);
+            Capability updatedCapability = capabilityRepository.save(capability);
+            log.info("Capability with UUID {} updated successfully", uuid);
+
+            return capabilityMapper.mapToCapabilityReadOnlyDTO(updatedCapability);
     }
 
     /**
