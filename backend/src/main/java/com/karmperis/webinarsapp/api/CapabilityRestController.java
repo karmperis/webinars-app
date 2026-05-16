@@ -164,7 +164,6 @@ public class CapabilityRestController {
      * @throws EntityAlreadyExistsException if the new capability name conflicts with an existing capability (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
-
     @Operation(
             summary = "Update an existing capability",
             description = "Updates the name/description of an existing capability."
@@ -189,7 +188,6 @@ public class CapabilityRestController {
      * @return HTTP 204 if deleted successfully
      * @throws EntityNotFoundException if the capability does not exist (HTTP 404)
      */
-
     @Operation(
             summary = "Soft delete a capability",
             description = "Marks a capability as deleted in the system."
