@@ -49,7 +49,7 @@ public interface ICapabilityService {
      * @throws EntityAlreadyExistsException if the update would conflict with an existing non-deleted capability name
      * @throws EntityInvalidArgumentException if the provided data is invalid
      */
-    CapabilityReadOnlyDTO editCapability(UUID uuid, CapabilityEditDTO dto)
+    CapabilityReadOnlyDTO updateCapability(UUID uuid, CapabilityEditDTO dto)
             throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
 
     /**
