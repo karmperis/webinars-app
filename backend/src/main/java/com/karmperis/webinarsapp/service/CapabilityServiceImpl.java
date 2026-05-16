@@ -111,7 +111,7 @@ public class CapabilityServiceImpl implements ICapabilityService{
      */
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
-    public CapabilityReadOnlyDTO editCapability(UUID uuid, CapabilityEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
+    public CapabilityReadOnlyDTO updateCapability(UUID uuid, CapabilityEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
             log.info("Updating capability with UUID: {}", uuid);
 
             if (dto == null || dto.name() == null || dto.name().isBlank()) {
