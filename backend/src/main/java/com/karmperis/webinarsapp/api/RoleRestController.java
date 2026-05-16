@@ -22,7 +22,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-
 /**
  * REST controller exposing CRUD endpoints for managing roles.
  * Base path: {@code /api/v1/roles}.
