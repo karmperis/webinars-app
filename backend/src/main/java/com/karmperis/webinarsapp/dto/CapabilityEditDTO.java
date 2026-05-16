@@ -11,8 +11,8 @@ import jakarta.validation.constraints.Size;
  */
 @GroupSequence({CapabilityEditDTO.First.class, CapabilityEditDTO.Second.class, CapabilityEditDTO.class})
 public record CapabilityEditDTO(
-        @NotBlank(message = "The capability name cannot be blank.", groups = CapabilityInsertDTO.First.class)
-        @Size(min = 4, max = 50, message = "The capability name must contain between 4 and 50 characters.", groups = CapabilityInsertDTO.Second.class)
+        @NotBlank(message = "The capability name cannot be blank.", groups = First.class)
+        @Size(min = 4, max = 50, message = "The capability name must contain between 4 and 50 characters.", groups = Second.class)
         String name,
 
         @Size(max = 255, message = "The capability description must contain maximum 255 characters.")
