@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-
 /**
  * Default {@link ICapabilityService} implementation.
  * Handles capability CRUD operations and applies soft-delete semantics (deleted capabilities are excluded
