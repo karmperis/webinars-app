@@ -39,7 +39,6 @@ public class CapabilityServiceImpl implements ICapabilityService{
     @Override
     @Transactional(rollbackFor = { EntityAlreadyExistsException.class, EntityInvalidArgumentException.class })
     public CapabilityReadOnlyDTO saveCapability(CapabilityInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
-
         if (dto == null || dto.name() == null || dto.name().isBlank()) {
             throw new EntityInvalidArgumentException("Capability", "Capability name cannot be blank");
         }
@@ -61,6 +60,7 @@ public class CapabilityServiceImpl implements ICapabilityService{
 
             log.info("Capability saved successfully with UUID: {}", savedCapability.getUuid());
             return capabilityMapper.mapToCapabilityReadOnlyDTO(savedCapability);
+
         } catch (EntityAlreadyExistsException e) {
             log.warn("Failed to save capability: {}", e.getMessage());
             throw e;
