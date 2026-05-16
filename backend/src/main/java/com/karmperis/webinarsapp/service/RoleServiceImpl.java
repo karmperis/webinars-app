@@ -112,6 +112,7 @@ public class RoleServiceImpl implements IRoleService{
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public RoleReadOnlyDTO updateRole(UUID uuid, RoleEditDTO dto)
             throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
+
         log.info("Updating role with UUID: {}", uuid);
 
         if (dto == null || dto.name() == null || dto.name().isBlank()) {
