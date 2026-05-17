@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 
 /**
  * DTO used to update an existing capability.
+ * Validation is applied in two groups (First, Second) so basic blank checks run before
+ * more expensive/length/format validations.
  * @param name capability name (required)
  * @param description optional capability description
  */

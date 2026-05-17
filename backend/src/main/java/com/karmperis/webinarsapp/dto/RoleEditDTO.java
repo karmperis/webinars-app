@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 
 /**
  * DTO used to edit an existing Role.
+ * Validation is applied in two groups (First, Second) so basic blank checks run before
+ * more expensive/length/format validations.
  * @param name the existing role name (must be non-blank and contain between 4 and 50 characters)
  */
 @GroupSequence({RoleEditDTO.First.class, RoleEditDTO.Second.class, RoleEditDTO.class})
