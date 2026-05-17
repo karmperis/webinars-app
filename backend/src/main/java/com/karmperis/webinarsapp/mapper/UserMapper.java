@@ -1,6 +1,7 @@
 package com.karmperis.webinarsapp.mapper;
 
 import com.karmperis.webinarsapp.dto.UserInsertDTO;
+import com.karmperis.webinarsapp.dto.UserReadOnlyDTO;
 import com.karmperis.webinarsapp.model.User;
 import com.karmperis.webinarsapp.model.UserDetail;
 
@@ -33,4 +34,40 @@ public class UserMapper {
 
         return user;
     }
+
+    /**
+     * Map a {@link User} entity to a {@link UserReadOnlyDTO} suitable for API responses.
+     * The method safely handles a {@code null} input and missing related objects (role, userDetail).
+     * @param user the user entity to map
+     * @return a {@link UserReadOnlyDTO} populated from the entity, or {@code null} if the input is {@code null}
+     */
+    public UserReadOnlyDTO mapToUserReadOnlyDTO(User user) {
+        if (user == null) return null;
+
+        String firstname = null;
+        String lastname = null;
+        String phoneNumber = null;
+
+        if (user.getUserDetail() != null) {
+            firstname = user.getUserDetail().getFirstname();
+            lastname = user.getUserDetail().getLastname();
+            phoneNumber = user.getUserDetail().getPhoneNumber();
+        }
+
+        Long roleId = (user.getRole() != null) ? user.getRole().getId() : null;
+        String roleName = (user.getRole() != null) ? user.getRole().getName() : null;
+
+        return new UserReadOnlyDTO(
+                user.getUuid(),
+                user.getUsername(),
+                user.getActive(),
+                roleId,
+                roleName,
+                firstname,
+                lastname,
+                phoneNumber
+        );
+    }
+
+
 }
