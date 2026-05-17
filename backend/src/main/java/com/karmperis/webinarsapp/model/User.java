@@ -27,7 +27,7 @@ public class User extends AbstractUuidEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserDetail userDetail;
 
     @Column(nullable = false)
