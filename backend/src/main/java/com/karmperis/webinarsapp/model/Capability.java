@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "capabilities")
 public class Capability extends AbstractUuidEntity {
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 50)
     private String name;
 
     @Column
