@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
  * DTO used to create a new Role.
  * Validation is applied in two groups (First, Second) so basic blank checks run before
  * more expensive/length/format validations.
+ *
  * @param name the role name (must be non-blank and contain between 4 and 50 characters)
  */
 @GroupSequence({RoleInsertDTO.First.class, RoleInsertDTO.Second.class, RoleInsertDTO.class})

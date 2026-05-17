@@ -37,6 +37,7 @@ public class CapabilityRestController {
 
     /**
      * Creates a new capability.
+     *
      * @param capabilityInsertDTO the request payload used to create a capability
      * @param bindingResult bean validation results
      * @return HTTP 201 with the created capability DTO and a {@code Location} header
@@ -106,6 +107,7 @@ public class CapabilityRestController {
 
     /**
      * Retrieves a capability by UUID.
+     *
      * @param uuid the capability UUID
      * @return HTTP 200 with the capability
      * @throws EntityNotFoundException if no non-deleted capability exists for the given UUID (HTTP 404)
@@ -155,6 +157,7 @@ public class CapabilityRestController {
 
     /**
      * Updates an existing capability.
+     *
      * @param uuid the capability UUID
      * @param capabilityEditDTO the request payload containing updated capability data
      * @param bindingResult bean validation results
@@ -184,6 +187,7 @@ public class CapabilityRestController {
 
     /**
      * Soft-deletes a capability.
+     *
      * @param uuid the capability UUID
      * @return HTTP 204 if deleted successfully
      * @throws EntityNotFoundException if the capability does not exist (HTTP 404)

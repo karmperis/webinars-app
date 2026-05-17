@@ -31,6 +31,7 @@ public class CapabilityServiceImpl implements ICapabilityService{
 
     /**
      * Create and persist a new capability.
+     *
      * @param dto capability creation data
      * @return the persisted capability as a read-only DTO
      * @throws EntityAlreadyExistsException if a non-deleted capability with the same name already exists
@@ -83,6 +84,7 @@ public class CapabilityServiceImpl implements ICapabilityService{
 
     /**
      * Retrieve a non-deleted capability by UUID.
+     *
      * @param uuid capability UUID
      * @return the matching capability mapped to a read-only DTO
      * @throws EntityNotFoundException if no non-deleted capability with the given UUID exists
@@ -101,6 +103,7 @@ public class CapabilityServiceImpl implements ICapabilityService{
 
     /**
      * Update an existing non-deleted capability.
+     *
      * @param uuid capability UUID
      * @param dto updated capability data
      * @return the updated capability mapped to a read-only DTO
@@ -139,6 +142,7 @@ public class CapabilityServiceImpl implements ICapabilityService{
 
     /**
      * Soft-delete a capability by setting its deleted timestamp.
+     *
      * @param uuid capability UUID
      * @throws EntityNotFoundException if no non-deleted capability with the given UUID exists
      */

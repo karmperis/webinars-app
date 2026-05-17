@@ -31,6 +31,7 @@ public class RoleServiceImpl implements IRoleService{
 
     /**
      * Create and persist a new role.
+     *
      * @param dto role creation data
      * @return the persisted role as a read-only DTO
      * @throws EntityAlreadyExistsException if a non-deleted role with the same name already exists
@@ -83,6 +84,7 @@ public class RoleServiceImpl implements IRoleService{
 
     /**
      * Retrieve a non-deleted role by UUID.
+     *
      * @param uuid role UUID
      * @return the matching role mapped to a read-only DTO
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
@@ -101,6 +103,7 @@ public class RoleServiceImpl implements IRoleService{
 
     /**
      * Update an existing non-deleted role.
+     *
      * @param uuid role UUID
      * @param dto updated role data
      * @return the updated role mapped to a read-only DTO
@@ -141,6 +144,7 @@ public class RoleServiceImpl implements IRoleService{
 
     /**
      * Soft-delete a role by setting its deleted timestamp.
+     *
      * @param uuid role UUID
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */

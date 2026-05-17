@@ -14,6 +14,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 
     /**
      * Find a non-deleted role by its name.
+     *
      * @param name role name
      * @return an Optional containing the role if found and not soft-deleted
      */
@@ -21,6 +22,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 
     /**
      * Find a non-deleted role by its UUID.
+     *
      * @param uuid role UUID
      * @return an Optional containing the role if found and not soft-deleted
      */

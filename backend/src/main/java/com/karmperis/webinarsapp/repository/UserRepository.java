@@ -13,6 +13,7 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Find an active (non-deleted) user by UUID.
+     *
      * @param uuid the user's UUID
      * @return an Optional containing the matching user if present and not soft-deleted
      */
@@ -20,6 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Find an active (non-deleted) user by username.
+     *
      * @param username the user's username
      * @return an Optional containing the matching user if present and not soft-deleted
      */
@@ -27,6 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Check whether an active (non-deleted) user with the given username exists.
+     *
      * @param username the username to check
      * @return {@code true} if an active user with the username exists, otherwise {@code false}
      */

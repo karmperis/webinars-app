@@ -17,6 +17,7 @@ public interface ICapabilityService {
 
     /**
      * Create and persist a new capability. (Create)
+     *
      * @param dto the DTO containing values for creating a capability
      * @return the persisted capability as a read-only DTO
      * @throws EntityAlreadyExistsException if a non-deleted capability with the same name already exists
@@ -33,6 +34,7 @@ public interface ICapabilityService {
 
     /**
      * Retrieve a non-deleted capability by UUID. (Read)
+     *
      * @param uuid the capability UUID
      * @return the matching capability as a read-only DTO
      * @throws EntityNotFoundException if the capability does not exist or is soft-deleted

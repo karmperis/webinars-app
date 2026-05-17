@@ -14,6 +14,7 @@ public interface CapabilityRepository extends JpaRepository<Capability, Long> {
 
     /**
      * Finds an active (non-deleted) capability by its unique name.
+     *
      * @param name the capability name
      * @return the matching capability, if present
      */
@@ -21,6 +22,7 @@ public interface CapabilityRepository extends JpaRepository<Capability, Long> {
 
     /**
      * Finds an active (non-deleted) capability by UUID.
+     *
      * @param uuid the capability UUID
      * @return the matching capability, if present
      */

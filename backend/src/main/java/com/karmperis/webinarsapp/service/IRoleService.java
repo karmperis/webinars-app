@@ -17,6 +17,7 @@ public interface IRoleService {
 
     /**
      * Create and persist a new role. (Create)
+     *
      * @param dto data used to create the role
      * @return a read-only representation of the persisted role
      * @throws EntityAlreadyExistsException if a non-deleted role with the same unique data already exists
@@ -32,6 +33,7 @@ public interface IRoleService {
 
     /**
      * Retrieve a non-deleted role by its UUID. (ReadOne)
+     *
      * @param uuid role UUID
      * @return the matching role
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
@@ -40,6 +42,7 @@ public interface IRoleService {
 
     /**
      * Update an existing role. (Update)
+     *
      * @param uuid the UUID of the role to update
      * @param dto  the data to apply
      * @return a read-only representation of the updated role
@@ -52,6 +55,7 @@ public interface IRoleService {
             throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
     /**
      * Soft-delete a role by setting its deleted timestamp. (Delete)
+     *
      * @param uuid role UUID
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 /**
  * Read-only DTO for Role entities.
+ *
  * @param uuid the role UUID
  * @param name the role name
  */

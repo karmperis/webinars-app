@@ -14,6 +14,7 @@ public class CapabilityMapper {
 
     /**
      * Maps a {@link CapabilityInsertDTO} to a new {@link Capability} entity. (Insert)
+     *
      * @param dto the DTO containing values for creating a capability
      * @return a new Capability entity populated from the DTO
      */
@@ -27,6 +28,7 @@ public class CapabilityMapper {
 
     /**
      * Maps a {@link Capability} entity to a {@link CapabilityReadOnlyDTO}. (ReadOnly)
+     *
      * @param capability the Capability entity to map
      * @return a read-only DTO representation of the given capability
      */
@@ -40,6 +42,7 @@ public class CapabilityMapper {
 
     /**
      * Applies values from a {@link CapabilityEditDTO} to an existing {@link Capability} entity. (Edit)
+     *
      * @param capability the Capability entity to update
      * @param dto        the DTO containing the updated values
      */

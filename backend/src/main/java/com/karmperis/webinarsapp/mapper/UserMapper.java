@@ -17,6 +17,7 @@ public class UserMapper {
      * Map a {@link UserInsertDTO} to a new {@link User} entity instance. (Insert)
      * The returned entity is not persisted; the caller should handle saving and any
      * additional business logic (for example hashing the password).
+     *
      * @param dto the data transfer object containing user creation data
      * @return a new {@link User} entity populated from the DTO, or {@code null} if the dto is {@code null}
      */
@@ -41,7 +42,8 @@ public class UserMapper {
     /**
      * Map a {@link User} entity to a {@link UserReadOnlyDTO} suitable for API responses. (ReadOnly)
      * The method safely handles a {@code null} input and missing related objects (role, userDetail).
-     * @param user the user entity to map
+     *
+     *  @param user the user entity to map
      * @return a {@link UserReadOnlyDTO} populated from the entity, or {@code null} if the input is {@code null}
      */
     public UserReadOnlyDTO mapToUserReadOnlyDTO(User user) {
@@ -74,6 +76,7 @@ public class UserMapper {
 
     /**
      * Applies values from a {@link UserEditDTO} to an existing {@link User} entity and its {@link UserDetail}. (Edit)
+     *
      * @param user the User entity to update
      * @param dto  the DTO containing the updated values
      */

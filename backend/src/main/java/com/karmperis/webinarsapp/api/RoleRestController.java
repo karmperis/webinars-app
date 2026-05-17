@@ -104,6 +104,7 @@ public class RoleRestController {
 
     /**
      * Retrieves a role by UUID.
+     *
      * @param uuid the role UUID
      * @return HTTP 200 with the role
      * @throws EntityNotFoundException if no non-deleted role exists for the given UUID (HTTP 404)
@@ -152,6 +153,7 @@ public class RoleRestController {
 
     /**
      * Updates an existing role.
+     *
      * @param uuid the role UUID
      * @param roleEditDTO the request payload containing updated role data
      * @param bindingResult bean validation results
@@ -181,6 +183,7 @@ public class RoleRestController {
 
     /**
      * Soft-deletes a role.
+     *
      * @param uuid the role UUID
      * @return HTTP 204 if deleted successfully
      * @throws EntityNotFoundException if the role does not exist (HTTP 404)
