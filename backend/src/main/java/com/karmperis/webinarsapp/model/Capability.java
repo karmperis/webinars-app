@@ -13,11 +13,11 @@ import java.util.Set;
  * auditing timestamps and soft-delete support.
  */
 @Entity
+@Table(name = "capabilities")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "capabilities")
 public class Capability extends AbstractUuidEntity {
     @Column(unique = true, nullable = false, length = 50)
     private String name;

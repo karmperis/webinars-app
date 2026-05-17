@@ -13,11 +13,11 @@ import java.util.Set;
  * soft-delete support.
  */
 @Entity
+@Table(name = "roles")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "roles")
 public class Role extends AbstractUuidEntity {
 
     @Column(unique = true, nullable = false, length = 50)
