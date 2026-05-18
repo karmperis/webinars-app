@@ -42,11 +42,11 @@ public class UserServiceImpl implements IUserService {
      *
      * @param dto user creation data
      * @return the persisted user as a read-only DTO
-     * @throws EntityAlreadyExistsException if a non-deleted user with the same username already exists
+     * @throws EntityAlreadyExistsException   if a non-deleted user with the same username already exists
      * @throws EntityInvalidArgumentException if the provided user data is invalid
      */
     @Override
-    @Transactional(rollbackFor = { EntityAlreadyExistsException.class, EntityInvalidArgumentException.class })
+    @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public UserReadOnlyDTO saveUser(UserInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
         if (dto == null) {
             throw new EntityInvalidArgumentException("User", "User data cannot be null");
@@ -95,23 +95,102 @@ public class UserServiceImpl implements IUserService {
         return usersPage.map(userMapper::mapToUserReadOnlyDTO);
     }
 
+    /**
+     * Retrieve a non-deleted user by UUID.
+     *
+     * @param uuid user UUID
+     * @return the matching user mapped to a read-only DTO
+     * @throws EntityNotFoundException if no non-deleted user with the given UUID exists
+     */
     @Override
+    @Transactional(readOnly = true)
     public UserReadOnlyDTO findUserByUuid(UUID uuid) throws EntityNotFoundException {
-        return null;
+        log.info("Searching for user with UUID: {}", uuid);
+        return userRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .map(userMapper::mapToUserReadOnlyDTO)
+                .orElseThrow(() -> {
+                    log.warn("User with UUID {} not found", uuid);
+                    return new EntityNotFoundException("User", "User with UUID " + uuid + " not found");
+                });
     }
 
+    /**
+     * Retrieve a non-deleted user by username.
+     *
+     * @param username the username to search for
+     * @return the matching user mapped to a read-only DTO
+     * @throws EntityNotFoundException if no non-deleted user with the given username exists
+     */
     @Override
+    @Transactional(readOnly = true)
     public UserReadOnlyDTO findUserByUsername(String username) throws EntityNotFoundException {
-        return null;
+        log.info("Searching for user with username: {}", username);
+        return userRepository.findByUsernameAndDeletedAtIsNull(username)
+                .map(userMapper::mapToUserReadOnlyDTO)
+                .orElseThrow(() -> {
+                    log.warn("User with username {} not found", username);
+                    return new EntityNotFoundException("User", "User with username " + username + " not found");
+                });
     }
 
+    /**
+     * Update an existing non-deleted user.
+     *
+     * @param uuid user UUID
+     * @param dto  updated user data
+     * @return the updated user mapped to a read-only DTO
+     * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
+     * @throws EntityAlreadyExistsException   if the new username conflicts with another non-deleted user
+     * @throws EntityInvalidArgumentException if the provided user data is invalid
+     */
     @Override
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
-        return null;
+        log.info("Updating user with UUID: {}", uuid);
+
+        if (dto == null || dto.username() == null || dto.username().isBlank()) {
+            throw new EntityInvalidArgumentException("User", "Username cannot be blank");
+        }
+
+        int usernameLength = dto.username().trim().length();
+        if (usernameLength < 4 || usernameLength > 50) {
+            throw new EntityInvalidArgumentException("User", "Username must contain between 4 and 50 characters");
+        }
+
+        User user = userRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("User", "User not found"));
+
+        if (!user.getUsername().equalsIgnoreCase(dto.username()) &&
+                userRepository.existsByUsernameAndDeletedAtIsNull(dto.username())) {
+            throw new EntityAlreadyExistsException("User", "Username '" + dto.username() + "' already exists");
+        }
+
+        userMapper.mapToUserEditDTO(user, dto);
+
+        User updatedUser = userRepository.save(user);
+        log.info("User with UUID {} updated successfully", uuid);
+
+        return userMapper.mapToUserReadOnlyDTO(updatedUser);
     }
 
+    /**
+     * Soft-delete a user by setting its deleted timestamp.
+     *
+     * @param uuid user UUID
+     * @throws EntityNotFoundException if no non-deleted user with the given UUID exists
+     */
     @Override
+    @Transactional(rollbackFor = EntityNotFoundException.class)
     public void softDeleteUserByUuid(UUID uuid) throws EntityNotFoundException {
+        log.info("Performing soft delete for user with UUID: {}", uuid);
 
+        User user = userRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("User", "User not found"));
+
+        user.softDelete();
+        user.setActive(false);
+
+        userRepository.save(user);
+        log.info("User with UUID {} soft deleted successfully", uuid);
     }
 }
