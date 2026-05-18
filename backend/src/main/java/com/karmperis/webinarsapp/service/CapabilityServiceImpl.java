@@ -114,7 +114,7 @@ public class CapabilityServiceImpl implements ICapabilityService{
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public CapabilityReadOnlyDTO updateCapability(UUID uuid, CapabilityEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
-            log.info("Updating capability with UUID: {}", uuid);
+        log.info("Updating capability with UUID: {}", uuid);
 
             if (dto == null || dto.name() == null || dto.name().isBlank()) {
                 throw new EntityInvalidArgumentException("Capability", "Capability name cannot be blank");
