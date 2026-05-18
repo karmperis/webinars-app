@@ -1,6 +1,8 @@
 package com.karmperis.webinarsapp.repository;
 
 import com.karmperis.webinarsapp.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -11,6 +13,15 @@ import java.util.UUID;
  * Provides methods to find active (non-deleted) users by UUID or username and to check existence.
  */
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    /**
+     * Find a page of active (non-deleted) users.
+     *
+     * @param pageable pagination and sorting information
+     * @return a page containing active users (those with {@code deletedAt} == null)
+     */
+    Page<User> findByDeletedAtIsNull(Pageable pageable);
+
     /**
      * Find an active (non-deleted) user by UUID.
      *
