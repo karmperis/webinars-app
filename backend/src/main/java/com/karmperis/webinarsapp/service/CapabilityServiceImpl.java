@@ -120,6 +120,7 @@ public class CapabilityServiceImpl implements ICapabilityService{
                 throw new EntityInvalidArgumentException("Capability", "Capability name cannot be blank");
             }
 
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
             int nameLength = dto.name().trim().length();
             if (nameLength < 4 || nameLength > 50) {
                 throw new EntityInvalidArgumentException("Capability", "Capability name must contain between 4 and 50 characters");

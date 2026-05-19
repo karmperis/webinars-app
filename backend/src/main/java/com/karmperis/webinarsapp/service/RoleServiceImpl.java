@@ -46,6 +46,7 @@ public class RoleServiceImpl implements IRoleService{
 
         log.info("Attempting to save new role with name: {}", dto.name());
 
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
         int nameLength = dto.name().trim().length();
         if (nameLength < 4 || nameLength > 50) {
             throw new EntityInvalidArgumentException("Role", "Role name must contain between 4 and 50 characters");
