@@ -2,6 +2,8 @@ package com.karmperis.webinarsapp.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -30,9 +32,11 @@ public class UserDetail {
     @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 
+    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME2(6)")
     private Instant createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME2(6)")
     private Instant updatedAt;
 
@@ -42,26 +46,12 @@ public class UserDetail {
     private User user;
 
     /**
-     * Initializes timestamps when the entity is first persisted.
-     */
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
-
-    /**
-     * Updates the modification timestamp before the entity is updated.
-     */
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
-
-    /**
-     * Equality based on the primary key ({@code userId}).
-     * @param o the object to compare with
-     * @return {@code true} if both objects represent the same persisted row
+     * Equality for UserDetail is based on the linked user's identifier.
+     * This method compares only the {@code userId} (primary key) and is
+     * safe to use for detached entities as well.
+     *
+     * @param o other object to compare
+     * @return {@code true} when {@code o} is a {@link UserDetail} with the same {@code userId}
      */
     @Override
     public boolean equals(Object o) {
@@ -70,8 +60,8 @@ public class UserDetail {
     }
 
     /**
-     * Hash code based on the primary key ({@code userId}).
-     * @return a hash code for this entity
+     * Compute hash code for this entity based on the {@code userId}.
+     * @return hash code computed from {@code userId}
      */
     @Override
     public int hashCode() {
