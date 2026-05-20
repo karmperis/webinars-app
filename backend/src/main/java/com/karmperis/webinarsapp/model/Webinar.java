@@ -3,7 +3,7 @@ package com.karmperis.webinarsapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +27,7 @@ public class Webinar extends AbstractUuidEntity {
     private String description;
 
     @Column(name = "scheduled_date", nullable = false, columnDefinition = "DATETIME2(6)")
-    private LocalDateTime scheduledDate;
+    private Instant scheduledDate;
 
     @Column(nullable = false)
     private Integer duration;
@@ -65,7 +65,7 @@ public class Webinar extends AbstractUuidEntity {
      */
     public void addParticipant(User participant){
         participants.add(participant);
-        participant.getAllEnrolledWebinars().add(this);
+        participant.getEnrolledWebinars().add(this);
     }
 
     /**
@@ -76,6 +76,6 @@ public class Webinar extends AbstractUuidEntity {
      */
     public void removeParticipant(User participant) {
         participants.remove(participant);
-        participant.getAllEnrolledWebinars().remove(this);
+        participant.getEnrolledWebinars().remove(this);
     }
 }
