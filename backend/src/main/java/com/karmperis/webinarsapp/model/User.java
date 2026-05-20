@@ -16,7 +16,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class User extends AbstractUuidEntity {
 
     @Column(unique = true, nullable = false)
@@ -33,12 +32,10 @@ public class User extends AbstractUuidEntity {
     private UserDetail userDetail;
 
     @Column(nullable = false)
-    @Builder.Default
     private Boolean active = false;
 
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.NONE)
-    @Builder.Default
     @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
     private Set<Webinar> enrolledWebinars = new HashSet<>();
 
