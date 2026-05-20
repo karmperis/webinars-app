@@ -60,4 +60,13 @@ public interface IRoleService {
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
     void softDeleteRoleByUuid(UUID uuid) throws EntityNotFoundException;
+
+    /**
+     * Assigns a capability to a role.
+     *
+     * @param roleUuid the UUID of the role
+     * @param capabilityUuid the UUID of the capability to assign
+     * @throws EntityNotFoundException if either the role or capability is not found
+     */
+    void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException;
 }

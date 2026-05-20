@@ -7,7 +7,9 @@ import com.karmperis.webinarsapp.dto.RoleEditDTO;
 import com.karmperis.webinarsapp.dto.RoleInsertDTO;
 import com.karmperis.webinarsapp.dto.RoleReadOnlyDTO;
 import com.karmperis.webinarsapp.mapper.RoleMapper;
+import com.karmperis.webinarsapp.model.Capability;
 import com.karmperis.webinarsapp.model.Role;
+import com.karmperis.webinarsapp.repository.CapabilityRepository;
 import com.karmperis.webinarsapp.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import java.util.UUID;
 public class RoleServiceImpl implements IRoleService{
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
+    private final CapabilityRepository capabilityRepository;
 
     /**
      * Create and persist a new role.
@@ -161,5 +164,26 @@ public class RoleServiceImpl implements IRoleService{
 
         roleRepository.save(role);
         log.info("Role with UUID {} soft deleted successfully", uuid);
+    }
+
+    @Override
+    @Transactional(rollbackFor = EntityNotFoundException.class)
+    public void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException {
+        log.info("Assigning capability {} to role {}", capabilityUuid, roleUuid);
+
+        Role role = roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)
+                .orElseThrow(() -> {
+                    log.warn("Role assignment failed: Role with UUID {} not found", roleUuid);
+                    return new EntityNotFoundException("Role", "Role with UUID " + roleUuid + " not found");
+                });
+        Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(capabilityUuid)
+                .orElseThrow(() -> {
+                    log.warn("Role assignment failed: Capability with UUID {} not found", capabilityUuid);
+                    return new EntityNotFoundException("Capability", "Capability with UUID " + capabilityUuid + " not found");
+                });
+
+        role.addCapability(capability);
+
+        log.info("Successfully assigned capability {} to role {}", capabilityUuid, roleUuid);
     }
 }

@@ -199,4 +199,48 @@ public class RoleRestController {
         roleService.softDeleteRoleByUuid(uuid);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Assigns a capability to a role.
+     *
+     * @param roleUuid the role UUID
+     * @param capabilityUuid the capability UUID
+     * @return HTTP 200 OK if successful
+     * @throws EntityNotFoundException if role or capability does not exist (HTTP 404)
+     */
+    @Operation(
+            summary = "Assign capability to role",
+            description = "Assigns an existing capability to an existing role by their respective UUIDs."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Capability successfully assigned to role"
+                    // Δεν βάζουμε @Content εδώ, επειδή επιστρέφει ResponseEntity<Void> (κενό body)
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Role or Capability not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+    })
+    @PostMapping("/{roleUuid}/capabilities/{capabilityUuid}")
+    public ResponseEntity<Void> assignCapability(
+            @PathVariable UUID roleUuid,
+            @PathVariable UUID capabilityUuid) throws EntityNotFoundException {
+
+        roleService.assignCapabilityToRole(roleUuid, capabilityUuid);
+        return ResponseEntity.ok().build();
+    }
 }
