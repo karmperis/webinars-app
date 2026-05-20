@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -57,26 +56,5 @@ public class Role extends AbstractUuidEntity {
     public void removeCapability(Capability capability){
         capabilities.remove(capability);
         capability.getRoles().remove(this);
-    }
-
-    /**
-     * Equality is based on the entity UUID. Two Role instances are considered equal
-     * when their UUIDs are equal.
-     * @param o the object to compare
-     * @return {@code true} if the given object is a Role with the same UUID
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Role role)) return false;
-        return Objects.equals(getUuid(), role.getUuid());
-    }
-
-    /**
-     * Compute hash code using the entity UUID.
-     * @return hash code derived from {@code uuid}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getUuid());
     }
 }
