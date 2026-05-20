@@ -30,7 +30,7 @@ import java.util.UUID;
  * Base path: {@code /api/v1/capabilities}.
  */
 @RestController
-@RequestMapping("api/v1/capabilities")
+@RequestMapping("/api/v1/capabilities")
 @RequiredArgsConstructor
 public class CapabilityRestController {
     private final ICapabilityService capabilityService;
