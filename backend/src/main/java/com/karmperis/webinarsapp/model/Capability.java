@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -28,7 +27,6 @@ public class Capability extends AbstractUuidEntity {
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "capabilities", fetch = FetchType.LAZY)
-
     private Set<Role> roles = new HashSet<>();
 
     /**
@@ -55,26 +53,5 @@ public class Capability extends AbstractUuidEntity {
     public void removeRole(Role role){
         roles.remove(role);
         role.getCapabilities().remove(this);
-    }
-
-    /**
-     * Equality is based on the entity UUID. Two Capability instances are equal
-     * when their UUIDs are equal.
-     * @param o the object to compare
-     * @return {@code true} if the given object is a Capability with the same UUID
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Capability capability)) return false;
-        return Objects.equals(getUuid(), capability.getUuid());
-    }
-
-    /**
-     * Compute hash code using the entity UUID.
-     * @return hash code derived from {@code uuid}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getUuid());
     }
 }
