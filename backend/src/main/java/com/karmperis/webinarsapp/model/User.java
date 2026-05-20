@@ -62,4 +62,26 @@ public class User extends AbstractUuidEntity {
     public Set<Webinar> getAllEnrolledWebinars(){
         return Set.copyOf(enrolledWebinars);
     }
+
+    /**
+     * Enroll this user in the given webinar by updating the internal participants set.
+     * Intended for package-level use by the {@link Webinar} entity to keep the
+     * bidirectional relationship consistent.
+     *
+     * @param webinar webinar to add to the user's enrollments
+     */
+    void enrollInWebinar(Webinar webinar) {
+        this.enrolledWebinars.add(webinar);
+    }
+
+    /**
+     * Remove this user from the given webinar by updating the internal participants set.
+     * Intended for package-level use by the {@link Webinar} entity to keep the
+     * bidirectional relationship consistent.
+     *
+     * @param webinar webinar to remove from the user's enrollments
+     */
+    void dropWebinar(Webinar webinar) {
+        this.enrolledWebinars.remove(webinar);
+    }
 }
