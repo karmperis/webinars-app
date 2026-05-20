@@ -65,7 +65,7 @@ public class Webinar extends AbstractUuidEntity {
      */
     public void addParticipant(User participant){
         participants.add(participant);
-        participant.getEnrolledWebinars().add(this);
+        participant.enrollInWebinar(this);
     }
 
     /**
@@ -76,6 +76,6 @@ public class Webinar extends AbstractUuidEntity {
      */
     public void removeParticipant(User participant) {
         participants.remove(participant);
-        participant.getEnrolledWebinars().remove(this);
+        participant.dropWebinar(this);
     }
 }
