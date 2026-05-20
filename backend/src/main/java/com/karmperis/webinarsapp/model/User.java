@@ -18,7 +18,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class User extends AbstractUuidEntity {
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
