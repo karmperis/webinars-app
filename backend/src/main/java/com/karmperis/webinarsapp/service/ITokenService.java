@@ -15,8 +15,9 @@ public interface ITokenService {
      * @param user the user associated with the token
      * @param type the type of the token
      * @return the generated and persisted Token entity
+     * @throws EntityInvalidArgumentException if the user or token type is invalid
      */
-    Token createToken(User user, String type);
+    Token createToken(User user, String type) throws EntityInvalidArgumentException;
 
     /**
      * Retrieves a token by its string representation and validates its state.
@@ -36,8 +37,9 @@ public interface ITokenService {
      *
      * @param userToken the unique token string
      * @throws EntityNotFoundException if the token does not exist
+     * @throws EntityInvalidArgumentException if the token string is blank
      */
-    void markTokenAsUsed(String userToken) throws EntityNotFoundException;
+    void markTokenAsUsed(String userToken) throws EntityNotFoundException, EntityInvalidArgumentException;
 
     /**
      * Removes or invalidates all tokens belonging to a specific user.
@@ -45,6 +47,7 @@ public interface ITokenService {
      * and we want to invalidate previous unused tokens, or when an account is deleted.
      *
      * @param user the user whose tokens should be cleared
+     * @throws EntityInvalidArgumentException if the user is null
      */
-    void clearToken(User user);
+    void clearToken(User user) throws EntityInvalidArgumentException;
 }
