@@ -29,7 +29,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByUuidAndDeletedAtIsNull(UUID uuid);
 
     /**
-     * Return all roles ordered by name ascending αnd not soft-deleted.
+     * Return all roles ordered by name ascending and not soft-deleted.
      * @return list of roles sorted by name
      */
     List<Role> findAllByDeletedAtIsNullOrderByNameAsc();
