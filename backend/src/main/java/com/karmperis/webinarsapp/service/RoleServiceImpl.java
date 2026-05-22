@@ -166,6 +166,13 @@ public class RoleServiceImpl implements IRoleService{
         log.info("Role with UUID {} soft deleted successfully", uuid);
     }
 
+    /**
+     * Assign a capability to a role.
+     *
+     * @param roleUuid the role UUID
+     * @param capabilityUuid the capability UUID
+     * @throws EntityNotFoundException if the role or capability does not exist or is soft-deleted
+     */
     @Override
     @Transactional(rollbackFor = EntityNotFoundException.class)
     public void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException {
