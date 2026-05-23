@@ -65,10 +65,9 @@ public class UserServiceImpl implements IUserService {
             User user = userMapper.mapToUserEntity(dto);
 
             Role role = roleRepository.findById(dto.roleId())
-                    .orElseThrow(() -> new EntityInvalidArgumentException
-                            ("Role", "Role with ID " + dto.roleId() + " does not exist"));
-            user.setRole(role);
+                    .orElseThrow(() -> new EntityInvalidArgumentException ("Role", "Role with ID " + dto.roleId() + " does not exist"));
 
+            user.setRole(role);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setUuid(UUID.randomUUID());
             user.setActive(false);
@@ -93,8 +92,8 @@ public class UserServiceImpl implements IUserService {
     @Transactional(readOnly = true)
     public Page<UserReadOnlyDTO> findAllUsersSortedByName(Pageable pageable) {
         log.info("Fetching a page of active users based on pageable configuration");
-        Page<User> usersPage = userRepository.findByDeletedAtIsNull(pageable);
 
+        Page<User> usersPage = userRepository.findByDeletedAtIsNull(pageable);
         return usersPage.map(userMapper::mapToUserReadOnlyDTO);
     }
 
@@ -109,6 +108,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional(readOnly = true)
     public UserReadOnlyDTO findUserByUuid(UUID uuid) throws EntityNotFoundException {
         log.info("Searching for user with UUID: {}", uuid);
+
         return userRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .map(userMapper::mapToUserReadOnlyDTO)
                 .orElseThrow(() -> {
@@ -128,6 +128,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional(readOnly = true)
     public UserReadOnlyDTO findUserByUsername(String username) throws EntityNotFoundException {
         log.info("Searching for user with username: {}", username);
+
         return userRepository.findByUsernameAndDeletedAtIsNull(username)
                 .map(userMapper::mapToUserReadOnlyDTO)
                 .orElseThrow(() -> {
@@ -149,14 +150,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
-        log.info("Updating user with UUID: {}", uuid);
-
         if (dto == null) {
             throw new EntityInvalidArgumentException("User", "User data cannot be null");
         }
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
         validateUserData(dto.username());
+
+        log.info("Updating user with UUID: {}", uuid);
 
         User user = userRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("User", "User not found"));
@@ -169,6 +170,7 @@ public class UserServiceImpl implements IUserService {
         userMapper.mapToUserEditDTO(user, dto);
 
         User updatedUser = userRepository.save(user);
+
         log.info("User with UUID {} updated successfully", uuid);
 
         return userMapper.mapToUserReadOnlyDTO(updatedUser);
