@@ -18,7 +18,7 @@ public class CapabilityMapper {
      * @param dto the DTO containing values for creating a capability
      * @return a new Capability entity populated from the DTO
      */
-    public Capability mapToCapabilityEntity(CapabilityInsertDTO dto) {
+    public Capability mapToCapabilityEntity(CapabilityInsertDTO dto){
         if (dto == null) return null;
 
         Capability capability = new Capability();
@@ -34,7 +34,7 @@ public class CapabilityMapper {
      * @param capability the Capability entity to map
      * @return a read-only DTO representation of the given capability
      */
-    public CapabilityReadOnlyDTO mapToCapabilityReadOnlyDTO(Capability capability) {
+    public CapabilityReadOnlyDTO mapToCapabilityReadOnlyDTO(Capability capability){
         if (capability == null) return null;
 
         return new CapabilityReadOnlyDTO(
