@@ -36,31 +36,23 @@ public class WebinarServiceImpl implements IWebinarService {
      *
      * @param dto the DTO containing values for creating a webinar
      * @return the persisted webinar as a read-only DTO
-     * @throws EntityAlreadyExistsException if a non-deleted webinar with the same title already exists
+     * @throws EntityAlreadyExistsException   if a non-deleted webinar with the same title already exists
      * @throws EntityInvalidArgumentException if the provided webinar data is invalid
-     * @throws EntityNotFoundException if the organizer specified in the DTO does not exist
+     * @throws EntityNotFoundException        if the organizer specified in the DTO does not exist
      */
     @Override
     @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class, EntityNotFoundException.class})
     public WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
-        if (dto == null || dto.title() == null || dto.title().isBlank()) {
-            throw new EntityInvalidArgumentException("Webinar", "Webinar title cannot be blank");
-        }
+
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateWebinarData(dto.title(), dto.duration());
+
         if (dto.organizerUuid() == null) {
             throw new EntityInvalidArgumentException("Webinar", "Organizer UUID cannot be null");
         }
 
         log.info("Attempting to save new webinar with title: {}", dto.title());
-
-        /// Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
-        int titleLength = dto.title().trim().length();
-        if (titleLength < 5 || titleLength > 100) {
-            throw new EntityInvalidArgumentException("Webinar", "Webinar title must contain between 5 and 100 characters");
-        }
-        if (dto.duration() == null || dto.duration() < 15 || dto.duration() > 480) {
-            throw new EntityInvalidArgumentException("Webinar", "Webinar duration must be between 15 and 480 minutes");
-        }
 
         try {
             if (webinarRepository.findByTitleAndDeletedAtIsNull(dto.title()).isPresent()) {
@@ -101,28 +93,145 @@ public class WebinarServiceImpl implements IWebinarService {
                 .map(webinarMapper::mapToWebinarReadOnlyDTO);
     }
 
+    /**
+     * Retrieve a page of non-deleted webinars organized by a specific user.
+     *
+     * @param organizerUuid the UUID of the organizing user
+     * @param pageable      paging and sorting information
+     * @return a page of active webinars as read-only DTOs
+     * @throws EntityNotFoundException if the organizer does not exist
+     */
     @Override
+    @Transactional(readOnly = true)
     public Page<WebinarReadOnlyDTO> findAllWebinarsByOrganizer(UUID organizerUuid, Pageable pageable) throws EntityNotFoundException {
-        return null;
+        log.info("Fetching active webinars for organizer with UUID: {}", organizerUuid);
+
+        User organizer = userRepository.findByUuidAndDeletedAtIsNull(organizerUuid)
+                .orElseThrow(() -> {
+                    log.warn("Organizer with UUID {} not found", organizerUuid);
+                    return new EntityNotFoundException("User", "Organizer with UUID " + organizerUuid + " not found");
+                });
+
+        return webinarRepository.findAllByUserAndDeletedAtIsNull(organizer, pageable)
+                .map(webinarMapper::mapToWebinarReadOnlyDTO);
     }
 
+    /**
+     * Retrieve a non-deleted webinar by UUID.
+     *
+     * @param uuid webinar UUID
+     * @return the matching webinar as a read-only DTO
+     * @throws EntityNotFoundException if no non-deleted webinar with the given UUID exists
+     */
     @Override
+    @Transactional(readOnly = true)
     public WebinarReadOnlyDTO findWebinarByUuid(UUID uuid) throws EntityNotFoundException {
-        return null;
+        log.info("Searching for webinar with UUID: {}", uuid);
+        return webinarRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .map(webinarMapper::mapToWebinarReadOnlyDTO)
+                .orElseThrow(() -> {
+                    log.warn("Webinar with UUID {} not found", uuid);
+                    return new EntityNotFoundException("Webinar", "Webinar with UUID " + uuid + " not found");
+                });
     }
 
+    /**
+     * Update an existing webinar.
+     *
+     * @param uuid the UUID of the webinar to update
+     * @param dto  the data to apply
+     * @return the updated webinar as a read-only DTO
+     * @throws EntityNotFoundException        if no non-deleted webinar with the given UUID exists
+     * @throws EntityAlreadyExistsException   if the update would conflict with an existing non-deleted webinar title
+     * @throws EntityInvalidArgumentException if the provided data is invalid
+     */
     @Override
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public WebinarReadOnlyDTO updateWebinar(UUID uuid, WebinarEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
-        return null;
+        log.info("Updating webinar with UUID: {}", uuid);
+
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateWebinarData(dto.title(), dto.duration());
+
+        Webinar webinar = webinarRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("Webinar", "Webinar not found"));
+
+        if (!webinar.getTitle().equalsIgnoreCase(dto.title()) &&
+                webinarRepository.findByTitleAndDeletedAtIsNull(dto.title()).isPresent()) {
+            throw new EntityAlreadyExistsException("Webinar", "Webinar with title '" + dto.title() + "' already exists");
+        }
+
+        webinarMapper.mapToWebinarEditDTO(webinar, dto);
+        Webinar updatedWebinar = webinarRepository.save(webinar);
+        log.info("Webinar with UUID {} updated successfully", uuid);
+
+        return webinarMapper.mapToWebinarReadOnlyDTO(updatedWebinar);
     }
 
+    /**
+     * Soft-delete a webinar by setting its deleted timestamp.
+     *
+     * @param uuid the webinar UUID
+     * @throws EntityNotFoundException if the webinar does not exist or is already deleted
+     */
     @Override
+    @Transactional(rollbackFor = EntityNotFoundException.class)
     public void softDeleteWebinarByUuid(UUID uuid) throws EntityNotFoundException {
+        log.info("Performing soft delete for webinar with UUID: {}", uuid);
 
+        Webinar webinar = webinarRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("Webinar", "Webinar not found"));
+
+        webinar.softDelete();
+
+        webinarRepository.save(webinar);
+        log.info("Webinar with UUID {} soft deleted successfully", uuid);
     }
 
+    /**
+     * Enroll a user as a participant in a webinar.
+     *
+     * @param webinarUuid the UUID of the webinar
+     * @param userUuid the UUID of the user to enroll
+     * @throws EntityNotFoundException if either the webinar or the user is not found
+     */
     @Override
+    @Transactional(rollbackFor = EntityNotFoundException.class)
     public void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException {
+        log.info("Enrolling user {} in webinar {}", userUuid, webinarUuid);
 
+        Webinar webinar = webinarRepository.findByUuidAndDeletedAtIsNull(webinarUuid)
+                .orElseThrow(() -> {
+                    log.warn("Enrollment failed: Webinar with UUID {} not found", webinarUuid);
+                    return new EntityNotFoundException("Webinar", "Webinar with UUID " + webinarUuid + " not found");
+                });
+
+        User user = userRepository.findByUuidAndDeletedAtIsNull(userUuid)
+                .orElseThrow(() -> {
+                    log.warn("Enrollment failed: User with UUID {} not found", userUuid);
+                    return new EntityNotFoundException("User", "User with UUID " + userUuid + " not found");
+                });
+
+        webinar.addParticipant(user);
+
+        log.info("Successfully enrolled user {} in webinar {}", userUuid, webinarUuid);
+    }
+
+    /**
+     * Helper method for defensive structural validation of webinar data.
+     */
+    private void validateWebinarData(String title, Integer duration) throws EntityInvalidArgumentException {
+        if (title == null || title.isBlank()) {
+            throw new EntityInvalidArgumentException("Webinar", "Webinar title cannot be blank");
+        }
+
+        int titleLength = title.trim().length();
+        if (titleLength < 5 || titleLength > 100) {
+            throw new EntityInvalidArgumentException("Webinar", "Webinar title must contain between 5 and 100 characters");
+        }
+
+        if (duration == null || duration < 15 || duration > 480) {
+            throw new EntityInvalidArgumentException("Webinar", "Webinar duration must be between 15 and 480 minutes");
+        }
     }
 }
