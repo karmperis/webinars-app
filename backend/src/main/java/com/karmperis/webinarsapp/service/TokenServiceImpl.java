@@ -23,7 +23,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TokenServiceImpl implements ITokenService{
+public class TokenServiceImpl implements ITokenService {
     private final TokenRepository tokenRepository;
 
     @Value("${app.token.expiration-hours:24}")
@@ -31,6 +31,7 @@ public class TokenServiceImpl implements ITokenService{
 
     /**
      * Create and persist a new token for the given user and type.
+     *
      * @param user the user the token belongs to
      * @param type the token type (e.g., verification, reset)
      * @return the persisted token entity
@@ -39,14 +40,10 @@ public class TokenServiceImpl implements ITokenService{
     @Override
     @Transactional(rollbackFor = EntityInvalidArgumentException.class)
     public Token createToken(User user, String type) throws EntityInvalidArgumentException {
+
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
-        if (user == null) {
-            throw new EntityInvalidArgumentException("User", "User cannot be null when creating a token");
-        }
-        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
-        if (type == null || type.isBlank()) {
-            throw new EntityInvalidArgumentException("Token", "Token type cannot be blank");
-        }
+        validateUserNotNull(user);
+        validateStringNotBlank(type, "Token type");
 
         log.info("Attempting to create {} token for user: {}", type, user.getUsername());
 
@@ -71,21 +68,20 @@ public class TokenServiceImpl implements ITokenService{
 
     /**
      * Verify a token string and type and return the matching token.
-     * @param userToken the token string provided by the user
+     *
+     * @param userToken    the token string provided by the user
      * @param expectedType the expected token type
      * @return the verified token entity
-     * @throws EntityNotFoundException if the token is missing or type mismatch occurs
+     * @throws EntityNotFoundException        if the token is missing or type mismatch occurs
      * @throws EntityInvalidArgumentException if the token is blank, used, or expired
      */
     @Override
     @Transactional(readOnly = true)
     public Token verifyAndGetToken(String userToken, String expectedType) throws EntityNotFoundException, EntityInvalidArgumentException {
-        if (userToken == null || userToken.isBlank()) {
-            throw new EntityInvalidArgumentException("Token", "Token string cannot be blank");
-        }
-        if (expectedType == null || expectedType.isBlank()) {
-            throw new EntityInvalidArgumentException("Token", "Expected token type cannot be blank");
-        }
+
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateStringNotBlank(userToken, "Token string");
+        validateStringNotBlank(expectedType, "Expected token type");
 
         log.info("Verifying token of type: {}", expectedType);
 
@@ -111,16 +107,16 @@ public class TokenServiceImpl implements ITokenService{
 
     /**
      * Mark a token as used.
+     *
      * @param userToken the token string to mark as used
-     * @throws EntityNotFoundException if the token does not exist
+     * @throws EntityNotFoundException        if the token does not exist
      * @throws EntityInvalidArgumentException if the token string is blank
      */
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
     public void markTokenAsUsed(String userToken) throws EntityNotFoundException, EntityInvalidArgumentException {
-        if (userToken == null || userToken.isBlank()) {
-            throw new EntityInvalidArgumentException("Token", "Token string cannot be blank");
-        }
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateStringNotBlank(userToken, "Token string");
 
         log.info("Attempting to mark token as used");
 
@@ -141,16 +137,16 @@ public class TokenServiceImpl implements ITokenService{
 
     /**
      * Delete all tokens associated with a user.
+     *
      * @param user the user whose tokens should be cleared
      * @throws EntityInvalidArgumentException if the user is null
      */
     @Override
     @Transactional(rollbackFor = EntityInvalidArgumentException.class)
     public void clearToken(User user) throws EntityInvalidArgumentException {
-        if (user == null) {
-            throw new EntityInvalidArgumentException("User", "User cannot be null when clearing tokens");
-        }
 
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateUserNotNull(user);
         log.info("Attempting to clear all tokens for user: {}", user.getUsername());
 
         List<Token> tokens = tokenRepository.findAllByUser(user);
@@ -159,6 +155,24 @@ public class TokenServiceImpl implements ITokenService{
             log.info("Successfully cleared {} tokens for user: {}", tokens.size(), user.getUsername());
         } else {
             log.info("No tokens found to clear for user: {}", user.getUsername());
+        }
+    }
+
+    /**
+     * Helper method to validate that a user object is not null.
+     */
+    private void validateUserNotNull(User user) throws EntityInvalidArgumentException {
+        if (user == null) {
+            throw new EntityInvalidArgumentException("User", "User cannot be null for token operations");
+        }
+    }
+
+    /**
+     * Helper method to validate that a string field is not null or blank.
+     */
+    private void validateStringNotBlank(String value, String fieldName) throws EntityInvalidArgumentException {
+        if (value == null || value.isBlank()) {
+            throw new EntityInvalidArgumentException("Token", fieldName + " cannot be blank");
         }
     }
 }

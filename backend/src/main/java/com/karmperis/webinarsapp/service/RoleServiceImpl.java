@@ -43,17 +43,14 @@ public class RoleServiceImpl implements IRoleService{
     @Override
     @Transactional(rollbackFor = { EntityAlreadyExistsException.class, EntityInvalidArgumentException.class })
     public RoleReadOnlyDTO saveRole(RoleInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
-        if (dto == null || dto.name() == null || dto.name().isBlank()) {
-            throw new EntityInvalidArgumentException("Role", "Role name cannot be blank");
+        if (dto == null) {
+            throw new EntityInvalidArgumentException("Role", "Role data cannot be null");
         }
-
-        log.info("Attempting to save new role with name: {}", dto.name());
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
-        int nameLength = dto.name().trim().length();
-        if (nameLength < 4 || nameLength > 50) {
-            throw new EntityInvalidArgumentException("Role", "Role name must contain between 4 and 50 characters");
-        }
+        validateRoleData(dto.name());
+
+        log.info("Attempting to save new role with name: {}", dto.name());
 
         try {
             if (roleRepository.findByNameAndDeletedAtIsNull(dto.name()).isPresent()) {
@@ -122,14 +119,12 @@ public class RoleServiceImpl implements IRoleService{
 
         log.info("Updating role with UUID: {}", uuid);
 
-        if (dto == null || dto.name() == null || dto.name().isBlank()) {
-            throw new EntityInvalidArgumentException("Role", "Role name cannot be blank");
+        if (dto == null) {
+            throw new EntityInvalidArgumentException("Role", "Role data cannot be null");
         }
 
-        int nameLength = dto.name().trim().length();
-        if (nameLength < 4 || nameLength > 50) {
-            throw new EntityInvalidArgumentException("Role", "Role name must contain between 4 and 50 characters");
-        }
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateRoleData(dto.name());
 
         Role role = roleRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("Role", "Role not found"));
@@ -192,5 +187,19 @@ public class RoleServiceImpl implements IRoleService{
         role.addCapability(capability);
 
         log.info("Successfully assigned capability {} to role {}", capabilityUuid, roleUuid);
+    }
+
+    /**
+     * Helper method for defensive structural validation of role data.
+     */
+    private void validateRoleData(String name) throws EntityInvalidArgumentException {
+        if (name == null || name.isBlank()) {
+            throw new EntityInvalidArgumentException("Role", "Role name cannot be blank");
+        }
+
+        int nameLength = name.trim().length();
+        if (nameLength < 4 || nameLength > 50) {
+            throw new EntityInvalidArgumentException("Role", "Role name must contain between 4 and 50 characters");
+        }
     }
 }

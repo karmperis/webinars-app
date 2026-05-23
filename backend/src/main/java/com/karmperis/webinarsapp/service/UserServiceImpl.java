@@ -52,6 +52,9 @@ public class UserServiceImpl implements IUserService {
             throw new EntityInvalidArgumentException("User", "User data cannot be null");
         }
 
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateUserData(dto.username());
+
         log.info("Attempting to save new user with username: {}", dto.username());
 
         try {
@@ -148,14 +151,12 @@ public class UserServiceImpl implements IUserService {
     public UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
         log.info("Updating user with UUID: {}", uuid);
 
-        if (dto == null || dto.username() == null || dto.username().isBlank()) {
-            throw new EntityInvalidArgumentException("User", "Username cannot be blank");
+        if (dto == null) {
+            throw new EntityInvalidArgumentException("User", "User data cannot be null");
         }
 
-        int usernameLength = dto.username().trim().length();
-        if (usernameLength < 4 || usernameLength > 50) {
-            throw new EntityInvalidArgumentException("User", "Username must contain between 4 and 50 characters");
-        }
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateUserData(dto.username());
 
         User user = userRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("User", "User not found"));
@@ -192,5 +193,19 @@ public class UserServiceImpl implements IUserService {
 
         userRepository.save(user);
         log.info("User with UUID {} soft deleted successfully", uuid);
+    }
+
+    /**
+     * Helper method for defensive structural validation of user data.
+     */
+    private void validateUserData(String username) throws EntityInvalidArgumentException {
+        if (username == null || username.isBlank()) {
+            throw new EntityInvalidArgumentException("User", "Username cannot be blank");
+        }
+
+        int usernameLength = username.trim().length();
+        if (usernameLength < 4 || usernameLength > 50) {
+            throw new EntityInvalidArgumentException("User", "Username must contain between 4 and 50 characters");
+        }
     }
 }

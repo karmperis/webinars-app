@@ -25,9 +25,9 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CapabilityServiceImpl implements ICapabilityService{
-        private final CapabilityRepository capabilityRepository;
-        private final CapabilityMapper capabilityMapper;
+public class CapabilityServiceImpl implements ICapabilityService {
+    private final CapabilityRepository capabilityRepository;
+    private final CapabilityMapper capabilityMapper;
 
     /**
      * Create and persist a new capability.
@@ -40,9 +40,12 @@ public class CapabilityServiceImpl implements ICapabilityService{
     @Override
     @Transactional(rollbackFor = { EntityAlreadyExistsException.class, EntityInvalidArgumentException.class })
     public CapabilityReadOnlyDTO saveCapability(CapabilityInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
-        if (dto == null || dto.name() == null || dto.name().isBlank()) {
-            throw new EntityInvalidArgumentException("Capability", "Capability name cannot be blank");
+        if (dto == null) {
+            throw new EntityInvalidArgumentException("Capability", "Capability data cannot be null");
         }
+
+        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
+        validateCapabilityData(dto.name());
 
         log.info("Attempting to save new capability with name: {}", dto.name());
 
@@ -116,15 +119,12 @@ public class CapabilityServiceImpl implements ICapabilityService{
     public CapabilityReadOnlyDTO updateCapability(UUID uuid, CapabilityEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
         log.info("Updating capability with UUID: {}", uuid);
 
-            if (dto == null || dto.name() == null || dto.name().isBlank()) {
-                throw new EntityInvalidArgumentException("Capability", "Capability name cannot be blank");
-            }
+        if (dto == null) {
+            throw new EntityInvalidArgumentException("Capability", "Capability data cannot be null");
+        }
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
-            int nameLength = dto.name().trim().length();
-            if (nameLength < 4 || nameLength > 50) {
-                throw new EntityInvalidArgumentException("Capability", "Capability name must contain between 4 and 50 characters");
-            }
+        validateCapabilityData(dto.name());
 
             Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
                     .orElseThrow(() -> new EntityNotFoundException("Capability", "Capability not found"));
@@ -158,5 +158,19 @@ public class CapabilityServiceImpl implements ICapabilityService{
             capability.softDelete();
             capabilityRepository.save(capability);
             log.info("Capability with UUID {} soft deleted successfully", uuid);
+    }
+
+    /**
+     * Helper method for defensive structural validation of capability data.
+     */
+    private void validateCapabilityData(String name) throws EntityInvalidArgumentException {
+        if (name == null || name.isBlank()) {
+            throw new EntityInvalidArgumentException("Capability", "Capability name cannot be blank");
+        }
+
+        int nameLength = name.trim().length();
+        if (nameLength < 4 || nameLength > 50) {
+            throw new EntityInvalidArgumentException("Capability", "Capability name must contain between 4 and 50 characters");
+        }
     }
 }
