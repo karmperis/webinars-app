@@ -19,8 +19,7 @@ import jakarta.validation.constraints.Size;
  * @param phoneNumber optional phone number (digits, optional leading '+', 7-15 digits)
  */
 @GroupSequence({UserInsertDTO.First.class, UserInsertDTO.Second.class, UserInsertDTO.class})
-public record UserInsertDTO (
-
+public record UserInsertDTO(
         @NotNull(message = "The username cannot be null.", groups = First.class)
         @Size(min = 4, max = 50, message = "The username must contain between 4 and 50 characters.",
                 groups = Second.class)

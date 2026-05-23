@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
+//TODO: Decide on architecture for updating user roles and status
 /**
  * DTO used to update an existing user.
  * Validation is applied in two groups (First, Second) so basic null/blank checks run before
@@ -20,7 +20,6 @@ import jakarta.validation.constraints.Size;
  */
 @GroupSequence({UserEditDTO.First.class, UserEditDTO.Second.class, UserEditDTO.class})
 public record UserEditDTO(
-
         @NotNull(message = "The username cannot be null.", groups = First.class)
         @Size(min = 4, max = 50, message = "The username must contain between 4 and 50 characters.",
                 groups = Second.class)

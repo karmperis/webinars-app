@@ -17,7 +17,6 @@ import java.time.Instant;
  */
 @GroupSequence({WebinarEditDTO.First.class, WebinarEditDTO.Second.class, WebinarEditDTO.class})
 public record WebinarEditDTO(
-
         @NotBlank(message = "The webinar title cannot be blank.", groups = First.class)
         @Size(min = 5, max = 100, message = "The webinar title must contain between 5 and 100 characters.", groups = Second.class)
         String title,
