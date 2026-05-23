@@ -49,11 +49,6 @@ public class CapabilityServiceImpl implements ICapabilityService {
 
         log.info("Attempting to save new capability with name: {}", dto.name());
 
-        int nameLength = dto.name().trim().length();
-        if (nameLength < 4 || nameLength > 50) {
-            throw new EntityInvalidArgumentException("Capability", "Capability name must contain between 4 and 50 characters");
-        }
-
         try {
             if (capabilityRepository.findByNameAndDeletedAtIsNull(dto.name()).isPresent()) {
                 throw new EntityAlreadyExistsException("Capability", "Capability with name " + dto.name() + " already exists");
@@ -117,14 +112,14 @@ public class CapabilityServiceImpl implements ICapabilityService {
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public CapabilityReadOnlyDTO updateCapability(UUID uuid, CapabilityEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
-        log.info("Updating capability with UUID: {}", uuid);
-
         if (dto == null) {
             throw new EntityInvalidArgumentException("Capability", "Capability data cannot be null");
         }
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
         validateCapabilityData(dto.name());
+
+        log.info("Updating capability with UUID: {}", uuid);
 
             Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
                     .orElseThrow(() -> new EntityNotFoundException("Capability", "Capability not found"));
@@ -136,6 +131,7 @@ public class CapabilityServiceImpl implements ICapabilityService {
 
             capabilityMapper.mapToCapabilityEditDTO(capability, dto);
             Capability updatedCapability = capabilityRepository.save(capability);
+
             log.info("Capability with UUID {} updated successfully", uuid);
 
             return capabilityMapper.mapToCapabilityReadOnlyDTO(updatedCapability);
@@ -157,6 +153,7 @@ public class CapabilityServiceImpl implements ICapabilityService {
 
             capability.softDelete();
             capabilityRepository.save(capability);
+
             log.info("Capability with UUID {} soft deleted successfully", uuid);
     }
 
