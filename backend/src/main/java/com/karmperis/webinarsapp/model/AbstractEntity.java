@@ -47,6 +47,7 @@ public abstract class AbstractEntity {
 
     /**
      * Returns whether the entity has been soft-deleted.
+     *
      * @return {@code true} if {@code deletedAt} is non-null, otherwise {@code false}
      */
     @Transient

@@ -50,6 +50,7 @@ public class Token {
 
     /**
      * Check if the token is expired.
+     *
      * @return {@code true} if the current time is after the expiry time
      */
     @Transient
@@ -73,6 +74,7 @@ public class Token {
 
     /**
      * Compute hash code for this entity based on the unique {@code token} string.
+     *
      * @return hash code computed from the token string
      */
     @Override

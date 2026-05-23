@@ -30,12 +30,14 @@ public interface CapabilityRepository extends JpaRepository<Capability, Long> {
 
     /**
      * Returns all active (non-deleted) capabilities sorted by name.
+     *
      * @return list of active capabilities
      */
     List<Capability> findAllByDeletedAtIsNullOrderByNameAsc();
 
     /**
      * Returns all soft-deleted capabilities sorted by name.
+     *
      * @return list of deleted capabilities
      */
     List<Capability> findAllByDeletedAtIsNotNullOrderByNameAsc();

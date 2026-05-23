@@ -34,6 +34,7 @@ public class Role extends AbstractUuidEntity {
 
     /**
      * Return an unmodifiable set of this role's capabilities.
+     *
      * @return an immutable copy of the capabilities set
      */
     public Set<Capability> getAllCapabilities() {
@@ -42,18 +43,20 @@ public class Role extends AbstractUuidEntity {
 
     /**
      * Add a capability to this role.
+     *
      * @param capability capability to add
      */
-    public void addCapability(Capability capability){
+    public void addCapability(Capability capability) {
         capabilities.add(capability);
         capability.getRoles().add(this);
     }
 
     /**
      * Remove a capability from this role.
+     *
      * @param capability capability to remove
      */
-    public void removeCapability(Capability capability){
+    public void removeCapability(Capability capability) {
         capabilities.remove(capability);
         capability.getRoles().remove(this);
     }

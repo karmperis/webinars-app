@@ -22,8 +22,8 @@ public class WebinarMapper {
      * @param dto the data transfer object containing webinar creation data
      * @return a new Webinar entity populated from the DTO
      */
-    public Webinar mapToWebinarEntity(WebinarInsertDTO dto){
-        if(dto == null) return null;
+    public Webinar mapToWebinarEntity(WebinarInsertDTO dto) {
+        if (dto == null) return null;
 
         Webinar webinar = new Webinar();
         webinar.setTitle(dto.title());
@@ -41,11 +41,11 @@ public class WebinarMapper {
      * @param webinar the webinar entity to map
      * @return a {@link WebinarReadOnlyDTO} populated from the entity, or {@code null} if the input is {@code null}
      */
-    public WebinarReadOnlyDTO mapToWebinarReadOnlyDTO(Webinar webinar){
-        if(webinar == null) return null;
+    public WebinarReadOnlyDTO mapToWebinarReadOnlyDTO(Webinar webinar) {
+        if (webinar == null) return null;
 
         UserReadOnlyDTO organizerDTO = null;
-        if(webinar.getUser() != null){
+        if (webinar.getUser() != null) {
             organizerDTO = userMapper.mapToUserReadOnlyDTO(webinar.getUser());
         }
         return new WebinarReadOnlyDTO(
@@ -64,8 +64,8 @@ public class WebinarMapper {
      * @param webinar the Webinar entity to update
      * @param dto     the DTO containing the updated values
      */
-    public void mapToWebinarEditDTO(Webinar webinar, WebinarEditDTO dto){
-        if(webinar == null || dto == null) return;
+    public void mapToWebinarEditDTO(Webinar webinar, WebinarEditDTO dto) {
+        if (webinar == null || dto == null) return;
 
         webinar.setTitle(dto.title());
         webinar.setDescription(dto.description());

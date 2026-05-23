@@ -17,6 +17,9 @@ public record RoleEditDTO(
         @Size(min = 4, max = 50, message = "The role name must contain between 4 and 50 characters.", groups = Second.class)
         String name
 ) {
-        public interface First {}
-        public interface Second {}
+    public interface First {
+    }
+
+    public interface Second {
+    }
 }

@@ -34,11 +34,11 @@ public class CapabilityServiceImpl implements ICapabilityService {
      *
      * @param dto capability creation data
      * @return the persisted capability as a read-only DTO
-     * @throws EntityAlreadyExistsException if a non-deleted capability with the same name already exists
+     * @throws EntityAlreadyExistsException   if a non-deleted capability with the same name already exists
      * @throws EntityInvalidArgumentException if the provided capability data is invalid
      */
     @Override
-    @Transactional(rollbackFor = { EntityAlreadyExistsException.class, EntityInvalidArgumentException.class })
+    @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public CapabilityReadOnlyDTO saveCapability(CapabilityInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
         if (dto == null) {
             throw new EntityInvalidArgumentException("Capability", "Capability data cannot be null");
@@ -68,6 +68,7 @@ public class CapabilityServiceImpl implements ICapabilityService {
 
     /**
      * Retrieve all non-deleted capabilities sorted by name.
+     *
      * @return list of active capabilities mapped to read-only DTOs
      */
     @Override
@@ -94,8 +95,8 @@ public class CapabilityServiceImpl implements ICapabilityService {
         return capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .map(capabilityMapper::mapToCapabilityReadOnlyDTO)
                 .orElseThrow(() -> {
-                   log.warn("Capability with UUID {} not found", uuid);
-                   return new EntityNotFoundException("Capability", "Capability with UUID " + uuid + " not found");
+                    log.warn("Capability with UUID {} not found", uuid);
+                    return new EntityNotFoundException("Capability", "Capability with UUID " + uuid + " not found");
                 });
     }
 
@@ -103,10 +104,10 @@ public class CapabilityServiceImpl implements ICapabilityService {
      * Update an existing non-deleted capability.
      *
      * @param uuid capability UUID
-     * @param dto updated capability data
+     * @param dto  updated capability data
      * @return the updated capability mapped to a read-only DTO
-     * @throws EntityNotFoundException if no non-deleted capability with the given UUID exists
-     * @throws EntityAlreadyExistsException if the new name conflicts with another non-deleted capability
+     * @throws EntityNotFoundException        if no non-deleted capability with the given UUID exists
+     * @throws EntityAlreadyExistsException   if the new name conflicts with another non-deleted capability
      * @throws EntityInvalidArgumentException if the provided capability data is invalid
      */
     @Override
@@ -121,20 +122,20 @@ public class CapabilityServiceImpl implements ICapabilityService {
 
         log.info("Updating capability with UUID: {}", uuid);
 
-            Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
-                    .orElseThrow(() -> new EntityNotFoundException("Capability", "Capability not found"));
+        Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("Capability", "Capability not found"));
 
-            if (!capability.getName().equalsIgnoreCase(dto.name()) &&
-                    capabilityRepository.findByNameAndDeletedAtIsNull(dto.name()).isPresent()) {
-                throw new EntityAlreadyExistsException("Capability", "Capability with name " + dto.name() + " already exists");
-            }
+        if (!capability.getName().equalsIgnoreCase(dto.name()) &&
+                capabilityRepository.findByNameAndDeletedAtIsNull(dto.name()).isPresent()) {
+            throw new EntityAlreadyExistsException("Capability", "Capability with name " + dto.name() + " already exists");
+        }
 
-            capabilityMapper.mapToCapabilityEditDTO(capability, dto);
-            Capability updatedCapability = capabilityRepository.save(capability);
+        capabilityMapper.mapToCapabilityEditDTO(capability, dto);
+        Capability updatedCapability = capabilityRepository.save(capability);
 
-            log.info("Capability with UUID {} updated successfully", uuid);
+        log.info("Capability with UUID {} updated successfully", uuid);
 
-            return capabilityMapper.mapToCapabilityReadOnlyDTO(updatedCapability);
+        return capabilityMapper.mapToCapabilityReadOnlyDTO(updatedCapability);
     }
 
     /**
@@ -146,15 +147,15 @@ public class CapabilityServiceImpl implements ICapabilityService {
     @Override
     @Transactional(rollbackFor = EntityNotFoundException.class)
     public void softDeleteCapabilityByUuid(UUID uuid) throws EntityNotFoundException {
-            log.info("Performing soft delete for capability with UUID: {}", uuid);
+        log.info("Performing soft delete for capability with UUID: {}", uuid);
 
-            Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
-                    .orElseThrow(() -> new EntityNotFoundException("Capability","Capability not found"));
+        Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("Capability", "Capability not found"));
 
-            capability.softDelete();
-            capabilityRepository.save(capability);
+        capability.softDelete();
+        capabilityRepository.save(capability);
 
-            log.info("Capability with UUID {} soft deleted successfully", uuid);
+        log.info("Capability with UUID {} soft deleted successfully", uuid);
     }
 
     /**

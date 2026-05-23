@@ -39,8 +39,8 @@ public class UserRestController {
      * @param userInsertDTO the request payload used to create a user
      * @param bindingResult bean validation results
      * @return HTTP 201 with the created user DTO and a {@code Location} header
-     * @throws ValidationException if request payload validation fails (HTTP 400)
-     * @throws EntityAlreadyExistsException if a user with the same username already exists (HTTP 409)
+     * @throws ValidationException            if request payload validation fails (HTTP 400)
+     * @throws EntityAlreadyExistsException   if a user with the same username already exists (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
     @Operation(
@@ -157,13 +157,13 @@ public class UserRestController {
     /**
      * Updates an existing user.
      *
-     * @param uuid the user UUID
-     * @param userEditDTO the request payload containing updated user data
+     * @param uuid          the user UUID
+     * @param userEditDTO   the request payload containing updated user data
      * @param bindingResult bean validation results
      * @return HTTP 200 with the updated user DTO
-     * @throws ValidationException if request payload validation fails (HTTP 400)
-     * @throws EntityNotFoundException if the user does not exist (HTTP 404)
-     * @throws EntityAlreadyExistsException if the new username conflicts with an existing user (HTTP 409)
+     * @throws ValidationException            if request payload validation fails (HTTP 400)
+     * @throws EntityNotFoundException        if the user does not exist (HTTP 404)
+     * @throws EntityAlreadyExistsException   if the new username conflicts with an existing user (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
     @Operation(

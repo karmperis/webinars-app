@@ -31,17 +31,19 @@ public abstract class AbstractUuidEntity extends AbstractEntity {
      * If {@code uuid} is null it will be set to a newly generated random UUID.
      */
     @PrePersist
-    protected void onCreateUuid(){
-        if(uuid == null){
+    protected void onCreateUuid() {
+        if (uuid == null) {
             uuid = UUID.randomUUID();
         }
     }
+
     /**
      * Equality is based on the {@code uuid} field. Two entities are considered
      * equal when their UUIDs are equal.
+     *
      * @param o the object to compare
      * @return {@code true} if the given object is an {@code AbstractUuidEntity}
-     *         with the same UUID, otherwise {@code false}
+     * with the same UUID, otherwise {@code false}
      */
     @Override
     public boolean equals(Object o) {
@@ -52,6 +54,7 @@ public abstract class AbstractUuidEntity extends AbstractEntity {
 
     /**
      * Compute hash code using the entity UUID.
+     *
      * @return hash code derived from {@code uuid}
      */
     @Override

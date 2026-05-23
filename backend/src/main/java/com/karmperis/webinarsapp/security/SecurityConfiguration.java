@@ -14,6 +14,7 @@ public class SecurityConfiguration {
 
     /**
      * Provides a {@link PasswordEncoder} that uses BCrypt for hashing passwords.
+     *
      * @return a {@link BCryptPasswordEncoder} instance
      */
     @Bean

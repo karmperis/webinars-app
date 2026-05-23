@@ -8,6 +8,7 @@ public class EntityInvalidArgumentException extends AppGenericException {
 
     /**
      * Create a new exception for an "invalid argument" error.
+     *
      * @param code    base application error code/prefix
      * @param message readable error message
      */

@@ -30,12 +30,14 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 
     /**
      * Return all roles ordered by name ascending and not soft-deleted.
+     *
      * @return list of roles sorted by name
      */
     List<Role> findAllByDeletedAtIsNullOrderByNameAsc();
 
     /**
      * Return all roles ordered by name ascending and are soft-deleted.
+     *
      * @return list of roles sorted by name
      */
     List<Role> findAllByDeletedAtIsNotNullOrderByNameAsc();

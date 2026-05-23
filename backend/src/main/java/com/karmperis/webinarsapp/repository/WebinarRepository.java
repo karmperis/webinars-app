@@ -48,7 +48,7 @@ public interface WebinarRepository extends JpaRepository<Webinar, Long> {
     /**
      * Return a paginated list of non-deleted webinars organized by a specific user.
      *
-     * @param user the organizing user
+     * @param user     the organizing user
      * @param pageable pagination and sorting instructions
      * @return a page of webinars belonging to the user
      */

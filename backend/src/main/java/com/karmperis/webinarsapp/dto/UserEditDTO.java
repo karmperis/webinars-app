@@ -6,16 +6,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 //TODO: Decide on architecture for updating user roles and status
+
 /**
  * DTO used to update an existing user.
  * Validation is applied in two groups (First, Second) so basic null/blank checks run before
  * more expensive/length/format validations.
  *
- * @param username the user's username (4-50 chars)
- * @param roleId the database id of the assigned role
- * @param active whether the user is active
- * @param firstname the user's first name (max 100 chars)
- * @param lastname the user's last name (max 100 chars)
+ * @param username    the user's username (4-50 chars)
+ * @param roleId      the database id of the assigned role
+ * @param active      whether the user is active
+ * @param firstname   the user's first name (max 100 chars)
+ * @param lastname    the user's last name (max 100 chars)
  * @param phoneNumber optional phone number (digits, optional leading '+', 7-15 digits)
  */
 @GroupSequence({UserEditDTO.First.class, UserEditDTO.Second.class, UserEditDTO.class})
@@ -47,7 +48,10 @@ public record UserEditDTO(
         )
         String phoneNumber
 
-        ) {
-    public interface First{}
-    public interface Second{}
+) {
+    public interface First {
+    }
+
+    public interface Second {
+    }
 }

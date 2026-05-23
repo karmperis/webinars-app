@@ -52,7 +52,7 @@ public class Webinar extends AbstractUuidEntity {
      *
      * @return an immutable set with the webinar participants
      */
-    public Set<User> getAllParticipants(){
+    public Set<User> getAllParticipants() {
         return Set.copyOf(participants);
     }
 
@@ -63,7 +63,7 @@ public class Webinar extends AbstractUuidEntity {
      *
      * @param participant the user to enroll; callers should ensure the argument is not null
      */
-    public void addParticipant(User participant){
+    public void addParticipant(User participant) {
         participants.add(participant);
         participant.enrollInWebinar(this);
     }

@@ -21,9 +21,9 @@ public interface IWebinarService {
      *
      * @param dto the DTO containing values for creating a webinar
      * @return the persisted webinar as a read-only DTO
-     * @throws EntityAlreadyExistsException if a non-deleted webinar with the same title already exists
+     * @throws EntityAlreadyExistsException   if a non-deleted webinar with the same title already exists
      * @throws EntityInvalidArgumentException if the provided webinar data is invalid
-     * @throws EntityNotFoundException if the organizer specified in the DTO does not exist
+     * @throws EntityNotFoundException        if the organizer specified in the DTO does not exist
      */
     WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
@@ -40,7 +40,7 @@ public interface IWebinarService {
      * Retrieve a page of non-deleted webinars organized by a specific user.
      *
      * @param organizerUuid the UUID of the organizing user
-     * @param pageable paging and sorting information
+     * @param pageable      paging and sorting information
      * @return a page of active webinars as read-only DTOs
      * @throws EntityNotFoundException if the organizer does not exist
      */
@@ -60,10 +60,10 @@ public interface IWebinarService {
      * Update an existing webinar. (Update)
      *
      * @param uuid the UUID of the webinar to update
-     * @param dto the data to apply
+     * @param dto  the data to apply
      * @return the updated webinar as a read-only DTO
-     * @throws EntityNotFoundException if no non-deleted webinar with the given UUID exists
-     * @throws EntityAlreadyExistsException if the update would conflict with an existing non-deleted webinar title
+     * @throws EntityNotFoundException        if no non-deleted webinar with the given UUID exists
+     * @throws EntityAlreadyExistsException   if the update would conflict with an existing non-deleted webinar title
      * @throws EntityInvalidArgumentException if the provided data is invalid
      */
     WebinarReadOnlyDTO updateWebinar(UUID uuid, WebinarEditDTO dto)
@@ -81,7 +81,7 @@ public interface IWebinarService {
      * Enroll a user as a participant in a webinar.
      *
      * @param webinarUuid the UUID of the webinar
-     * @param userUuid the UUID of the user to enroll
+     * @param userUuid    the UUID of the user to enroll
      * @throws EntityNotFoundException if either the webinar or the user is not found
      */
     void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException;

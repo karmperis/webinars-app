@@ -23,10 +23,10 @@ public interface ITokenService {
      * Retrieves a token by its string representation and validates its state.
      * Checks if the token exists, matches the expected type, is not expired, and has not been used.
      *
-     * @param userToken  the unique token string provided by the client
+     * @param userToken    the unique token string provided by the client
      * @param expectedType the expected type of the token
      * @return the validated Token entity
-     * @throws EntityNotFoundException if the token does not exist
+     * @throws EntityNotFoundException        if the token does not exist
      * @throws EntityInvalidArgumentException if the token is expired or has already been used
      */
     Token verifyAndGetToken(String userToken, String expectedType)
@@ -36,7 +36,7 @@ public interface ITokenService {
      * Marks a specific token as used, preventing its future reuse.
      *
      * @param userToken the unique token string
-     * @throws EntityNotFoundException if the token does not exist
+     * @throws EntityNotFoundException        if the token does not exist
      * @throws EntityInvalidArgumentException if the token string is blank
      */
     void markTokenAsUsed(String userToken) throws EntityNotFoundException, EntityInvalidArgumentException;

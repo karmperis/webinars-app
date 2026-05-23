@@ -65,7 +65,7 @@ public class UserServiceImpl implements IUserService {
             User user = userMapper.mapToUserEntity(dto);
 
             Role role = roleRepository.findById(dto.roleId())
-                    .orElseThrow(() -> new EntityInvalidArgumentException ("Role", "Role with ID " + dto.roleId() + " does not exist"));
+                    .orElseThrow(() -> new EntityInvalidArgumentException("Role", "Role with ID " + dto.roleId() + " does not exist"));
 
             user.setRole(role);
             user.setPassword(passwordEncoder.encode(user.getPassword()));

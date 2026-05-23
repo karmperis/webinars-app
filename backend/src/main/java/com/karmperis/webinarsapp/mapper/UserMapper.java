@@ -43,7 +43,7 @@ public class UserMapper {
      * Map a {@link User} entity to a {@link UserReadOnlyDTO} suitable for API responses. (ReadOnly)
      * The method safely handles a {@code null} input and missing related objects (role, userDetail).
      *
-     *  @param user the user entity to map
+     * @param user the user entity to map
      * @return a {@link UserReadOnlyDTO} populated from the entity, or {@code null} if the input is {@code null}
      */
     public UserReadOnlyDTO mapToUserReadOnlyDTO(User user) {

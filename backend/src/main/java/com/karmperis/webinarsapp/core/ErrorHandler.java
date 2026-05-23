@@ -1,6 +1,9 @@
 package com.karmperis.webinarsapp.core;
 
-import com.karmperis.webinarsapp.core.exceptions.*;
+import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
+import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
+import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
+import com.karmperis.webinarsapp.core.exceptions.ValidationException;
 import com.karmperis.webinarsapp.dto.ErrorResponseDTO;
 import com.karmperis.webinarsapp.dto.ValidationErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;

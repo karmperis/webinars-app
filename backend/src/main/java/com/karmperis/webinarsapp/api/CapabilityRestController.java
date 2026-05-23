@@ -15,9 +15,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -39,10 +36,10 @@ public class CapabilityRestController {
      * Creates a new capability.
      *
      * @param capabilityInsertDTO the request payload used to create a capability
-     * @param bindingResult bean validation results
+     * @param bindingResult       bean validation results
      * @return HTTP 201 with the created capability DTO and a {@code Location} header
-     * @throws ValidationException if request payload validation fails (HTTP 400)
-     * @throws EntityAlreadyExistsException if a capability with the same name already exists (HTTP 409)
+     * @throws ValidationException            if request payload validation fails (HTTP 400)
+     * @throws EntityAlreadyExistsException   if a capability with the same name already exists (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
     @Operation(
@@ -85,7 +82,7 @@ public class CapabilityRestController {
     })
     @PostMapping
     public ResponseEntity<CapabilityReadOnlyDTO> createCapability(@Valid @RequestBody CapabilityInsertDTO capabilityInsertDTO,
-                                                            BindingResult bindingResult)
+                                                                  BindingResult bindingResult)
             throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException {
 
         if (bindingResult.hasErrors()) {
@@ -143,6 +140,7 @@ public class CapabilityRestController {
 
     /**
      * Returns all active (non-deleted) capabilities sorted by name.
+     *
      * @return HTTP 200 with a list of capabilities
      */
 
@@ -158,13 +156,13 @@ public class CapabilityRestController {
     /**
      * Updates an existing capability.
      *
-     * @param uuid the capability UUID
+     * @param uuid              the capability UUID
      * @param capabilityEditDTO the request payload containing updated capability data
-     * @param bindingResult bean validation results
+     * @param bindingResult     bean validation results
      * @return HTTP 200 with the updated capability DTO
-     * @throws ValidationException if request payload validation fails (HTTP 400)
-     * @throws EntityNotFoundException if the capability does not exist (HTTP 404)
-     * @throws EntityAlreadyExistsException if the new capability name conflicts with an existing capability (HTTP 409)
+     * @throws ValidationException            if request payload validation fails (HTTP 400)
+     * @throws EntityNotFoundException        if the capability does not exist (HTTP 404)
+     * @throws EntityAlreadyExistsException   if the new capability name conflicts with an existing capability (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
     @Operation(
@@ -173,8 +171,8 @@ public class CapabilityRestController {
     )
     @PutMapping("/{uuid}")
     public ResponseEntity<CapabilityReadOnlyDTO> updateCapability(@PathVariable UUID uuid,
-                                                      @Valid @RequestBody CapabilityEditDTO capabilityEditDTO,
-                                                      BindingResult bindingResult)
+                                                                  @Valid @RequestBody CapabilityEditDTO capabilityEditDTO,
+                                                                  BindingResult bindingResult)
             throws ValidationException, EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
 
         if (bindingResult.hasErrors()) {

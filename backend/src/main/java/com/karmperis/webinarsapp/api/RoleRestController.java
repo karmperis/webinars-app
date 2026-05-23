@@ -38,8 +38,8 @@ public class RoleRestController {
      * @param roleInsertDTO the request payload used to create a role
      * @param bindingResult bean validation results
      * @return HTTP 201 with the created role DTO and a {@code Location} header
-     * @throws ValidationException if request payload validation fails (HTTP 400)
-     * @throws EntityAlreadyExistsException if a role with the same name already exists (HTTP 409)
+     * @throws ValidationException            if request payload validation fails (HTTP 400)
+     * @throws EntityAlreadyExistsException   if a role with the same name already exists (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
     @Operation(
@@ -140,6 +140,7 @@ public class RoleRestController {
 
     /**
      * Returns all active (non-deleted) roles sorted by name.
+     *
      * @return HTTP 200 with a list of roles
      */
     @Operation(
@@ -154,13 +155,13 @@ public class RoleRestController {
     /**
      * Updates an existing role.
      *
-     * @param uuid the role UUID
-     * @param roleEditDTO the request payload containing updated role data
+     * @param uuid          the role UUID
+     * @param roleEditDTO   the request payload containing updated role data
      * @param bindingResult bean validation results
      * @return HTTP 200 with the updated role DTO
-     * @throws ValidationException if request payload validation fails (HTTP 400)
-     * @throws EntityNotFoundException if the role does not exist (HTTP 404)
-     * @throws EntityAlreadyExistsException if the new role name conflicts with an existing role (HTTP 409)
+     * @throws ValidationException            if request payload validation fails (HTTP 400)
+     * @throws EntityNotFoundException        if the role does not exist (HTTP 404)
+     * @throws EntityAlreadyExistsException   if the new role name conflicts with an existing role (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
     @Operation(
@@ -169,8 +170,8 @@ public class RoleRestController {
     )
     @PutMapping("/{uuid}")
     public ResponseEntity<RoleReadOnlyDTO> updateRole(@PathVariable UUID uuid,
-                                           @Valid @RequestBody RoleEditDTO roleEditDTO,
-                                           BindingResult bindingResult)
+                                                      @Valid @RequestBody RoleEditDTO roleEditDTO,
+                                                      BindingResult bindingResult)
             throws ValidationException, EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
 
         if (bindingResult.hasErrors()) {
@@ -203,7 +204,7 @@ public class RoleRestController {
     /**
      * Assigns a capability to a role.
      *
-     * @param roleUuid the role UUID
+     * @param roleUuid       the role UUID
      * @param capabilityUuid the capability UUID
      * @return HTTP 200 OK if successful
      * @throws EntityNotFoundException if role or capability does not exist (HTTP 404)

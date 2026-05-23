@@ -17,7 +17,7 @@ public class RoleMapper {
      * @param dto the DTO containing values for creating a role
      * @return a new Role entity populated from the DTO
      */
-    public Role mapToRoleEntity(RoleInsertDTO dto){
+    public Role mapToRoleEntity(RoleInsertDTO dto) {
         if (dto == null) return null;
 
         Role role = new Role();
@@ -32,7 +32,7 @@ public class RoleMapper {
      * @param role the Role entity to map
      * @return a read-only DTO representation of the given role
      */
-    public RoleReadOnlyDTO mapToRoleReadOnlyDTO(Role role){
+    public RoleReadOnlyDTO mapToRoleReadOnlyDTO(Role role) {
         if (role == null) return null;
         return new RoleReadOnlyDTO(role.getUuid(), role.getName());
     }
@@ -43,7 +43,7 @@ public class RoleMapper {
      * @param role the Role entity to update
      * @param dto  the DTO containing the updated values
      */
-    public void mapToRoleEditDTO(Role role, RoleEditDTO dto){
+    public void mapToRoleEditDTO(Role role, RoleEditDTO dto) {
         if (role == null || dto == null) return;
         role.setName(dto.name());
     }

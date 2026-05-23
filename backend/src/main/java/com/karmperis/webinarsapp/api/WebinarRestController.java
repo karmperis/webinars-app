@@ -36,7 +36,7 @@ public class WebinarRestController {
     /**
      * Creates a new webinar.
      *
-     * @param dto the request payload used to create a webinar
+     * @param dto           the request payload used to create a webinar
      * @param bindingResult bean validation results
      * @return HTTP 201 with the created webinar DTO and a {@code Location} header
      * @throws ValidationException            if request payload validation fails (HTTP 400)

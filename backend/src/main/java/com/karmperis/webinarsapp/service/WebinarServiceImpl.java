@@ -192,7 +192,7 @@ public class WebinarServiceImpl implements IWebinarService {
      * Enroll a user as a participant in a webinar.
      *
      * @param webinarUuid the UUID of the webinar
-     * @param userUuid the UUID of the user to enroll
+     * @param userUuid    the UUID of the user to enroll
      * @throws EntityNotFoundException if either the webinar or the user is not found
      */
     @Override

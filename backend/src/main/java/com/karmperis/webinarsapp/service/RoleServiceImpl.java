@@ -27,7 +27,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RoleServiceImpl implements IRoleService{
+public class RoleServiceImpl implements IRoleService {
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
     private final CapabilityRepository capabilityRepository;
@@ -37,11 +37,11 @@ public class RoleServiceImpl implements IRoleService{
      *
      * @param dto role creation data
      * @return the persisted role as a read-only DTO
-     * @throws EntityAlreadyExistsException if a non-deleted role with the same name already exists
+     * @throws EntityAlreadyExistsException   if a non-deleted role with the same name already exists
      * @throws EntityInvalidArgumentException if the provided role data is invalid
      */
     @Override
-    @Transactional(rollbackFor = { EntityAlreadyExistsException.class, EntityInvalidArgumentException.class })
+    @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public RoleReadOnlyDTO saveRole(RoleInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
         if (dto == null) {
             throw new EntityInvalidArgumentException("Role", "Role data cannot be null");
@@ -71,6 +71,7 @@ public class RoleServiceImpl implements IRoleService{
 
     /**
      * Retrieve all non-deleted roles sorted by name.
+     *
      * @return list of active roles mapped to read-only DTOs
      */
     @Override
@@ -106,10 +107,10 @@ public class RoleServiceImpl implements IRoleService{
      * Update an existing non-deleted role.
      *
      * @param uuid role UUID
-     * @param dto updated role data
+     * @param dto  updated role data
      * @return the updated role mapped to a read-only DTO
-     * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
-     * @throws EntityAlreadyExistsException if the new name conflicts with another non-deleted role
+     * @throws EntityNotFoundException        if no non-deleted role with the given UUID exists
+     * @throws EntityAlreadyExistsException   if the new name conflicts with another non-deleted role
      * @throws EntityInvalidArgumentException if the provided role data is invalid
      */
     @Override
@@ -164,7 +165,7 @@ public class RoleServiceImpl implements IRoleService{
     /**
      * Assign a capability to a role.
      *
-     * @param roleUuid the role UUID
+     * @param roleUuid       the role UUID
      * @param capabilityUuid the capability UUID
      * @throws EntityNotFoundException if the role or capability does not exist or is soft-deleted
      */

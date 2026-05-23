@@ -31,26 +31,29 @@ public class Capability extends AbstractUuidEntity {
 
     /**
      * Return an unmodifiable set of roles that have this capability.
+     *
      * @return an immutable copy of the roles set
      */
-    public Set<Role> getAllRoles(){
+    public Set<Role> getAllRoles() {
         return Set.copyOf(roles);
     }
 
     /**
      * Add a role to this capability.
+     *
      * @param role role to add
      */
-    public void addRole(Role role){
+    public void addRole(Role role) {
         roles.add(role);
         role.getCapabilities().add(this);
     }
 
     /**
      * Remove a role from this capability.
+     *
      * @param role role to remove
      */
-    public void removeRole(Role role){
+    public void removeRole(Role role) {
         roles.remove(role);
         role.getCapabilities().remove(this);
     }

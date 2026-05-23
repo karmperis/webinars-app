@@ -14,6 +14,7 @@ public class ValidationException extends AppGenericException {
 
     /**
      * Create a new validation exception.
+     *
      * @param code          base application error code
      * @param message       general error message
      * @param bindingResult the Spring BindingResult containing field errors

@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
  * Validation is applied in two groups (First, Second) so basic blank checks run before
  * more expensive/length/format validations.
  *
- * @param name capability name (required)
+ * @param name        capability name (required)
  * @param description optional capability description
  */
 @GroupSequence({CapabilityInsertDTO.First.class, CapabilityInsertDTO.Second.class, CapabilityInsertDTO.class})
@@ -21,6 +21,9 @@ public record CapabilityInsertDTO(
         @Size(max = 255, message = "The capability description must contain maximum 255 characters.")
         String description
 ) {
-        public interface First {}
-        public interface Second {}
+    public interface First {
+    }
+
+    public interface Second {
+    }
 }

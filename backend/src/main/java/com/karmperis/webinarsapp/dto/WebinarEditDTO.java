@@ -34,6 +34,9 @@ public record WebinarEditDTO(
         @Max(value = 480, message = "The maximum duration is 480 minutes (8 hours).", groups = Second.class)
         Integer duration
 ) {
-    public interface First {}
-    public interface Second {}
+    public interface First {
+    }
+
+    public interface Second {
+    }
 }

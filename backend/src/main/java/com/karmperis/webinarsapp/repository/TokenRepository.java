@@ -24,7 +24,7 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
      * Useful for ensuring a token is used for its intended purpose (e.g., password reset).
      *
      * @param token the unique token string
-     * @param type the type of the token
+     * @param type  the type of the token
      * @return an Optional containing the token if found
      */
     Optional<Token> findByTokenAndType(String token, String type);

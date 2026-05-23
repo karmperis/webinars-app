@@ -11,6 +11,7 @@ public class AppGenericException extends Exception {
 
     /**
      * Create a new exception with the given error code and message.
+     *
      * @param code    application-specific error code
      * @param message readable error message
      */

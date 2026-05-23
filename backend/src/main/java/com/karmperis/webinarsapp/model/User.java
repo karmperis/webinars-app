@@ -59,7 +59,7 @@ public class User extends AbstractUuidEntity {
      *
      * @return an immutable set with the user's enrolled webinars
      */
-    public Set<Webinar> getAllEnrolledWebinars(){
+    public Set<Webinar> getAllEnrolledWebinars() {
         return Set.copyOf(enrolledWebinars);
     }
 
