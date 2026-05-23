@@ -15,7 +15,7 @@ import java.util.UUID;
  * @param lastname the user's last name
  * @param phoneNumber the user's phone number
  */
-public record UserReadOnlyDTO (
+public record UserReadOnlyDTO(
         UUID uuid,
         String username,
         Boolean active,
