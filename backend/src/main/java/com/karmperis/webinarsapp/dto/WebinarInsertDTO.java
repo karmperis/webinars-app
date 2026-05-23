@@ -1,5 +1,6 @@
 package com.karmperis.webinarsapp.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.*;
 
@@ -28,6 +29,7 @@ public record WebinarInsertDTO(
 
         @NotNull(message = "The scheduled date must be provided.", groups = First.class)
         @Future(message = "The scheduled date must be in the future.", groups = Second.class)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
         Instant scheduledDate,
 
         @NotNull(message = "The duration must be provided.", groups = First.class)
@@ -40,6 +42,9 @@ public record WebinarInsertDTO(
         @NotNull(message = "The organizer's UUID must be provided.", groups = First.class)
         UUID organizerUuid
 ) {
-    public interface First {}
-    public interface Second {}
+    public interface First {
+    }
+
+    public interface Second {
+    }
 }
