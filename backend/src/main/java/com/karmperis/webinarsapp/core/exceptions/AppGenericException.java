@@ -6,7 +6,7 @@ import lombok.Getter;
  * Generic application exception that carries an application-specific error code.
  */
 @Getter
-public class AppGenericException extends Exception{
+public class AppGenericException extends Exception {
     private final String code;
 
     /**

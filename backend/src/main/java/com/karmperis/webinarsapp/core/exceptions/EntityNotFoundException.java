@@ -3,7 +3,7 @@ package com.karmperis.webinarsapp.core.exceptions;
 /**
  * Exception thrown when an expected entity cannot be found.
  */
-public class EntityNotFoundException extends AppGenericException{
+public class EntityNotFoundException extends AppGenericException {
     private static final String DEFAULT_CODE = "NotFound";
 
     /**
