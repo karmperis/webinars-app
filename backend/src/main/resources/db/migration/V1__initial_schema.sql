@@ -4,6 +4,22 @@
 
 /*
 ============================================================================
+Database Cleanup / Schema Reset
+============================================================================
+Caution: Drops all existing tables to provide a clean state for migrations.
+============================================================================
+*/
+DROP TABLE IF EXISTS tokens;
+DROP TABLE IF EXISTS roles_capabilities;
+DROP TABLE IF EXISTS users_webinars;
+DROP TABLE IF EXISTS users_details;
+DROP TABLE IF EXISTS webinars;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS capabilities;
+
+/*
+============================================================================
 Authentication & Authorization
 ============================================================================
 Tables for authentication (users) and authorization (roles, capabilities).
