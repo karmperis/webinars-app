@@ -101,7 +101,8 @@ CREATE UNIQUE INDEX ix_users_uuid
 CREATE INDEX ix_users_role_id
     ON users (role_id);
 
-/* ============================================================================
+/*
+============================================================================
 AUTHENTICATION TOKENS
 ============================================================================
 Tokens for account verification and password reset.
