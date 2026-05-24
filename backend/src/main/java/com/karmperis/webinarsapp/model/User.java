@@ -2,7 +2,11 @@ package com.karmperis.webinarsapp.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +20,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends AbstractUuidEntity {
+public class User extends AbstractUuidEntity implements UserDetails {
 
     @Column(nullable = false)
     private String username;
@@ -83,5 +87,59 @@ public class User extends AbstractUuidEntity {
      */
     void dropWebinar(Webinar webinar) {
         this.enrolledWebinars.remove(webinar);
+    }
+
+    /**
+     * Return granted authorities derived from the user's role and capabilities.
+     *
+     * @return a collection of Spring Security authorities for this user
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+        role.getCapabilities()
+                .forEach(capability -> grantedAuthorities.add(new SimpleGrantedAuthority(capability.getName())));
+        return grantedAuthorities;
+    }
+
+    /**
+     * Indicates whether the user account is expired.
+     *
+     * @return {@code true} when the account is treated as non-expired
+     */
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    /**
+     * Indicates whether the user account is locked.
+     *
+     * @return {@code true} when the account is treated as non-locked
+     */
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    /**
+     * Indicates whether the user credentials are expired.
+     *
+     * @return {@code true} when credentials are treated as non-expired
+     */
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    /**
+     * Indicates whether the user is enabled.
+     *
+     * @return {@code true} when the user is active and not soft-deleted
+     */
+    @Override
+    public boolean isEnabled() {
+        return this.active != null && this.active && !this.isDeleted();
     }
 }
