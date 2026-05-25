@@ -83,9 +83,6 @@ public class UserMapper {
     public void mapToUserEditDTO(User user, UserEditDTO dto) {
         if (user == null || dto == null) return;
 
-        user.setUsername(dto.username());
-        user.setActive(dto.active());
-
         if (user.getUserDetail() == null) {
             UserDetail detail = new UserDetail();
             detail.setUser(user);
