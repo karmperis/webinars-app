@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -133,6 +134,7 @@ public class UserRestController {
             )
     })
     @GetMapping("/{uuid}")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwnProfile(#uuid, authentication)")
     public ResponseEntity<UserReadOnlyDTO> getUserByUUID(@PathVariable UUID uuid)
             throws EntityNotFoundException {
 
@@ -163,24 +165,47 @@ public class UserRestController {
      * @return HTTP 200 with the updated user DTO
      * @throws ValidationException            if request payload validation fails (HTTP 400)
      * @throws EntityNotFoundException        if the user does not exist (HTTP 404)
-     * @throws EntityAlreadyExistsException   if the new username conflicts with an existing user (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
     @Operation(
-            summary = "Update an existing user",
-            description = "Updates the account and profile data of an existing user."
+            summary = "Update user profile",
+            description = "Updates the profile details of an existing user."
     )
     @PutMapping("/{uuid}")
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwnProfile(#uuid, authentication)")
     public ResponseEntity<UserReadOnlyDTO> updateUser(@PathVariable UUID uuid,
                                                       @Valid @RequestBody UserEditDTO userEditDTO,
                                                       BindingResult bindingResult)
-            throws ValidationException, EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
+            throws ValidationException, EntityNotFoundException, EntityInvalidArgumentException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException("User", "Invalid user update data", bindingResult);
         }
 
         UserReadOnlyDTO updatedUserDto = userService.updateUser(uuid, userEditDTO);
+        return ResponseEntity.ok(updatedUserDto);
+    }
+
+    /**
+     * Updates an existing user's access rights (Role, Active Status).
+     * Strictly restricted to Administrators.
+     */
+    @Operation(
+            summary = "Update user access rights (Admin Only)",
+            description = "Updates the assigned role and active status of a user."
+    )
+    @PatchMapping("/{uuid}/access")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserReadOnlyDTO> updateUserAccess(@PathVariable UUID uuid,
+                                                            @Valid @RequestBody UserAdminEditDTO userAdminEditDTO,
+                                                            BindingResult bindingResult)
+            throws ValidationException, EntityNotFoundException, EntityInvalidArgumentException {
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException("User", "Invalid user access data", bindingResult);
+        }
+
+        UserReadOnlyDTO updatedUserDto = userService.updateUserAccess(uuid, userAdminEditDTO);
         return ResponseEntity.ok(updatedUserDto);
     }
 
@@ -196,6 +221,7 @@ public class UserRestController {
             description = "Marks a user as deleted and deactivates their account in the system."
     )
     @DeleteMapping("/{uuid}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID uuid)
             throws EntityNotFoundException {
 
