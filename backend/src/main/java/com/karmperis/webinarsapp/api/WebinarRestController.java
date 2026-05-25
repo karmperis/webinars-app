@@ -5,6 +5,7 @@ import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
 import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
 import com.karmperis.webinarsapp.core.exceptions.ValidationException;
 import com.karmperis.webinarsapp.dto.*;
+import com.karmperis.webinarsapp.model.User;
 import com.karmperis.webinarsapp.service.IWebinarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -36,8 +39,9 @@ public class WebinarRestController {
     /**
      * Creates a new webinar.
      *
-     * @param dto           the request payload used to create a webinar
-     * @param bindingResult bean validation results
+     * @param dto            the request payload used to create a webinar
+     * @param bindingResult  bean validation results
+     * @param authentication the authenticated principal (used to derive organizer UUID)
      * @return HTTP 201 with the created webinar DTO and a {@code Location} header
      * @throws ValidationException            if request payload validation fails (HTTP 400)
      * @throws EntityAlreadyExistsException   if a webinar with the same title already exists (HTTP 409)
@@ -59,15 +63,19 @@ public class WebinarRestController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_WEBINAR')")
     public ResponseEntity<WebinarReadOnlyDTO> createWebinar(@Valid @RequestBody WebinarInsertDTO dto,
-                                                            BindingResult bindingResult)
+                                                            BindingResult bindingResult, Authentication authentication)
             throws ValidationException, EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException("Webinar", "Invalid webinar data", bindingResult);
         }
 
-        WebinarReadOnlyDTO readOnlyDTO = webinarService.saveWebinar(dto);
+        User principal = (User) authentication.getPrincipal();
+        UUID organizerUuid = principal.getUuid();
+
+        WebinarReadOnlyDTO readOnlyDTO = webinarService.saveWebinar(dto, organizerUuid);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -95,6 +103,7 @@ public class WebinarRestController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @GetMapping("/{uuid}")
+    @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
     public ResponseEntity<WebinarReadOnlyDTO> getWebinarByUUID(@PathVariable UUID uuid) throws EntityNotFoundException {
         return ResponseEntity.ok(webinarService.findWebinarByUuid(uuid));
     }
@@ -107,6 +116,7 @@ public class WebinarRestController {
      */
     @Operation(summary = "Get a page of webinars", description = "Returns a paginated and sorted page of active webinars.")
     @GetMapping
+    @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
     public ResponseEntity<Page<WebinarReadOnlyDTO>> getAllWebinars(Pageable pageable) {
         return ResponseEntity.ok(webinarService.findAllWebinars(pageable));
     }
@@ -121,6 +131,7 @@ public class WebinarRestController {
      */
     @Operation(summary = "Get webinars by organizer", description = "Returns a paginated list of webinars organized by a specific user.")
     @GetMapping("/organizer/{organizerUuid}")
+    @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
     public ResponseEntity<Page<WebinarReadOnlyDTO>> getWebinarsByOrganizer(@PathVariable UUID organizerUuid, Pageable pageable)
             throws EntityNotFoundException {
         return ResponseEntity.ok(webinarService.findAllWebinarsByOrganizer(organizerUuid, pageable));
@@ -140,6 +151,7 @@ public class WebinarRestController {
      */
     @Operation(summary = "Update an existing webinar", description = "Updates the details of an existing scheduled webinar.")
     @PutMapping("/{uuid}")
+    @PreAuthorize("hasAuthority('EDIT_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnWebinar(#uuid, authentication))")
     public ResponseEntity<WebinarReadOnlyDTO> updateWebinar(@PathVariable UUID uuid,
                                                             @Valid @RequestBody WebinarEditDTO dto,
                                                             BindingResult bindingResult)
@@ -162,6 +174,7 @@ public class WebinarRestController {
      */
     @Operation(summary = "Soft delete a webinar", description = "Marks a webinar as deleted in the system.")
     @DeleteMapping("/{uuid}")
+    @PreAuthorize("hasAuthority('DELETE_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnWebinar(#uuid, authentication))")
     public ResponseEntity<Void> deleteWebinar(@PathVariable UUID uuid) throws EntityNotFoundException {
         webinarService.softDeleteWebinarByUuid(uuid);
         return ResponseEntity.noContent().build();
@@ -185,6 +198,7 @@ public class WebinarRestController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @PostMapping("/{webinarUuid}/participants/{userUuid}")
+    @PreAuthorize("hasAuthority('ENROLL_IN_WEBINAR') and (hasRole('ADMIN')or @securityService.isOwnProfile(#userUuid, authentication))")
     public ResponseEntity<Void> enrollUser(@PathVariable UUID webinarUuid, @PathVariable UUID userUuid)
             throws EntityNotFoundException {
         webinarService.enrollUserInWebinar(webinarUuid, userUuid);
