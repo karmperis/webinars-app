@@ -89,7 +89,7 @@ public class UserServiceImplTest {
 
         when(userRepository.existsByUsernameAndDeletedAtIsNull("testuser")).thenReturn(false);
         when(userMapper.mapToUserEntity(dto)).thenReturn(unmappedUser);
-        when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
+        when(roleRepository.findByNameAndDeletedAtIsNull("PARTICIPANT")).thenReturn(Optional.of(role));
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(userMapper.mapToUserReadOnlyDTO(user)).thenReturn(readOnlyDTO);
@@ -129,7 +129,7 @@ public class UserServiceImplTest {
 
         when(userRepository.existsByUsernameAndDeletedAtIsNull("testuser")).thenReturn(false);
         when(userMapper.mapToUserEntity(dto)).thenReturn(unmappedUser);
-        when(roleRepository.findById(1L)).thenReturn(Optional.empty());
+        when(roleRepository.findByNameAndDeletedAtIsNull("PARTICIPANT")).thenReturn(Optional.empty());
 
         assertThrows(EntityInvalidArgumentException.class, () -> userService.saveUser(dto));
         verify(userRepository, never()).save(any());
@@ -185,18 +185,17 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("updateUser: Should update User successfully")
     void updateUser_Success() throws Exception {
-        UserEditDTO editDTO = new UserEditDTO("updateduser", 1L, true, "John", "Doe", "+306900000000");
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "updateduser", true, 1L, "USER", "John", "Doe", "+306900000000");
+        UserEditDTO editDTO = new UserEditDTO("John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "John", true, 1L, "USER", "John", "Doe", "+306900000000");
 
         when(userRepository.findByUuidAndDeletedAtIsNull(userUuid)).thenReturn(Optional.of(user));
-        when(userRepository.existsByUsernameAndDeletedAtIsNull("updateduser")).thenReturn(false);
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.mapToUserReadOnlyDTO(user)).thenReturn(readOnlyDTO);
 
         UserReadOnlyDTO result = userService.updateUser(userUuid, editDTO);
 
         assertNotNull(result);
-        assertEquals("updateduser", result.username());
+        assertEquals("John", result.username());
     }
 
     @Test
@@ -209,5 +208,32 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).save(user);
         assertNotNull(user.getDeletedAt());
         assertFalse(user.getActive());
+    }
+
+    // ==========================================
+    // TESTS-UPDATE (ADMIN)
+    // ==========================================
+    @Test
+    @DisplayName("updateUserAccess: Should update user role and status successfully (Admin)")
+    void updateUserAccess_Success() throws Exception {
+        com.karmperis.webinarsapp.dto.UserAdminEditDTO adminEditDTO =
+                new com.karmperis.webinarsapp.dto.UserAdminEditDTO(2L, false);
+
+        Role newRole = new Role();
+        newRole.setId(2L);
+        newRole.setName("TEACHER");
+
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", false, 2L, "TEACHER", "John", "Doe", "+306900000000");
+
+        when(userRepository.findByUuidAndDeletedAtIsNull(userUuid)).thenReturn(Optional.of(user));
+        when(roleRepository.findById(2L)).thenReturn(Optional.of(newRole));
+        when(userRepository.save(user)).thenReturn(user);
+        when(userMapper.mapToUserReadOnlyDTO(user)).thenReturn(readOnlyDTO);
+
+        UserReadOnlyDTO result = userService.updateUserAccess(userUuid, adminEditDTO);
+
+        assertNotNull(result);
+        assertEquals("TEACHER", result.roleName());
+        assertFalse(result.active());
     }
 }
