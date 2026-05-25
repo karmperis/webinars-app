@@ -3,6 +3,7 @@ package com.karmperis.webinarsapp.service;
 import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
 import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
 import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
+import com.karmperis.webinarsapp.dto.UserAdminEditDTO;
 import com.karmperis.webinarsapp.dto.UserEditDTO;
 import com.karmperis.webinarsapp.dto.UserInsertDTO;
 import com.karmperis.webinarsapp.dto.UserReadOnlyDTO;
@@ -64,10 +65,10 @@ public class UserServiceImpl implements IUserService {
 
             User user = userMapper.mapToUserEntity(dto);
 
-            Role role = roleRepository.findById(dto.roleId())
-                    .orElseThrow(() -> new EntityInvalidArgumentException("Role", "Role with ID " + dto.roleId() + " does not exist"));
+            Role defaultRole = roleRepository.findByNameAndDeletedAtIsNull("PARTICIPANT")
+                    .orElseThrow(() -> new EntityInvalidArgumentException("Role", "Default role 'PARTICIPANT' not found"));
 
-            user.setRole(role);
+            user.setRole(defaultRole);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setUuid(UUID.randomUUID());
             user.setActive(false);
@@ -144,34 +145,59 @@ public class UserServiceImpl implements IUserService {
      * @param dto  updated user data
      * @return the updated user mapped to a read-only DTO
      * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
-     * @throws EntityAlreadyExistsException   if the new username conflicts with another non-deleted user
      * @throws EntityInvalidArgumentException if the provided user data is invalid
      */
     @Override
-    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
-    public UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
+    public UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto) throws EntityNotFoundException, EntityInvalidArgumentException {
         if (dto == null) {
             throw new EntityInvalidArgumentException("User", "User data cannot be null");
         }
-
-        // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
-        validateUserData(dto.username());
 
         log.info("Updating user with UUID: {}", uuid);
 
         User user = userRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("User", "User not found"));
 
-        if (!user.getUsername().equalsIgnoreCase(dto.username()) &&
-                userRepository.existsByUsernameAndDeletedAtIsNull(dto.username())) {
-            throw new EntityAlreadyExistsException("User", "Username '" + dto.username() + "' already exists");
-        }
-
         userMapper.mapToUserEditDTO(user, dto);
 
         User updatedUser = userRepository.save(user);
 
         log.info("User with UUID {} updated successfully", uuid);
+
+        return userMapper.mapToUserReadOnlyDTO(updatedUser);
+    }
+
+    /**
+     * Update an existing user's access rights (role and status).
+     * Intended for Administrator use only.
+     *
+     * @param uuid user UUID
+     * @param dto  updated user access data (roleId, active)
+     * @return the updated user mapped to a read-only DTO
+     * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
+     * @throws EntityInvalidArgumentException if the provided role data is invalid
+     */
+    @Override
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
+    public UserReadOnlyDTO updateUserAccess(UUID uuid, UserAdminEditDTO dto) throws EntityNotFoundException, EntityInvalidArgumentException {
+        if (dto == null) {
+            throw new EntityInvalidArgumentException("User", "User access data cannot be null");
+        }
+
+        log.info("Updating access rights for user with UUID: {}", uuid);
+
+        User user = userRepository.findByUuidAndDeletedAtIsNull(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("User", "User not found"));
+
+        Role role = roleRepository.findById(dto.roleId())
+                .orElseThrow(() -> new EntityInvalidArgumentException("Role", "Role not found"));
+
+        user.setRole(role);
+        user.setActive(dto.active());
+
+        User updatedUser = userRepository.save(user);
+        log.info("User access for UUID {} updated successfully", uuid);
 
         return userMapper.mapToUserReadOnlyDTO(updatedUser);
     }
