@@ -3,6 +3,7 @@ package com.karmperis.webinarsapp.service;
 import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
 import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
 import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
+import com.karmperis.webinarsapp.dto.UserAdminEditDTO;
 import com.karmperis.webinarsapp.dto.UserEditDTO;
 import com.karmperis.webinarsapp.dto.UserInsertDTO;
 import com.karmperis.webinarsapp.dto.UserReadOnlyDTO;
@@ -59,11 +60,23 @@ public interface IUserService {
      * @param dto  the data to apply
      * @return the updated user as a read-only DTO
      * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
-     * @throws EntityAlreadyExistsException   if the update would conflict with an existing non-deleted username
      * @throws EntityInvalidArgumentException if the provided data is invalid
      */
     UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto)
-            throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
+            throws EntityNotFoundException, EntityInvalidArgumentException;
+
+    /**
+     * Update an existing user's access rights (role and status).
+     * Intended for Administrator use only.
+     *
+     * @param uuid user UUID
+     * @param dto  updated user access data (roleId, active)
+     * @return the updated user mapped to a read-only DTO
+     * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
+     * @throws EntityInvalidArgumentException if the provided role or data is invalid
+     */
+    UserReadOnlyDTO updateUserAccess(UUID uuid, UserAdminEditDTO dto)
+            throws EntityNotFoundException, EntityInvalidArgumentException;
 
     /**
      * Soft-delete a user by setting its deleted timestamp. (Delete)
