@@ -19,13 +19,14 @@ public interface IWebinarService {
     /**
      * Create and persist a new webinar. (Create)
      *
-     * @param dto the DTO containing values for creating a webinar
+     * @param dto           the DTO containing values for creating a webinar
+     * @param organizerUuid the UUID of the organizing user
      * @return the persisted webinar as a read-only DTO
      * @throws EntityAlreadyExistsException   if a non-deleted webinar with the same title already exists
      * @throws EntityInvalidArgumentException if the provided webinar data is invalid
      * @throws EntityNotFoundException        if the organizer specified in the DTO does not exist
      */
-    WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto)
+    WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto, UUID organizerUuid)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
 
     /**
