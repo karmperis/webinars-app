@@ -42,15 +42,11 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class, EntityNotFoundException.class})
-    public WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto)
+    public WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto, UUID organizerUuid)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
         validateWebinarData(dto.title(), dto.duration());
-
-        if (dto.organizerUuid() == null) {
-            throw new EntityInvalidArgumentException("Webinar", "Organizer UUID cannot be null");
-        }
 
         log.info("Attempting to save new webinar with title: {}", dto.title());
 
@@ -59,14 +55,15 @@ public class WebinarServiceImpl implements IWebinarService {
                 throw new EntityAlreadyExistsException("Webinar", "Webinar with title '" + dto.title() + "' already exists");
             }
 
-            User organizer = userRepository.findByUuidAndDeletedAtIsNull(dto.organizerUuid())
+            User organizer = userRepository.findByUuidAndDeletedAtIsNull(organizerUuid)
                     .orElseThrow(() -> {
-                        log.warn("Failed to create webinar: Organizer with UUID {} not found", dto.organizerUuid());
-                        return new EntityNotFoundException("User", "Organizer with UUID " + dto.organizerUuid() + " not found");
+                        log.warn("Failed to create webinar: Organizer with UUID {} not found", organizerUuid);
+                        return new EntityNotFoundException("User", "Organizer with UUID " + organizerUuid + " not found");
                     });
 
             Webinar webinar = webinarMapper.mapToWebinarEntity(dto);
             webinar.setUser(organizer);
+            webinar.setUuid(UUID.randomUUID());
 
             Webinar savedWebinar = webinarRepository.save(webinar);
             log.info("Webinar saved successfully with UUID: {}", savedWebinar.getUuid());
