@@ -83,7 +83,6 @@ public class WebinarServiceImplTest {
         WebinarInsertDTO dto = mock(WebinarInsertDTO.class);
         when(dto.title()).thenReturn("Spring Boot Advanced");
         when(dto.duration()).thenReturn(120);
-        when(dto.organizerUuid()).thenReturn(organizerUuid);
 
         WebinarReadOnlyDTO readOnlyDTO = mock(WebinarReadOnlyDTO.class);
         when(readOnlyDTO.title()).thenReturn("Spring Boot Advanced");
@@ -94,7 +93,7 @@ public class WebinarServiceImplTest {
         when(webinarRepository.save(any(Webinar.class))).thenReturn(webinar);
         when(webinarMapper.mapToWebinarReadOnlyDTO(webinar)).thenReturn(readOnlyDTO);
 
-        WebinarReadOnlyDTO result = webinarService.saveWebinar(dto);
+        WebinarReadOnlyDTO result = webinarService.saveWebinar(dto, organizerUuid);
 
         assertNotNull(result);
         assertEquals("Spring Boot Advanced", result.title());
@@ -109,19 +108,8 @@ public class WebinarServiceImplTest {
         when(dto.title()).thenReturn("abc"); // Invalid length (< 5)
         when(dto.duration()).thenReturn(120);
 
-        assertThrows(EntityInvalidArgumentException.class, () -> webinarService.saveWebinar(dto));
+        assertThrows(EntityInvalidArgumentException.class, () -> webinarService.saveWebinar(dto, organizerUuid));
         verify(webinarRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("saveWebinar: Should throw Exception when organizer UUID is null")
-    void saveWebinar_ThrowsEntityInvalidArgumentException_WhenOrganizerIsNull() {
-        WebinarInsertDTO dto = mock(WebinarInsertDTO.class);
-        when(dto.title()).thenReturn("Spring Boot Advanced");
-        when(dto.duration()).thenReturn(120);
-        when(dto.organizerUuid()).thenReturn(null);
-
-        assertThrows(EntityInvalidArgumentException.class, () -> webinarService.saveWebinar(dto));
     }
 
     @Test
@@ -130,12 +118,11 @@ public class WebinarServiceImplTest {
         WebinarInsertDTO dto = mock(WebinarInsertDTO.class);
         when(dto.title()).thenReturn("Spring Boot Advanced");
         when(dto.duration()).thenReturn(120);
-        when(dto.organizerUuid()).thenReturn(organizerUuid);
 
         when(webinarRepository.findByTitleAndDeletedAtIsNull("Spring Boot Advanced")).thenReturn(Optional.empty());
         when(userRepository.findByUuidAndDeletedAtIsNull(organizerUuid)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> webinarService.saveWebinar(dto));
+        assertThrows(EntityNotFoundException.class, () -> webinarService.saveWebinar(dto, organizerUuid));
         verify(webinarRepository, never()).save(any());
     }
 
