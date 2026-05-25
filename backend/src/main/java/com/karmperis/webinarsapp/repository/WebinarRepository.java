@@ -53,4 +53,13 @@ public interface WebinarRepository extends JpaRepository<Webinar, Long> {
      * @return a page of webinars belonging to the user
      */
     Page<Webinar> findAllByUserAndDeletedAtIsNull(User user, Pageable pageable);
+
+    /**
+     * Check whether a non-deleted webinar exists for the given webinar UUID and organizer user UUID.
+     *
+     * @param webinarUuid the webinar UUID
+     * @param userUuid    the organizer user UUID
+     * @return {@code true} if a matching non-deleted webinar exists
+     */
+    boolean existsByUuidAndUserUuidAndDeletedAtIsNull(UUID webinarUuid, UUID userUuid);
 }
