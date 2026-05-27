@@ -2,6 +2,7 @@ package com.karmperis.webinarsapp.repository;
 
 import com.karmperis.webinarsapp.model.Token;
 import com.karmperis.webinarsapp.model.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,20 +14,24 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<Token, Long> {
     /**
      * Find a token by its unique string representation.
+     * Eagerly fetches the associated {@code user} to optimize the subsequent
+     * user state updates (e.g., account activation) and avoid extra database queries.
      *
      * @param token the unique token string
      * @return an Optional containing the token if found
      */
+    @EntityGraph(attributePaths = {"user"})
     Optional<Token> findByToken(String token);
 
     /**
      * Find a token by its unique string representation and type.
-     * Useful for ensuring a token is used for its intended purpose (e.g., password reset).
+     * Eagerly fetches the associated {@code user} to optimize operations like password resets.
      *
      * @param token the unique token string
      * @param type  the type of the token
      * @return an Optional containing the token if found
      */
+    @EntityGraph(attributePaths = {"user"})
     Optional<Token> findByTokenAndType(String token, String type);
 
     /**
