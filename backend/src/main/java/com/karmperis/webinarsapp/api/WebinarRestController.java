@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -119,7 +120,7 @@ public class WebinarRestController {
     @Operation(summary = "Get a page of webinars", description = "Returns a paginated and sorted page of active webinars.")
     @GetMapping
     @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
-    public ResponseEntity<Page<WebinarReadOnlyDTO>> getAllWebinars(Pageable pageable) {
+    public ResponseEntity<Page<WebinarReadOnlyDTO>> getAllWebinars(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(webinarService.findAllWebinars(pageable));
     }
 
@@ -134,7 +135,7 @@ public class WebinarRestController {
     @Operation(summary = "Get webinars by organizer", description = "Returns a paginated list of webinars organized by a specific user.")
     @GetMapping("/organizer/{organizerUuid}")
     @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
-    public ResponseEntity<Page<WebinarReadOnlyDTO>> getWebinarsByOrganizer(@PathVariable UUID organizerUuid, Pageable pageable)
+    public ResponseEntity<Page<WebinarReadOnlyDTO>> getWebinarsByOrganizer(@PathVariable UUID organizerUuid, @ParameterObject Pageable pageable)
             throws EntityNotFoundException {
         return ResponseEntity.ok(webinarService.findAllWebinarsByOrganizer(organizerUuid, pageable));
     }

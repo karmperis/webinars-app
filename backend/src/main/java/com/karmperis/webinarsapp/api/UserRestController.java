@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -154,7 +155,7 @@ public class UserRestController {
             description = "Returns a paginated and sorted page of active users based on query parameters (page, size, sort)."
     )
     @GetMapping
-    public ResponseEntity<Page<UserReadOnlyDTO>> getAllUsers(Pageable pageable) {
+    public ResponseEntity<Page<UserReadOnlyDTO>> getAllUsers(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(userService.findAllUsersSortedByName(pageable));
     }
 
