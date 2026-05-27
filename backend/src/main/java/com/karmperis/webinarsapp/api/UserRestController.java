@@ -155,6 +155,7 @@ public class UserRestController {
             description = "Returns a paginated and sorted page of active users based on query parameters (page, size, sort)."
     )
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<UserReadOnlyDTO>> getAllUsers(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(userService.findAllUsersSortedByName(pageable));
     }
