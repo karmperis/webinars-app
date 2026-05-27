@@ -30,7 +30,7 @@ public interface IWebinarService {
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
 
     /**
-     * Retrieve a page of non-deleted webinars ordered chronologically. (ReadAll)
+     * Retrieve a page of non-deleted webinars using the provided paging and sorting information. (ReadAll)
      *
      * @param pageable paging and sorting information
      * @return a page of active webinars as read-only DTOs

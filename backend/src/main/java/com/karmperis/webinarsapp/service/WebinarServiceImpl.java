@@ -77,7 +77,7 @@ public class WebinarServiceImpl implements IWebinarService {
     }
 
     /**
-     * Retrieve a page of non-deleted webinars ordered chronologically.
+     * Retrieve a page of non-deleted webinars using the provided paging and sorting information.
      *
      * @param pageable paging and sorting information
      * @return a page of active webinars as read-only DTOs
