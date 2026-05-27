@@ -46,15 +46,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameAndDeletedAtIsNull(String username);
 
     /**
-     * Find a user by username for authentication purposes.
+     * Find an active (non-deleted) user by username specifically for authentication.
      * Eagerly fetches the associated {@code role} and its {@code capabilities} to establish
      * Spring Security granted authorities without triggering lazy initialization exceptions.
      *
      * @param username the user's username
-     * @return an Optional containing the matching user if present
+     * @return an Optional containing the matching active user if present
      */
     @EntityGraph(attributePaths = {"role", "role.capabilities"})
-    Optional<User> findByUsername(String username);
+    Optional<User> findAuthUserByUsernameAndDeletedAtIsNull(String username);
 
     /**
      * Check whether an active (non-deleted) user with the given username exists.

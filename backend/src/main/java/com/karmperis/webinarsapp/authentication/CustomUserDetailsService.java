@@ -16,7 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     /**
-     * Load a user by username, excluding soft-deleted accounts.
+     * Load a user by username , excluding soft-deleted accounts.
      *
      * @param username the username to look up
      * @return the resolved {@link UserDetails}
@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsernameAndDeletedAtIsNull(username)
+        return userRepository.findAuthUserByUsernameAndDeletedAtIsNull(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }
