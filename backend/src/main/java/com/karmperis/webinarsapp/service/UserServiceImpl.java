@@ -11,12 +11,12 @@ import com.karmperis.webinarsapp.mapper.UserMapper;
 import com.karmperis.webinarsapp.model.Role;
 import com.karmperis.webinarsapp.model.User;
 import com.karmperis.webinarsapp.repository.RoleRepository;
-import com.karmperis.webinarsapp.repository.UserDetailRepository;
 import com.karmperis.webinarsapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,6 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements IUserService {
     private final UserRepository userRepository;
-    private final UserDetailRepository userDetailRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -49,6 +48,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public UserReadOnlyDTO saveUser(UserInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
             throw new EntityInvalidArgumentException("User", "User data cannot be null");
         }
@@ -91,6 +91,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<UserReadOnlyDTO> findAllUsersSortedByName(Pageable pageable) {
         log.info("Fetching a page of active users based on pageable configuration");
 
@@ -107,6 +108,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwnProfile(#uuid, authentication)")
     public UserReadOnlyDTO findUserByUuid(UUID uuid) throws EntityNotFoundException {
         log.info("Searching for user with UUID: {}", uuid);
 
@@ -149,7 +151,9 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
+    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwnProfile(#uuid, authentication)")
     public UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto) throws EntityNotFoundException, EntityInvalidArgumentException {
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
             throw new EntityInvalidArgumentException("User", "User data cannot be null");
         }
@@ -180,7 +184,9 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
+    @PreAuthorize("hasRole('ADMIN')")
     public UserReadOnlyDTO updateUserAccess(UUID uuid, UserAdminEditDTO dto) throws EntityNotFoundException, EntityInvalidArgumentException {
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
             throw new EntityInvalidArgumentException("User", "User access data cannot be null");
         }
@@ -210,6 +216,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(rollbackFor = EntityNotFoundException.class)
+    @PreAuthorize("hasRole('ADMIN')")
     public void softDeleteUserByUuid(UUID uuid) throws EntityNotFoundException {
         log.info("Performing soft delete for user with UUID: {}", uuid);
 
