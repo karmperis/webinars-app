@@ -11,6 +11,7 @@ import com.karmperis.webinarsapp.model.Capability;
 import com.karmperis.webinarsapp.repository.CapabilityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@PreAuthorize("hasRole('ADMIN')")
 public class CapabilityServiceImpl implements ICapabilityService {
     private final CapabilityRepository capabilityRepository;
     private final CapabilityMapper capabilityMapper;
@@ -40,6 +42,7 @@ public class CapabilityServiceImpl implements ICapabilityService {
     @Override
     @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public CapabilityReadOnlyDTO saveCapability(CapabilityInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
             throw new EntityInvalidArgumentException("Capability", "Capability data cannot be null");
         }
@@ -113,6 +116,7 @@ public class CapabilityServiceImpl implements ICapabilityService {
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public CapabilityReadOnlyDTO updateCapability(UUID uuid, CapabilityEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
             throw new EntityInvalidArgumentException("Capability", "Capability data cannot be null");
         }
