@@ -28,7 +28,7 @@ public interface IUserService {
     UserReadOnlyDTO saveUser(UserInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException;
 
     /**
-     * Retrieve a page of non-deleted users sorted by name. (ReadAll)
+     * Retrieve a page of non-deleted users using the provided paging and sorting information. (ReadAll)
      *
      * @param pageable paging and sorting information
      * @return a page of active users as read-only DTOs
@@ -60,7 +60,7 @@ public interface IUserService {
      * @param dto  the data to apply
      * @return the updated user as a read-only DTO
      * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
-     * @throws EntityInvalidArgumentException if the provided data is invalid
+     * @throws EntityInvalidArgumentException if the provided role or data is invalid
      */
     UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto)
             throws EntityNotFoundException, EntityInvalidArgumentException;
