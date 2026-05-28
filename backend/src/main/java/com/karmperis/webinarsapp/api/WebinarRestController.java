@@ -73,8 +73,11 @@ public class WebinarRestController {
             throw new ValidationException("Webinar", "Invalid webinar data", bindingResult);
         }
 
-        User principal = (User) authentication.getPrincipal();
-        UUID organizerUuid = principal.getUuid();
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof User)) {
+            throw new EntityNotFoundException("User", "Invalid authentication principal");
+        }
+        UUID organizerUuid = ((User) principal).getUuid();
 
         WebinarReadOnlyDTO readOnlyDTO = webinarService.saveWebinar(dto, organizerUuid);
 
