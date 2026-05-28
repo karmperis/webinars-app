@@ -43,7 +43,7 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class, EntityNotFoundException.class})
-    @PreAuthorize("hasAuthority('CREATE_WEBINAR')")
+    @PreAuthorize("hasAuthority('CREATE_WEBINAR') and (#organizerUuid == authentication.principal.uuid or hasRole('ADMIN'))")
     public WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto, UUID organizerUuid)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
 
@@ -108,7 +108,7 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
+    @PreAuthorize("hasAuthority('VIEW_WEBINARS') and (#organizerUuid == authentication.principal.uuid or hasRole('ADMIN'))")
     public Page<WebinarReadOnlyDTO> findAllWebinarsByOrganizer(UUID organizerUuid, Pageable pageable) throws EntityNotFoundException {
         log.info("Fetching active webinars for organizer with UUID: {}", organizerUuid);
 
