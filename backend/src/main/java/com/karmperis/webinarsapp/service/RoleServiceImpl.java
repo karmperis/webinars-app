@@ -13,6 +13,7 @@ import com.karmperis.webinarsapp.repository.CapabilityRepository;
 import com.karmperis.webinarsapp.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@PreAuthorize("hasRole('ADMIN')")
 public class RoleServiceImpl implements IRoleService {
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
@@ -43,6 +45,7 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     public RoleReadOnlyDTO saveRole(RoleInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException {
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
             throw new EntityInvalidArgumentException("Role", "Role data cannot be null");
         }
@@ -119,7 +122,7 @@ public class RoleServiceImpl implements IRoleService {
             throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
 
         log.info("Updating role with UUID: {}", uuid);
-
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
             throw new EntityInvalidArgumentException("Role", "Role data cannot be null");
         }
