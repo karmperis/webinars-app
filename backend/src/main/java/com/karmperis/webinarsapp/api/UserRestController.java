@@ -18,7 +18,6 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -137,7 +136,6 @@ public class UserRestController {
             )
     })
     @GetMapping("/{uuid}")
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwnProfile(#uuid, authentication)")
     public ResponseEntity<UserReadOnlyDTO> getUserByUUID(@PathVariable UUID uuid)
             throws EntityNotFoundException {
 
@@ -155,7 +153,6 @@ public class UserRestController {
             description = "Returns a paginated and sorted page of active users based on query parameters (page, size, sort)."
     )
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<UserReadOnlyDTO>> getAllUsers(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(userService.findAllUsersSortedByName(pageable));
     }
@@ -176,7 +173,6 @@ public class UserRestController {
             description = "Updates the profile details of an existing user."
     )
     @PutMapping("/{uuid}")
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwnProfile(#uuid, authentication)")
     public ResponseEntity<UserReadOnlyDTO> updateUser(@PathVariable UUID uuid,
                                                       @Valid @RequestBody UserEditDTO userEditDTO,
                                                       BindingResult bindingResult)
@@ -193,13 +189,20 @@ public class UserRestController {
     /**
      * Updates an existing user's access rights (Role, Active Status).
      * Strictly restricted to Administrators.
+     *
+     * @param uuid             the user UUID
+     * @param userAdminEditDTO the request payload containing updated access data
+     * @param bindingResult    bean validation results
+     * @return HTTP 200 with the updated user DTO
+     * @throws ValidationException            if request payload validation fails (HTTP 400)
+     * @throws EntityNotFoundException        if the user does not exist (HTTP 404)
+     * @throws EntityInvalidArgumentException if the provided role or data is invalid (HTTP 400)
      */
     @Operation(
             summary = "Update user access rights (Admin Only)",
             description = "Updates the assigned role and active status of a user."
     )
     @PatchMapping("/{uuid}/access")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserReadOnlyDTO> updateUserAccess(@PathVariable UUID uuid,
                                                             @Valid @RequestBody UserAdminEditDTO userAdminEditDTO,
                                                             BindingResult bindingResult)
@@ -225,7 +228,6 @@ public class UserRestController {
             description = "Marks a user as deleted and deactivates their account in the system."
     )
     @DeleteMapping("/{uuid}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID uuid)
             throws EntityNotFoundException {
 
