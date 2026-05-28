@@ -1,6 +1,7 @@
 package com.karmperis.webinarsapp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.karmperis.webinarsapp.core.MDCLoggingFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final MDCLoggingFilter mdcLoggingFilter;
     private final ObjectMapper objectMapper;
 
     @Value("${allowed.origins}")
@@ -62,7 +64,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/authenticate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/webinars/{uuid}/enroll").hasAuthority("ENROLL_IN_WEBINAR")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/webinars/{webinarUuid}/participants/{userUuid}").hasAuthority("ENROLL_IN_WEBINAR")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/webinars/organizer/{organizerUuid}").hasAuthority("VIEW_WEBINARS")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/webinars/{uuid}").hasAuthority("EDIT_WEBINAR")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/webinars/{uuid}").hasAuthority("DELETE_WEBINAR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/webinars/{uuid}").hasAuthority("VIEW_WEBINARS")
