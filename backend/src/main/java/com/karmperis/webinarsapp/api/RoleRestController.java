@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -31,7 +30,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/roles")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
 public class RoleRestController {
     private final IRoleService roleService;
@@ -48,7 +46,7 @@ public class RoleRestController {
      */
     @Operation(
             summary = "Create a new role",
-            description = "Creates a new role account in the system."
+            description = "Creates a new role in the system."
     )
     @ApiResponses({
             @ApiResponse(
