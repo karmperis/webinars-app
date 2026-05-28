@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +43,14 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(rollbackFor = {EntityAlreadyExistsException.class, EntityInvalidArgumentException.class, EntityNotFoundException.class})
+    @PreAuthorize("hasAuthority('CREATE_WEBINAR')")
     public WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto, UUID organizerUuid)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException {
+
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
+        if (dto == null) {
+            throw new EntityInvalidArgumentException("Webinar", "Webinar data cannot be null");
+        }
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
         validateWebinarData(dto.title(), dto.duration());
@@ -84,6 +91,7 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
     public Page<WebinarReadOnlyDTO> findAllWebinars(Pageable pageable) {
         log.info("Fetching a page of active webinars");
         return webinarRepository.findAllByDeletedAtIsNull(pageable)
@@ -100,6 +108,7 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
     public Page<WebinarReadOnlyDTO> findAllWebinarsByOrganizer(UUID organizerUuid, Pageable pageable) throws EntityNotFoundException {
         log.info("Fetching active webinars for organizer with UUID: {}", organizerUuid);
 
@@ -122,6 +131,7 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('VIEW_WEBINARS')")
     public WebinarReadOnlyDTO findWebinarByUuid(UUID uuid) throws EntityNotFoundException {
         log.info("Searching for webinar with UUID: {}", uuid);
         return webinarRepository.findByUuidAndDeletedAtIsNull(uuid)
@@ -144,8 +154,14 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
+    @PreAuthorize("hasAuthority('EDIT_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnWebinar(#uuid, authentication))")
     public WebinarReadOnlyDTO updateWebinar(UUID uuid, WebinarEditDTO dto) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
         log.info("Updating webinar with UUID: {}", uuid);
+
+        // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
+        if (dto == null) {
+            throw new EntityInvalidArgumentException("Webinar", "Webinar update data cannot be null");
+        }
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
         validateWebinarData(dto.title(), dto.duration());
@@ -173,6 +189,7 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(rollbackFor = EntityNotFoundException.class)
+    @PreAuthorize("hasAuthority('DELETE_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnWebinar(#uuid, authentication))")
     public void softDeleteWebinarByUuid(UUID uuid) throws EntityNotFoundException {
         log.info("Performing soft delete for webinar with UUID: {}", uuid);
 
@@ -194,6 +211,7 @@ public class WebinarServiceImpl implements IWebinarService {
      */
     @Override
     @Transactional(rollbackFor = EntityNotFoundException.class)
+    @PreAuthorize("hasAuthority('ENROLL_IN_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnProfile(#userUuid, authentication))")
     public void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException {
         log.info("Enrolling user {} in webinar {}", userUuid, webinarUuid);
 
