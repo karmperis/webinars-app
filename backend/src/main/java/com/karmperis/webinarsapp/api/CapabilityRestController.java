@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -31,7 +30,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/capabilities")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
 public class CapabilityRestController {
     private final ICapabilityService capabilityService;
@@ -48,7 +46,7 @@ public class CapabilityRestController {
      */
     @Operation(
             summary = "Create a new capability",
-            description = "Creates a new capability account in the system"
+            description = "Creates a new capability in the system"
     )
     @ApiResponses({
             @ApiResponse(
