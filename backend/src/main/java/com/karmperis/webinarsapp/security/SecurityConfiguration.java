@@ -1,7 +1,6 @@
 package com.karmperis.webinarsapp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.karmperis.webinarsapp.core.MDCLoggingFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +38,6 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final MDCLoggingFilter mdcLoggingFilter;
     private final ObjectMapper objectMapper;
 
     @Value("${allowed.origins}")
