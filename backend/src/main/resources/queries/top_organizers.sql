@@ -1,4 +1,4 @@
---This query shows a list of active organizers who have created 2 or more webinars, along with their total webinar count and total duration, sorted by total duration in descending order.
+--This query shows a list of active organizers who have created 4 or more webinars, along with their total webinar count and total duration, sorted by total duration in descending order.
 --For each organizer it displays:
 
 --ΔΙΟΡΓΑΝΩΤΗΣ — the username of the user who created/organizes the webinar
