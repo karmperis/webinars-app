@@ -3,26 +3,25 @@ package com.karmperis.webinarsapp.dto;
 import java.util.List;
 
 /**
- * DTO representing the status of a background job with optional result data.
+ * DTO representing the status of a background job with optional report data.
  *
  * @param jobId  the job identifier
  * @param status the current job status
- * @param data   the job result data, or {@code null} if not available
+ * @param data   the report data, or {@code null} if not available
  */
-public record JobStatusDTO<T>(
+public record JobStatusDTO(
         String jobId,
         String status,
-        List<T> data
+        List<WebinarReportView> data
 ) {
     /**
-     * Create a job status response without result data.
+     * Create a job status response without report data.
      *
      * @param jobId  the job identifier
      * @param status the current job status
-     * @param <T>    the data element type
      * @return a job status DTO with no data payload
      */
-    public static <T> JobStatusDTO<T> withoutData(String jobId, String status) {
-        return new JobStatusDTO<>(jobId, status, null);
+    public static JobStatusDTO withoutData(String jobId, String status) {
+        return new JobStatusDTO(jobId, status, null);
     }
 }
