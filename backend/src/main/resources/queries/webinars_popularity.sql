@@ -13,27 +13,22 @@
 --Προηγμένη Μηχανική Δεδομένων        k.papadopoulos@test.gr   ΚΩΣΤΑΣ             ΠΑΠΑΔΟΠΟΥΛΟΣ         1
 --Το μέλλον της Τεχνητής Νοημοσύνης   m.pappa@test.gr          ΜΑΡΙΑ              ΠΑΠΠΑ                0
 
-SELECT
-    w.title AS 'ΣΕΜΙΝΑΡΙΟ',
-    u.username AS 'ΔΙΟΡΓΑΝΩΤΗΣ',
-    ud.firstname AS 'ΟΝΟΜΑ ΔΙΟΡΓΑΝΩΤΗ',
-    ud.lastname AS 'ΕΠΩΝΥΜΟ ΔΙΟΡΓΑΝΩΤΗ',
-    COUNT(uw.user_id) AS 'ΣΥΜΜΕΤΕΧΟΝΤΕΣ'
-FROM
-    webinars w
-        INNER JOIN
-    users u ON w.user_id = u.id
-        INNER JOIN
-    users_details ud ON ud.user_id = u.id
-        LEFT JOIN
-    users_webinars uw ON uw.webinar_id = w.id
-WHERE
-    w.deleted_at IS NULL
-GROUP BY
-    w.id,
-    w.title,
-    u.username,
-    ud.firstname,
-    ud.lastname
-ORDER BY
-    COUNT(uw.user_id) DESC;
+SELECT w.title           AS 'ΣΕΜΙΝΑΡΙΟ',
+       u.username        AS 'ΔΙΟΡΓΑΝΩΤΗΣ',
+       ud.firstname      AS 'ΟΝΟΜΑ ΔΙΟΡΓΑΝΩΤΗ',
+       ud.lastname       AS 'ΕΠΩΝΥΜΟ ΔΙΟΡΓΑΝΩΤΗ',
+       COUNT(uw.user_id) AS 'ΣΥΜΜΕΤΕΧΟΝΤΕΣ'
+FROM webinars w
+         INNER JOIN
+     users u ON w.user_id = u.id
+         INNER JOIN
+     users_details ud ON ud.user_id = u.id
+         LEFT JOIN
+     users_webinars uw ON uw.webinar_id = w.id
+WHERE w.deleted_at IS NULL
+GROUP BY w.id,
+         w.title,
+         u.username,
+         ud.firstname,
+         ud.lastname
+ORDER BY COUNT(uw.user_id) DESC;

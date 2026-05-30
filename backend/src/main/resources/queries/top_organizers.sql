@@ -12,26 +12,20 @@
 --k.papadopoulos@test.gr   ΚΩΣΤΑΣ             ΠΑΠΑΔΟΠΟΥΛΟΣ         8                   480
 --m.pappa@test.gr          ΜΑΡΙΑ              ΠΑΠΠΑ                5                   300
 
-SELECT
-    u.username AS 'ΔΙΟΡΓΑΝΩΤΗΣ',
-    ud.firstname AS 'ΟΝΟΜΑ ΔΙΟΡΓΑΝΩΤΗ',
-    ud.lastname AS 'ΕΠΩΝΥΜΟ ΔΙΟΡΓΑΝΩΤΗ',
-    COUNT(w.id) AS 'ΠΛΗΘΟΣ ΣΕΜΙΝΑΡΙΩΝ',
-    SUM(w.duration) AS 'ΣΥΝΟΛΙΚΗ ΔΙΑΡΚΕΙΑ'
-FROM
-    users u
-        INNER JOIN
-    users_details ud ON u.id = ud.user_id
-        INNER JOIN
-    webinars w ON w.user_id = u.id
-WHERE
-    w.deleted_at IS NULL
-GROUP BY
-    u.id,
-    u.username,
-    ud.firstname,
-    ud.lastname
-HAVING
-    COUNT(w.id) >= 4
-ORDER BY
-    SUM(w.duration) DESC;
+SELECT u.username      AS 'ΔΙΟΡΓΑΝΩΤΗΣ',
+       ud.firstname    AS 'ΟΝΟΜΑ ΔΙΟΡΓΑΝΩΤΗ',
+       ud.lastname     AS 'ΕΠΩΝΥΜΟ ΔΙΟΡΓΑΝΩΤΗ',
+       COUNT(w.id)     AS 'ΠΛΗΘΟΣ ΣΕΜΙΝΑΡΙΩΝ',
+       SUM(w.duration) AS 'ΣΥΝΟΛΙΚΗ ΔΙΑΡΚΕΙΑ'
+FROM users u
+         INNER JOIN
+     users_details ud ON u.id = ud.user_id
+         INNER JOIN
+     webinars w ON w.user_id = u.id
+WHERE w.deleted_at IS NULL
+GROUP BY u.id,
+         u.username,
+         ud.firstname,
+         ud.lastname
+HAVING COUNT(w.id) >= 4
+ORDER BY SUM(w.duration) DESC;

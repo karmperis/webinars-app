@@ -14,30 +14,26 @@
 --Εισαγωγή στην SQL                  ΕΝΕΡΓΟ                m.pappa@test.gr          ΜΑΡΙΑ             ΠΑΠΠΑ               ΑΝΕΝΕΡΓΟΣ
 --Εισαγωγή στη C#                    ΔΙΕΓΡΑΜΜΕΝΟ           n.alexiou@test.gr        ΝΙΚΟΣ             ΑΛΕΞΙΟΥ             ΔΙΕΓΡΑΜΜΕΝΟΣ
 
-SELECT
-    w.title AS 'ΣΕΜΙΝΑΡΙΟ',
-    CASE
-        WHEN w.deleted_at IS NOT NULL THEN 'ΔΙΕΓΡΑΜΜΕΝΟ'
-        ELSE 'ΕΝΕΡΓΟ'
-        END AS 'ΚΑΤΑΣΤΑΣΗ ΣΕΜΙΝΑΡΙΟΥ',
-    u.username AS 'ΔΙΟΡΓΑΝΩΤΗΣ',
-    ud.firstname AS 'ΟΝΟΜΑ ΔΙΟΡΓΑΝΩΤΗ',
-    ud.lastname AS 'ΕΠΩΝΥΜΟ ΔΙΟΡΓΑΝΩΤΗ',
-    CASE
-        WHEN u.deleted_at IS NOT NULL THEN 'ΔΙΕΓΡΑΜΜΕΝΟΣ'
-        WHEN u.active = 0 THEN 'ΑΝΕΝΕΡΓΟΣ'
-        ELSE 'ΕΝΕΡΓΟΣ'
-        END AS 'ΚΑΤΑΣΤΑΣΗ ΧΡΗΣΤΗ'
-FROM
-    webinars w
-        INNER JOIN
-    users u ON w.user_id = u.id
-        INNER JOIN
-    users_details ud ON ud.user_id = u.id
-WHERE
-    w.deleted_at IS NOT NULL
+SELECT w.title      AS 'ΣΕΜΙΝΑΡΙΟ',
+       CASE
+           WHEN w.deleted_at IS NOT NULL THEN N'ΔΙΕΓΡΑΜΜΕΝΟ'
+           ELSE N'ΕΝΕΡΓΟ'
+           END      AS 'ΚΑΤΑΣΤΑΣΗ ΣΕΜΙΝΑΡΙΟΥ',
+       u.username   AS 'ΔΙΟΡΓΑΝΩΤΗΣ',
+       ud.firstname AS 'ΟΝΟΜΑ ΔΙΟΡΓΑΝΩΤΗ',
+       ud.lastname  AS 'ΕΠΩΝΥΜΟ ΔΙΟΡΓΑΝΩΤΗ',
+       CASE
+           WHEN u.deleted_at IS NOT NULL THEN N'ΔΙΕΓΡΑΜΜΕΝΟΣ'
+           WHEN u.active = 0 THEN N'ΑΝΕΝΕΡΓΟΣ'
+           ELSE N'ΕΝΕΡΓΟΣ'
+           END      AS 'ΚΑΤΑΣΤΑΣΗ ΧΡΗΣΤΗ'
+FROM webinars w
+         INNER JOIN
+     users u ON w.user_id = u.id
+         INNER JOIN
+     users_details ud ON ud.user_id = u.id
+WHERE w.deleted_at IS NOT NULL
    OR u.active = 0
    OR u.deleted_at IS NOT NULL
-ORDER BY
-    w.deleted_at DESC,
-    u.username ASC;
+ORDER BY w.deleted_at DESC,
+         u.username;
