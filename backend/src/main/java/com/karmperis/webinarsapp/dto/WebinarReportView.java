@@ -1,8 +1,11 @@
 package com.karmperis.webinarsapp.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Projection view for aggregated webinar report fields.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public interface WebinarReportView {
     /**
      * @return the webinar title
