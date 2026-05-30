@@ -6,6 +6,7 @@ import com.karmperis.webinarsapp.repository.WebinarRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class ReportService implements IReportService {
      * @param reportType type of report to generate (case-insensitive). Supported values:
      *                   "popularity", "productive", "inactive"
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @Async
     @Transactional(readOnly = true)
     @Override
@@ -66,6 +68,7 @@ public class ReportService implements IReportService {
      * @param jobId identifier of the job
      * @return JobStatusDTO containing status and optional report data, or null if no such job exists
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public JobStatusDTO getJobStatus(String jobId) {
         return jobStatusMap.get(jobId);
