@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Service responsible for generating webinar reports asynchronously and tracking job status.
+ * The service starts an asynchronous report generation job for the given report type and
+ * stores the job progress and result in an in-memory concurrent map. Supported report types:
+ * <code>popularity</code>, <code>productive</code>, <code>inactive</code>.</p>
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +26,17 @@ public class ReportService implements IReportService {
     private final Map<String, JobStatusDTO> jobStatusMap = new ConcurrentHashMap<>();
     private final WebinarRepository webinarRepository;
 
+    /**
+     * Starts asynchronous generation of a report for the specified report type.
+     * <p>
+     * This method runs asynchronously and updates an internal job status map. On success the job
+     * status is set to COMPLETED and the generated report is stored inside the JobStatusDTO.
+     * On failure the job status is set to FAILED and a RuntimeException is thrown.
+     *
+     * @param jobId      unique identifier for the background job
+     * @param reportType type of report to generate (case-insensitive). Supported values:
+     *                   "popularity", "productive", "inactive"
+     */
     @Async
     @Transactional(readOnly = true)
     @Override
@@ -43,6 +60,12 @@ public class ReportService implements IReportService {
         }
     }
 
+    /**
+     * Returns the current job status for the given job id.
+     *
+     * @param jobId identifier of the job
+     * @return JobStatusDTO containing status and optional report data, or null if no such job exists
+     */
     @Override
     public JobStatusDTO getJobStatus(String jobId) {
         return jobStatusMap.get(jobId);
