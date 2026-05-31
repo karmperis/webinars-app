@@ -228,6 +228,7 @@ public class WebinarServiceImpl implements IWebinarService {
                 });
 
         webinar.addParticipant(user);
+        webinarRepository.save(webinar);
 
         log.info("Successfully enrolled user {} in webinar {}", userUuid, webinarUuid);
     }
