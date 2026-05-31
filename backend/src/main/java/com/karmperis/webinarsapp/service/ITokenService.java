@@ -2,7 +2,7 @@ package com.karmperis.webinarsapp.service;
 
 import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
 import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
-import com.karmperis.webinarsapp.model.Token;
+import com.karmperis.webinarsapp.dto.TokenReadOnlyDTO;
 import com.karmperis.webinarsapp.model.User;
 
 /**
@@ -17,7 +17,7 @@ public interface ITokenService {
      * @return the generated and persisted Token entity
      * @throws EntityInvalidArgumentException if the user or token type is invalid
      */
-    Token createToken(User user, String type) throws EntityInvalidArgumentException;
+    TokenReadOnlyDTO createToken(User user, String type) throws EntityInvalidArgumentException;
 
     /**
      * Retrieves a token by its string representation and validates its state.
@@ -29,7 +29,7 @@ public interface ITokenService {
      * @throws EntityNotFoundException        if the token does not exist
      * @throws EntityInvalidArgumentException if the token is expired or has already been used
      */
-    Token verifyAndGetToken(String userToken, String expectedType)
+    TokenReadOnlyDTO verifyAndGetToken(String userToken, String expectedType)
             throws EntityNotFoundException, EntityInvalidArgumentException;
 
     /**
