@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  sqlserver-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: webinars_db_container
+    restart: always
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Dev!Password2026
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+volumes:
+  sqlserver_data:
