@@ -2,6 +2,7 @@ package com.karmperis.webinarsapp.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -44,6 +45,7 @@ public class Webinar extends AbstractUuidEntity {
             joinColumns = @JoinColumn(name = "webinar_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @BatchSize(size = 20)
     private Set<User> participants = new HashSet<>();
 
     /**
