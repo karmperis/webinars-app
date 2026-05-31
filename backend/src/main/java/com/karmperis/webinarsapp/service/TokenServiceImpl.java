@@ -2,6 +2,7 @@ package com.karmperis.webinarsapp.service;
 
 import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
 import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
+import com.karmperis.webinarsapp.dto.TokenReadOnlyDTO;
 import com.karmperis.webinarsapp.model.Token;
 import com.karmperis.webinarsapp.model.User;
 import com.karmperis.webinarsapp.repository.TokenRepository;
@@ -39,7 +40,7 @@ public class TokenServiceImpl implements ITokenService {
      */
     @Override
     @Transactional(rollbackFor = EntityInvalidArgumentException.class)
-    public Token createToken(User user, String type) throws EntityInvalidArgumentException {
+    public TokenReadOnlyDTO createToken(User user, String type) throws EntityInvalidArgumentException {
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
         validateUserNotNull(user);
@@ -63,7 +64,7 @@ public class TokenServiceImpl implements ITokenService {
         Token savedToken = tokenRepository.save(token);
 
         log.info("Successfully created {} token for user: {}", type, user.getUsername());
-        return savedToken;
+        return new TokenReadOnlyDTO(savedToken.getToken(), savedToken.getType(), savedToken.getUsed(), savedToken.getExpiryAt(), user.getUuid());
     }
 
     /**
@@ -77,7 +78,7 @@ public class TokenServiceImpl implements ITokenService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Token verifyAndGetToken(String userToken, String expectedType) throws EntityNotFoundException, EntityInvalidArgumentException {
+    public TokenReadOnlyDTO verifyAndGetToken(String userToken, String expectedType) throws EntityNotFoundException, EntityInvalidArgumentException {
 
         // Defensive programming: structural validation enforced at service level even though checked by DTO bean validation
         validateStringNotBlank(userToken, "Token string");
@@ -102,7 +103,7 @@ public class TokenServiceImpl implements ITokenService {
         }
 
         log.info("Token successfully verified");
-        return token;
+        return new TokenReadOnlyDTO(token.getToken(), token.getType(), token.getUsed(), token.getExpiryAt(), token.getUser().getUuid());
     }
 
     /**
