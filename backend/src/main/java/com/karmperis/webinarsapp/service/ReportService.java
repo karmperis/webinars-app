@@ -29,7 +29,6 @@ public class ReportService implements IReportService {
 
     /**
      * Starts asynchronous generation of a report for the specified report type.
-     * <p>
      * This method runs asynchronously and updates an internal job status map. On success the job
      * status is set to COMPLETED and the generated report is stored inside the JobStatusDTO.
      * On failure the job status is set to FAILED and a RuntimeException is thrown.

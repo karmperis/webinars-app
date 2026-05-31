@@ -219,7 +219,7 @@ public class RoleRestController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Capability successfully assigned to role"
-                    // Δεν βάζουμε @Content εδώ, επειδή επιστρέφει ResponseEntity<Void> (κενό body)
+                    // We don't include @Content here because it returns ResponseEntity<Void> (an empty body).
             ),
             @ApiResponse(
                     responseCode = "404",
