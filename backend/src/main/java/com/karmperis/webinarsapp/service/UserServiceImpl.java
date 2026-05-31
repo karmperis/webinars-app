@@ -129,6 +129,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public UserReadOnlyDTO findUserByUsername(String username) throws EntityNotFoundException {
         log.info("Searching for user with username: {}", username);
 
