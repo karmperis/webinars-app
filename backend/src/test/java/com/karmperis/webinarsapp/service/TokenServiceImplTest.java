@@ -2,6 +2,7 @@ package com.karmperis.webinarsapp.service;
 
 import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
 import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
+import com.karmperis.webinarsapp.dto.TokenReadOnlyDTO;
 import com.karmperis.webinarsapp.model.Token;
 import com.karmperis.webinarsapp.model.User;
 import com.karmperis.webinarsapp.repository.TokenRepository;
@@ -90,13 +91,13 @@ public class TokenServiceImplTest {
     void createToken_Success() throws Exception {
         when(tokenRepository.save(any(Token.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Token result = tokenService.createToken(user, "VERIFICATION");
+        TokenReadOnlyDTO result = tokenService.createToken(user, "VERIFICATION");
 
         assertNotNull(result);
-        assertEquals("VERIFICATION", result.getType());
-        assertEquals(user, result.getUser());
-        assertFalse(result.getUsed());
-        assertNotNull(result.getExpiryAt());
+        assertEquals("VERIFICATION", result.type());
+        assertEquals(user.getUuid(), result.userUuid());
+        assertFalse(result.used());
+        assertNotNull(result.expiryDate());
         verify(tokenRepository, times(1)).save(any(Token.class));
     }
 
@@ -123,10 +124,10 @@ public class TokenServiceImplTest {
     void verifyAndGetToken_Success() throws Exception {
         when(tokenRepository.findByTokenAndType(tokenStr, "VERIFICATION")).thenReturn(Optional.of(validToken));
 
-        Token result = tokenService.verifyAndGetToken(tokenStr, "VERIFICATION");
+        TokenReadOnlyDTO result = tokenService.verifyAndGetToken(tokenStr, "VERIFICATION");
 
         assertNotNull(result);
-        assertEquals(tokenStr, result.getToken());
+        assertEquals(tokenStr, result.token());
     }
 
     @Test
