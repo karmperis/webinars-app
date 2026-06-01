@@ -7,6 +7,7 @@ import com.karmperis.webinarsapp.core.exceptions.ValidationException;
 import com.karmperis.webinarsapp.dto.ErrorResponseDTO;
 import com.karmperis.webinarsapp.dto.ValidationErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,9 @@ import java.util.Map;
  */
 @ControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class ErrorHandler extends ResponseEntityExceptionHandler {
+    private final org.springframework.context.MessageSource messageSource;
 
     /**
      * Handles {@link ValidationException}. HTTP 400.
@@ -40,7 +43,8 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         BindingResult bindingResult = e.getBindingResult();
         Map<String, String> errors = new HashMap<>();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+            String localizedMessage = messageSource.getMessage(fieldError, org.springframework.context.i18n.LocaleContextHolder.getLocale());
+            errors.put(fieldError.getField(), localizedMessage);
         }
 
         return new ResponseEntity<>(new ValidationErrorResponseDTO(e.getCode(), e.getMessage(), errors),

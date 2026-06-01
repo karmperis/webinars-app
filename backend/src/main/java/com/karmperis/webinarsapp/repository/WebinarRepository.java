@@ -105,16 +105,16 @@ public interface WebinarRepository extends JpaRepository<Webinar, Long> {
               SELECT
                   w.title AS webinarTitle,
                   CASE
-                      WHEN w.deleted_at IS NOT NULL THEN N'ΔΙΕΓΡΑΜΜΕΝΟ'
-                      ELSE N'ΕΝΕΡΓΟ'
+                      WHEN w.deleted_at IS NOT NULL THEN 'status.webinar.DELETED'
+                      ELSE 'status.webinar.ACTIVE'
                   END AS webinarStatus,
                   u.username AS organizerUsername,
                   ud.firstname AS organizerFirstName,
                   ud.lastname AS organizerLastName,
                   CASE
-                      WHEN u.deleted_at IS NOT NULL THEN N'ΔΙΕΓΡΑΜΜΕΝΟΣ'
-                      WHEN u.active = 0 THEN N'ΑΝΕΝΕΡΓΟΣ'
-                      ELSE N'ΕΝΕΡΓΟΣ'
+                      WHEN u.deleted_at IS NOT NULL THEN 'status.user.DELETED'
+                      WHEN u.active = 0 THEN 'status.user.INACTIVE'
+                      ELSE 'status.user.ACTIVE'
                   END AS userStatus
               FROM webinars w
               INNER JOIN users u ON w.user_id = u.id
