@@ -1,7 +1,6 @@
 package com.karmperis.webinarsapp.security;
 
 import com.karmperis.webinarsapp.authentication.JwtService;
-
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -13,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -61,6 +61,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
+                if (!userDetails.isEnabled()) {
+                    throw new DisabledException("User account is disabled or deleted");
+                }
+
                 if (!jwtService.isTokenValid(jwt, userDetails)) {
                     throw new BadCredentialsException("Invalid token");
                 }
@@ -73,10 +77,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (ExpiredJwtException e) {
             throw new AuthenticationCredentialsNotFoundException("Token has expired");
+        } catch (DisabledException | BadCredentialsException e) {
+            throw e;
         } catch (JwtException | IllegalArgumentException e) {
             throw new BadCredentialsException("Invalid token");
-        } catch (BadCredentialsException e) {
-            throw e;
         } catch (Exception e) {
             log.error("Unexpected error during validation", e);
             throw new AuthenticationCredentialsNotFoundException("Token validation failed");
