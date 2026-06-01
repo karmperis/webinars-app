@@ -38,9 +38,6 @@ public class UserServiceImplTest {
     private UserRepository userRepository;
 
     @Mock
-    private UserDetailRepository userDetailRepository;
-
-    @Mock
     private RoleRepository roleRepository;
 
     @Mock
