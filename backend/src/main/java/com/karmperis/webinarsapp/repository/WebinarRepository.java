@@ -48,16 +48,6 @@ public interface WebinarRepository extends JpaRepository<Webinar, Long> {
     Page<Webinar> findAllByDeletedAtIsNull(Pageable pageable);
 
     /**
-     * Return a paginated list of all soft-deleted webinars.
-     * Eagerly fetches the organizing {@code user}, including their {@code userDetail} and {@code role}.
-     *
-     * @param pageable pagination and sorting instructions
-     * @return a page of deleted webinars
-     */
-    @EntityGraph(attributePaths = {"user", "user.userDetail", "user.role"})
-    Page<Webinar> findAllByDeletedAtIsNotNull(Pageable pageable);
-
-    /**
      * Return a paginated list of non-deleted webinars organized by a specific user.
      * Eagerly fetches the organizing {@code user}, including their {@code userDetail} and {@code role}.
      *
