@@ -162,7 +162,7 @@ class RoleServiceImplTest {
 
     @Test
     @DisplayName("assignCapabilityToRole: Should link capability to role successfully")
-    void assignCapabilityToRole_Success() throws Exception {
+    void assignCapabilityToRole_Success() {
         when(roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)).thenReturn(Optional.of(role));
         when(capabilityRepository.findByUuidAndDeletedAtIsNull(capabilityUuid)).thenReturn(Optional.of(capability));
 
