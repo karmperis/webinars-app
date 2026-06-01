@@ -110,11 +110,11 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         log.warn("Failed login for IP={}", request.getRemoteAddr());
 
         String errorCode = switch (e) {
-            case BadCredentialsException ex -> "INVALID_CREDENTIALS";
-            case DisabledException ex -> "ACCOUNT_DISABLED";
-            case LockedException ex -> "ACCOUNT_LOCKED";
-            case AccountExpiredException ex -> "ACCOUNT_EXPIRED";
-            case CredentialsExpiredException ex -> "CREDENTIALS_EXPIRED";
+            case BadCredentialsException ignored -> "INVALID_CREDENTIALS";
+            case DisabledException ignored -> "ACCOUNT_DISABLED";
+            case LockedException ignored -> "ACCOUNT_LOCKED";
+            case AccountExpiredException ignored -> "ACCOUNT_EXPIRED";
+            case CredentialsExpiredException ignored -> "CREDENTIALS_EXPIRED";
             default -> "AUTHENTICATION_ERROR";
         };
 
