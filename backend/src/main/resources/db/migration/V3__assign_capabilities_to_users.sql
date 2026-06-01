@@ -1,4 +1,4 @@
---V2__insert_roles_capabilities.sql
+--V3__assign_capabilities_to_users.sql
 --SQL Server 2022 (16.0.1175)
 --Collation: GREEK_CI_AS
 

@@ -1,4 +1,4 @@
---V2__insert_admin_user.sql
+--V4__insert_admin_user.sql
 --SQL Server 2022 (16.0.1175)
 --Collation: GREEK_CI_AS
 
