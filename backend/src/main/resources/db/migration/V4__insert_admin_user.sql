@@ -1,4 +1,4 @@
---V2__insert_roles_capabilities.sql
+--V2__insert_admin_user.sql
 --SQL Server 2022 (16.0.1175)
 --Collation: GREEK_CI_AS
 
@@ -29,5 +29,5 @@ IF NOT EXISTS
         ============================================================================
         */
         INSERT INTO users_details (user_id, firstname, lastname, phone_number)
-        VALUES (1, 'Nikos', 'Karmperis', '+306900000000');
+        VALUES (@AdminId, 'Nikos', 'Karmperis', '+306900000000');
     END;
