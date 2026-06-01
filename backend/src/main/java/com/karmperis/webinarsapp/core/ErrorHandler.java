@@ -109,18 +109,39 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleAuthenticationException(AuthenticationException e, HttpServletRequest request) {
         log.warn("Failed login for IP={}", request.getRemoteAddr());
 
-        String errorCode = switch (e) {
-            case BadCredentialsException ignored -> "INVALID_CREDENTIALS";
-            case DisabledException ignored -> "ACCOUNT_DISABLED";
-            case LockedException ignored -> "ACCOUNT_LOCKED";
-            case AccountExpiredException ignored -> "ACCOUNT_EXPIRED";
-            case CredentialsExpiredException ignored -> "CREDENTIALS_EXPIRED";
-            default -> "AUTHENTICATION_ERROR";
-        };
+        String errorCode;
+        String errorMessage;
+
+        switch (e) {
+            case BadCredentialsException ignored -> {
+                errorCode = "INVALID_CREDENTIALS";
+                errorMessage = "Invalid username or password.";
+            }
+            case DisabledException ignored -> {
+                errorCode = "ACCOUNT_DISABLED";
+                errorMessage = "This account has been disabled.";
+            }
+            case LockedException ignored -> {
+                errorCode = "ACCOUNT_LOCKED";
+                errorMessage = "This account is locked.";
+            }
+            case AccountExpiredException ignored -> {
+                errorCode = "ACCOUNT_EXPIRED";
+                errorMessage = "This account has expired.";
+            }
+            case CredentialsExpiredException ignored -> {
+                errorCode = "CREDENTIALS_EXPIRED";
+                errorMessage = "The credentials for this account have expired.";
+            }
+            default -> {
+                errorCode = "AUTHENTICATION_ERROR";
+                errorMessage = "Authentication failed. Please check your credentials.";
+            }
+        }
 
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponseDTO(errorCode, e.getMessage()));
+                .body(new ErrorResponseDTO(errorCode, errorMessage));
     }
 
     /**
@@ -131,6 +152,6 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         log.warn("Access denied. Message={}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResponseDTO("ACCESS_DENIED", e.getMessage()));
+                .body(new ErrorResponseDTO("ACCESS_DENIED", "You do not have permission to access this resource."));
     }
 }
