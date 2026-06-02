@@ -19,7 +19,7 @@ IF NOT EXISTS
         ============================================================================
        */
         INSERT INTO users (username, password, active, role_id, uuid)
-        VALUES ('admin', '$2a$10$dgxkyBEChDsvFm44UEHvZuZep27auxuWvdVjZrWPgewe9PY57obvy', 1, 1, NEWID());
+        VALUES ('ADMIN', '$2a$10$dgxkyBEChDsvFm44UEHvZuZep27auxuWvdVjZrWPgewe9PY57obvy', 1, 1, NEWID());
 
         DECLARE @AdminId INT;
         SET @AdminId = SCOPE_IDENTITY();
