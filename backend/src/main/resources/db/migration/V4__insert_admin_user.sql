@@ -11,7 +11,7 @@ The password is: Password123!
 IF NOT EXISTS
     (SELECT 1
      FROM users
-     WHERE username = 'admin')
+     WHERE username = 'ADMIN')
     BEGIN
         /*
         ============================================================================
@@ -30,5 +30,5 @@ IF NOT EXISTS
         ============================================================================
         */
         INSERT INTO users_details (user_id, firstname, lastname, phone_number)
-        VALUES (@AdminId, 'Nikos', 'Karmperis', '+306900000000');
+        VALUES (@AdminId, N'ΝΙΚΟΣ', N'ΚΑΡΜΠΕΡΗΣ', '+306900000000');
     END;
