@@ -10,9 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -61,29 +58,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                if (!userDetails.isEnabled()) {
-                    throw new DisabledException("User account is disabled or deleted");
+                if (userDetails.isEnabled() && jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities()
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                } else {
+                    log.warn("Token validation failed or user account disabled for user: {}", username);
                 }
-
-                if (!jwtService.isTokenValid(jwt, userDetails)) {
-                    throw new BadCredentialsException("Invalid token");
-                }
-
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                );
-
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
+
         } catch (ExpiredJwtException e) {
-            throw new AuthenticationCredentialsNotFoundException("Token has expired");
-        } catch (DisabledException | BadCredentialsException e) {
-            throw e;
+            log.warn("JWT Token has expired: {}", e.getMessage());
         } catch (JwtException | IllegalArgumentException e) {
-            throw new BadCredentialsException("Invalid token");
+            log.warn("Invalid JWT Token: {}", e.getMessage());
         } catch (Exception e) {
             log.error("Unexpected error during validation", e);
-            throw new AuthenticationCredentialsNotFoundException("Token validation failed");
         }
 
         filterChain.doFilter(request, response);
