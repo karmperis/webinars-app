@@ -2,19 +2,20 @@
 
 # Compiled output
 /dist
+dist/
 /tmp
 /out-tsc
 /bazel-out
 
-#Angular
+# Angular
 /.angular/cache
 .angular/
 
 # Node
 /node_modules
-npm-debug.log
-yarn-error.log
-pnpm-debug.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # IDEs and editors
 .idea/
@@ -34,9 +35,9 @@ pnpm-debug.log
 !.vscode/mcp.json
 .history/*
 
-#Testing and coverage
+# Testing and coverage
 /coverage
-screenshots/
+__screenshots__/
 
 # Miscellaneous
 .sass-cache/
