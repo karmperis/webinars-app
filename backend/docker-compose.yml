@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   sqlserver-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -8,10 +6,33 @@ services:
     ports:
       - "1433:1433"
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Dev!Password2026
+      - ACCEPT_EULA="Y"
+      - MSSQL_SA_PASSWORD="Dev!Password2026"
     volumes:
       - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "Dev!Password2026" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+  webinars-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webinars_api_container
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      sqlserver-db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://sqlserver-db:1433;databaseName=webinars_db;encrypt=true;trustServerCertificate=true;"
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: "Dev!Password2026"
+      ALLOWED_ORIGINS: "http://localhost:4200"
 
 volumes:
   sqlserver_data:
