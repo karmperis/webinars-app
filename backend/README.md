@@ -35,6 +35,7 @@ A Spring Boot REST API for managing webinars, enrollments, and users, developed 
 ## Requirements
 - Java 21
 - Docker & Docker Compose
+- No additional software is required for running the application through Docker
 - Gradle (wrapper included)
 
 ## Database Setup
@@ -62,8 +63,7 @@ The startup sequence automatically:
 3. Executes Flyway migrations.
 4. Starts the Spring Boot API.
 
-The application will be available at:
-http://localhost:8080
+The application will be available at: `http://localhost:8080`.
 
 ### 2. Local Development
 If you prefer running the Spring Boot application locally:
@@ -80,22 +80,22 @@ The server will be available at `http://localhost:8080`.
 ## Configuration
 The application uses Spring profiles (`dev`, `staging`, `pro`). The `dev` profile is active by default.
 
-| Property | Description | Default (Dev) |
-| :--- | :--- | :--- |
-| `spring.datasource.url` | SQL Server JDBC URL | `jdbc:sqlserver://localhost:1433...` |
-| `spring.datasource.username` | Database User | `sa` |
-| `spring.datasource.password` | Database Password | `Dev!Password2026` |
-| `app.security.secret-key` | JWT Signing Secret | (predefined in dev) |
-| `app.security.jwt-expiration` | JWT Token Validity | `86400000` (24h) |
-| `allowed.origins` | CORS Allowed Origins | `http://localhost:4200` |
+| Property                      | Description          | Default (Dev)                        |
+|:------------------------------|:---------------------|:-------------------------------------|
+| `spring.datasource.url`       | SQL Server JDBC URL  | `jdbc:sqlserver://localhost:1433...` |
+| `spring.datasource.username`  | Database User        | `sa`                                 |
+| `spring.datasource.password`  | Database Password    | `Dev!Password2026`                   |
+| `app.security.secret-key`     | JWT Signing Secret   | (predefined in dev)                  |
+| `app.security.jwt-expiration` | JWT Token Validity   | `86400000` (24h)                     |
+| `allowed.origins`             | CORS Allowed Origins | `http://localhost:4200`              |
 
 ## API Overview
 Base Path: `/api/v1`
 
 ### Authentication
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| POST | `/auth/authenticate` | Public | Login and receive JWT |
+| Method | Endpoint             | Auth   | Description           |
+|:-------|:---------------------|:-------|:----------------------|
+| POST   | `/auth/authenticate` | Public | Login and receive JWT |
 
 **Sample Request:**
 ```json
@@ -106,51 +106,51 @@ Base Path: `/api/v1`
 ```
 
 ### Users
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| POST | `/users` | Public | Register a new user |
-| GET | `/users/{uuid}` | Authenticated | Get user profile details |
-| PUT | `/users/{uuid}` | Authenticated | Update user profile |
-| DELETE | `/users/{uuid}` | Admin | Delete user account (soft-delete) |
+| Method | Endpoint        | Auth          | Description                       |
+|:-------|:----------------|:--------------|:----------------------------------|
+| POST   | `/users`        | Public        | Register a new user               |
+| GET    | `/users/{uuid}` | Authenticated | Get user profile details          |
+| PUT    | `/users/{uuid}` | Authenticated | Update user profile               |
+| DELETE | `/users/{uuid}` | Admin         | Delete user account (soft-delete) |
 
 ### Webinars & Enrollments
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| GET | `/webinars` | Authenticated | List all active webinars (paginated) |
-| POST | `/webinars` | Organizer | Create a new webinar |
-| GET | `/webinars/{uuid}` | Authenticated | Get detailed webinar information |
-| GET | `/webinars/organizer/{uuid}` | Authenticated | List webinars organized by a specific user |
-| PUT | `/webinars/{uuid}` | Organizer | Update webinar details |
-| DELETE | `/webinars/{uuid}` | Organizer | Soft-delete a webinar |
-| POST | `/webinars/{webUuid}/participants/{userUuid}` | Authenticated | Enroll a user in a webinar |
+| Method | Endpoint                                          | Auth          | Description                                |
+|:-------|:--------------------------------------------------|:--------------|:-------------------------------------------|
+| GET    | `/webinars`                                       | Authenticated | List all active webinars (paginated)       |
+| POST   | `/webinars`                                       | Organizer     | Create a new webinar                       |
+| GET    | `/webinars/{uuid}`                                | Authenticated | Get detailed webinar information           |
+| GET    | `/webinars/organizer/{uuid}`                      | Authenticated | List webinars organized by a specific user |
+| PUT    | `/webinars/{uuid}`                                | Organizer     | Update webinar details                     |
+| DELETE | `/webinars/{uuid}`                                | Organizer     | Soft-delete a webinar                      |
+| POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Authenticated | Enroll a user in a webinar                 |
 
 ### Roles & Capabilities
 Administrative endpoints are provided for managing roles and capabilities within the RBAC system.
 
 #### Roles
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| POST | `/roles` | Admin | Create a new role |
-| GET | `/roles` | Admin | List all roles |
-| GET | `/roles/{uuid}` | Admin | Get role details |
-| PUT | `/roles/{uuid}` | Admin | Update role details |
-| DELETE | `/roles/{uuid}` | Admin | Delete a role |
-| POST | `/roles/{roleUuid}/capabilities/{capUuid}` | Admin | Assign a capability to a role |
+| Method | Endpoint                                          | Auth  | Description                   |
+|:-------|:--------------------------------------------------|:------|:------------------------------|
+| POST   | `/roles`                                          | Admin | Create a new role             |
+| GET    | `/roles`                                          | Admin | List all roles                |
+| GET    | `/roles/{uuid}`                                   | Admin | Get role details              |
+| PUT    | `/roles/{uuid}`                                   | Admin | Update role details           |
+| DELETE | `/roles/{uuid}`                                   | Admin | Delete a role                 |
+| POST   | `/roles/{roleUuid}/capabilities/{capabilityUuid}` | Admin | Assign a capability to a role |
 
 #### Capabilities
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| POST | `/capabilities` | Admin | Create a new capability |
-| GET | `/capabilities` | Admin | List all capabilities |
-| GET | `/capabilities/{uuid}` | Admin | Get capability details |
-| PUT | `/capabilities/{uuid}` | Admin | Update capability details |
-| DELETE | `/capabilities/{uuid}` | Admin | Delete a capability |
+| Method | Endpoint               | Auth  | Description               |
+|:-------|:-----------------------|:------|:--------------------------|
+| POST   | `/capabilities`        | Admin | Create a new capability   |
+| GET    | `/capabilities`        | Admin | List all capabilities     |
+| GET    | `/capabilities/{uuid}` | Admin | Get capability details    |
+| PUT    | `/capabilities/{uuid}` | Admin | Update capability details |
+| DELETE | `/capabilities/{uuid}` | Admin | Delete a capability       |
 
 ### Reports (Async)
-| Method | Endpoint | Auth | Description |
-| :--- | :--- | :--- | :--- |
-| POST | `/reports/generate` | Admin | Trigger report generation |
-| GET | `/reports/report/{jobId}` | Admin | Check job status/result |
+| Method | Endpoint                  | Auth  | Description               |
+|:-------|:--------------------------|:------|:--------------------------|
+| POST   | `/reports/generate`       | Admin | Trigger report generation |
+| GET    | `/reports/report/{jobId}` | Admin | Check job status/result   |
 
 ## Password Policy
 The system enforces a strict password policy:
@@ -162,13 +162,13 @@ The system enforces a strict password policy:
 ## Error Responses
 The API returns structured error messages:
 
-| HTTP Status | Description |
-| :--- | :--- |
-| `400 Bad Request` | Validation failed or invalid arguments |
-| `401 Unauthorized` | Missing or invalid JWT token |
-| `403 Forbidden` | Insufficient permissions for resource |
-| `404 Not Found` | Resource does not exist |
-| `409 Conflict` | Resource already exists (e.g. duplicate username) |
+| HTTP Status        | Description                                       |
+|:-------------------|:--------------------------------------------------|
+| `400 Bad Request`  | Validation failed or invalid arguments            |
+| `401 Unauthorized` | Missing or invalid JWT token                      |
+| `403 Forbidden`    | Insufficient permissions for resource             |
+| `404 Not Found`    | Resource does not exist                           |
+| `409 Conflict`     | Resource already exists (e.g. duplicate username) |
 
 **Error Body Example:**
 ```json
@@ -193,6 +193,21 @@ The project uses **Springdoc OpenAPI** to generate interactive API documentation
 - **Role & Capability**: RBAC system (Many-to-Many).
 - **Webinar**: Managed by Organizers (Users) and attended by Participants (Users).
 - **Token**: Used for account-related workflows.
+
+All persistent domain entities inherit from two common base classes:
+
+- **AbstractEntity** provides:
+    - Internal database identifier (`id`)
+    - Auditing timestamps (`createdAt`, `updatedAt`)
+    - Soft-delete support through the `deletedAt` field
+    - Utility methods for soft-delete operations
+
+- **AbstractUuidEntity** extends `AbstractEntity` and provides:
+    - Public UUID identifier (`uuid`)
+    - Automatic UUID generation before persistence
+    - Equality and hash code implementations based on UUID values
+
+*As a design principle, the REST API exposes UUIDs instead of internal database IDs, ensuring stable public identifiers and preventing direct exposure of persistence-layer keys.*
 
 *Soft-delete is enabled globally via `deleted_at` timestamps.*
 
