@@ -10,7 +10,6 @@ import { Auth } from '../../../core/services/auth';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-
 export class Login {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);

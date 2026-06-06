@@ -11,7 +11,6 @@ const TOKEN_KEY = 'jwtToken';
 @Injectable({
   providedIn: 'root',
 })
-
 export class Auth {
   private readonly http = inject(HttpClient);
   private readonly authUrl = `${environment.apiUrl}/auth`;
@@ -23,13 +22,10 @@ export class Auth {
    * @returns observable containing the authentication token
    */
   login(credentials: AuthenticationRequest): Observable<AuthenticationResponse> {
-    return this.http.post<AuthenticationResponse>(
-      `${this.authUrl}/authenticate`,
-      credentials,
-    );
+    return this.http.post<AuthenticationResponse>(`${this.authUrl}/authenticate`, credentials);
   }
-  
- /**
+
+  /**
    * Stores the JWT token in browser local storage.
    *
    * @param token JWT token returned by the backend

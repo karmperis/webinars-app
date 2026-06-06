@@ -19,13 +19,8 @@
               formControlName="username"
             />
 
-            @if (
-              loginForm.controls.username.invalid &&
-              loginForm.controls.username.touched
-            ) {
-              <div class="text-danger small mt-1">
-                Η διεύθυνση email είναι υποχρεωτική.
-              </div>
+            @if (loginForm.controls.username.invalid && loginForm.controls.username.touched) {
+              <div class="text-danger small mt-1">Η διεύθυνση email είναι υποχρεωτική.</div>
             }
           </div>
 
@@ -37,29 +32,18 @@
               formControlName="password"
             />
 
-            @if (
-              loginForm.controls.password.invalid &&
-              loginForm.controls.password.touched
-            ) {
-              <div class="text-danger small mt-1">
-                Ο κωδικός πρόσβασης είναι υποχρεωτικός.
-              </div>
+            @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+              <div class="text-danger small mt-1">Ο κωδικός πρόσβασης είναι υποχρεωτικός.</div>
             }
           </div>
 
-          <button type="button" class="forgot-link">
-            Ξέχασα τον κωδικό πρόσβασης
-          </button>
+          <button type="button" class="forgot-link">Ξέχασα τον κωδικό πρόσβασης</button>
 
-          <button type="submit" class="btn login-button w-100 mt-4">
-            Σύνδεση
-          </button>
+          <button type="submit" class="btn login-button w-100 mt-4">Σύνδεση</button>
 
           <div class="form-check mt-4">
             <input class="form-check-input" type="checkbox" id="rememberMe" />
-            <label class="form-check-label" for="rememberMe">
-              Απομνημόνευση των στοιχείων
-            </label>
+            <label class="form-check-label" for="rememberMe"> Απομνημόνευση των στοιχείων </label>
           </div>
         </form>
       </div>
@@ -70,9 +54,7 @@
           <p>Κάντε εγγραφή τώρα!</p>
         </div>
 
-        <a routerLink="/register" class="btn register-button">
-          Εγγραφή
-        </a>
+        <a routerLink="/register" class="btn register-button"> Εγγραφή </a>
       </div>
     </div>
   </div>
