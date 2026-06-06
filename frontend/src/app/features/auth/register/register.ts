@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 
+/**
+ * Component responsible for user registration.
+ */
 @Component({
   selector: 'app-register',
   imports: [],
