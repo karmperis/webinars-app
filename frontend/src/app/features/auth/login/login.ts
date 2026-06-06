@@ -10,12 +10,19 @@ import { Auth } from '../../../core/services/auth';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
+
+/**
+ * Login component responsible for authenticating users and storing JWT tokens.
+ */
 export class Login {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
 
   errorMessage = '';
 
+  /**
+   * Reactive login form containing username and password fields.
+   */
   loginForm = new FormGroup({
     username: new FormControl('', {
       nonNullable: true,

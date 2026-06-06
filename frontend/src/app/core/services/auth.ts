@@ -8,6 +8,9 @@ import { AuthenticationResponse } from '../../shared/interfaces/authentication-r
 
 const TOKEN_KEY = 'jwtToken';
 
+/**
+ * Service responsible for user authentication and JWT token management.
+ */
 @Injectable({
   providedIn: 'root',
 })

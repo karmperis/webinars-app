@@ -1,3 +1,5 @@
+/* Login page layout */
+
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -30,6 +32,8 @@
   text-align: center;
   gap: 2rem;
 }
+
+/* Login form controls */
 
 .login-input {
   border-radius: 0;
@@ -81,6 +85,8 @@
   text-decoration: underline;
   font-weight: 600;
 }
+
+/* Form elements */
 
 .form-check-label {
   font-weight: 600;
