@@ -3,8 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AuthenticationRequest } from '../../shared/interfaces/authentication-request';
-import { AuthenticationResponse } from '../../shared/interfaces/authentication-response';
+import { AuthenticationRequest } from '../interfaces/authentication-request';
+import { AuthenticationResponse } from '../interfaces/authentication-response';
 
 const TOKEN_KEY = 'jwtToken';
 
