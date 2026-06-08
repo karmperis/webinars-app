@@ -2,6 +2,45 @@
   <app-navbar />
 
   <main class="page-content">
-    <h1>Webinars</h1>
+    <div class="content-header">
+      <h1>Webinars</h1>
+    </div>
+
+    @if (isLoading()) {
+      <div class="empty-state">Φόρτωση webinars...</div>
+    } @else if (loadError()) {
+      <div class="empty-state">{{ loadError() }}</div>
+    } @else if (webinars().length === 0) {
+      <div class="empty-state">Δεν υπάρχουν διαθέσιμα webinars.</div>
+    } @else {
+      <div class="table-container">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Τίτλος</th>
+              <th>Περιγραφή</th>
+              <th>Ημερομηνία</th>
+              <th>Διάρκεια</th>
+              <th>Διοργανωτής</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (webinar of webinars(); track webinar.uuid) {
+              <tr>
+                <td>{{ webinar.title }}</td>
+                <td>{{ webinar.description }}</td>
+                <td>{{ webinar.scheduledDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ webinar.duration }} λεπτά</td>
+                <td>
+                  {{ webinar.organizer.firstname }}
+                  {{ webinar.organizer.lastname }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </main>
-  </div>
+</div>
