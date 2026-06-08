@@ -1,0 +1,52 @@
+/* Navbar */
+.app-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: #000000;
+  color: #ffffff;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Sidebar navigation */
+
+.sidebar-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu a {
+  display: block;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.75rem 0;
+}
+
+.sidebar-menu a:hover {
+  text-decoration: underline;
+}
+
+/* Sidebar actions */
+
+.logout-button {
+  border: 1px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.75rem;
+}
+
+.logout-button:hover {
+  background: #ffffff;
+  color: #000000;
+}
