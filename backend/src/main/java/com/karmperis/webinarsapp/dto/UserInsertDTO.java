@@ -13,7 +13,6 @@ import jakarta.validation.constraints.Size;
  *
  * @param username    the username for the new user (4-50 chars)
  * @param password    the plaintext password meeting complexity rules (min 12 chars, digit/upper/lower/special)
- * @param roleId      the database id of the assigned role
  * @param firstname   the user's first name (max 100 chars)
  * @param lastname    the user's last name (max 100 chars)
  * @param phoneNumber optional phone number (digits, optional leading '+', 7-15 digits)
@@ -33,9 +32,6 @@ public record UserInsertDTO(
                 groups = Second.class
         )
         String password,
-
-        @NotNull(message = "The role_id cannot be null.", groups = First.class)
-        Long roleId,
 
         @NotBlank(message = "The firstname cannot be blank.", groups = First.class)
         @Size(max = 100, message = "The firstname must not exceed 100 characters.", groups = Second.class)

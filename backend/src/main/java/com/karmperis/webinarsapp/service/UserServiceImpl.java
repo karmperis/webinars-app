@@ -71,7 +71,7 @@ public class UserServiceImpl implements IUserService {
             user.setRole(defaultRole);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setUuid(UUID.randomUUID());
-            user.setActive(false);
+            user.setActive(true);
 
             User savedUser = userRepository.save(user);
             log.info("User saved successfully with UUID: {}", savedUser.getUuid());

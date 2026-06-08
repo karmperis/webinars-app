@@ -49,7 +49,7 @@ public class UserRestControllerTest {
     @Test
     @DisplayName("POST /api/v1/users - Should return 201 Created")
     void createUser_ReturnsCreated() throws Exception {
-        UserInsertDTO insertDTO = new UserInsertDTO("testuser", "StrongPass123!", 1L, "John", "Doe", "+306900000000");
+        UserInsertDTO insertDTO = new UserInsertDTO("testuser", "StrongPass123!", "John", "Doe", "+306900000000");
         UUID uuid = UUID.randomUUID();
         UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, 1L, "John", "Doe", "john@example.com", "+306900000000");
 

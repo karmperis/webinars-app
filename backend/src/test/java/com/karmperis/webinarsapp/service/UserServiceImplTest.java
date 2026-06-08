@@ -10,7 +10,6 @@ import com.karmperis.webinarsapp.mapper.UserMapper;
 import com.karmperis.webinarsapp.model.Role;
 import com.karmperis.webinarsapp.model.User;
 import com.karmperis.webinarsapp.repository.RoleRepository;
-import com.karmperis.webinarsapp.repository.UserDetailRepository;
 import com.karmperis.webinarsapp.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,7 +75,7 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("saveUser: Should save and return UserReadOnlyDTO successfully")
     void saveUser_Success() throws Exception {
-        UserInsertDTO dto = new UserInsertDTO("testuser", "password123", 1L, "John", "Doe", "+306900000000");
+        UserInsertDTO dto = new UserInsertDTO("testuser", "password123", "John", "Doe", "+306900000000");
         UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", false, 1L, "USER", "John", "Doe", "+306900000000");
 
         User unmappedUser = new User();
@@ -108,7 +107,7 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("saveUser: Should throw Exception when username already exists")
     void saveUser_ThrowsEntityAlreadyExistsException() {
-        UserInsertDTO dto = new UserInsertDTO("testuser", "password123", 1L, "John", "Doe", "+306900000000");
+        UserInsertDTO dto = new UserInsertDTO("testuser", "password123", "John", "Doe", "+306900000000");
 
         when(userRepository.existsByUsernameAndDeletedAtIsNull("testuser")).thenReturn(true);
 
@@ -119,7 +118,7 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("saveUser: Should throw Exception when Role does not exist")
     void saveUser_ThrowsEntityInvalidArgumentException_WhenRoleNotFound() {
-        UserInsertDTO dto = new UserInsertDTO("testuser", "password1234!N", 1L, "John", "Doe", "+306900000000");
+        UserInsertDTO dto = new UserInsertDTO("testuser", "password1234!N", "John", "Doe", "+306900000000");
         User unmappedUser = new User();
         unmappedUser.setUsername("testuser");
 
