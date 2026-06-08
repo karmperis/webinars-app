@@ -15,12 +15,12 @@
             <input
               type="text"
               class="form-control login-input"
-              placeholder="Διεύθυνση email"
+              placeholder="Όνομα χρήστη"
               formControlName="username"
             />
 
             @if (loginForm.controls.username.invalid && loginForm.controls.username.touched) {
-              <div class="text-danger small mt-1">Η διεύθυνση email είναι υποχρεωτική.</div>
+              <div class="text-danger small mt-1">Το όνομα χρήστη είναι υποχρεωτικό.</div>
             }
           </div>
 
@@ -37,14 +37,7 @@
             }
           </div>
 
-          <button type="button" class="forgot-link">Ξέχασα τον κωδικό πρόσβασης</button>
-
           <button type="submit" class="btn login-button w-100 mt-4">Σύνδεση</button>
-
-          <div class="form-check mt-4">
-            <input class="form-check-input" type="checkbox" id="rememberMe" />
-            <label class="form-check-label" for="rememberMe"> Απομνημόνευση των στοιχείων </label>
-          </div>
         </form>
       </div>
 
