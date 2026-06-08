@@ -1,1 +1,128 @@
-<p>register works!</p>
+<div class="login-page">
+  <div class="login-card">
+    <div class="row g-0">
+      <div class="col-12 col-md-5 login-right">
+        <div>
+          <h2>Έχετε ήδη λογαριασμό;</h2>
+          <p>Συνδεθείτε τώρα!</p>
+        </div>
+
+        <a routerLink="/login" class="btn register-button"> Σύνδεση </a>
+      </div>
+
+      <div class="col-12 col-md-7 login-left">
+        <h2 class="text-center mb-4">Εγγραφή</h2>
+
+        @if (errorMessage) {
+          <div class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+        }
+
+        @if (successMessage) {
+          <div class="alert alert-success">
+            {{ successMessage }}
+          </div>
+        }
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control login-input"
+              placeholder="Όνομα"
+              formControlName="firstname"
+            />
+
+            @if (registerForm.controls.firstname.invalid && registerForm.controls.firstname.touched) {
+              <div class="text-danger small mt-1">Το όνομα είναι υποχρεωτικό.</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control login-input"
+              placeholder="Επώνυμο"
+              formControlName="lastname"
+            />
+
+            @if (registerForm.controls.lastname.invalid && registerForm.controls.lastname.touched) {
+              <div class="text-danger small mt-1">Το επώνυμο είναι υποχρεωτικό.</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <input
+              type="tel"
+              class="form-control login-input"
+              placeholder="Τηλέφωνο"
+              formControlName="phoneNumber"
+            />
+
+            @if (registerForm.controls.phoneNumber.invalid && registerForm.controls.phoneNumber.touched) {
+              <div class="text-danger small mt-1">
+                Εισάγετε έγκυρο αριθμό τηλεφώνου.
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control login-input"
+              placeholder="Όνομα χρήστη"
+              formControlName="username"
+            />
+
+            @if (registerForm.controls.username.invalid && registerForm.controls.username.touched) {
+              <div class="text-danger small mt-1">
+                Το όνομα χρήστη πρέπει να περιέχει 4-50 χαρακτήρες.
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <input
+              type="password"
+              class="form-control login-input"
+              placeholder="Κωδικός πρόσβασης"
+              formControlName="password"
+            />
+
+            @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
+              <div class="text-danger small mt-1">
+                Ο κωδικός πρέπει να περιέχει τουλάχιστον 12 χαρακτήρες, κεφαλαίο,
+                πεζό, αριθμό και ειδικό χαρακτήρα.
+              </div>
+            }
+          </div>
+
+          <div class="form-check mt-3 mb-4">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="acceptTerms"
+              formControlName="acceptTerms"
+            />
+
+            <label class="form-check-label" for="acceptTerms">
+              Έχω διαβάσει και αποδέχομαι τους Όρους Χρήσης.
+            </label>
+
+            @if (registerForm.controls.acceptTerms.invalid &&
+            registerForm.controls.acceptTerms.touched) {
+              <div class="text-danger small mt-1">
+                Πρέπει να αποδεχθείτε τους όρους χρήσης.
+              </div>
+            }
+          </div>
+
+          <button type="submit" class="btn login-button w-100">
+            Εγγραφή
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
