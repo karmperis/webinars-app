@@ -192,7 +192,9 @@ The project uses **Springdoc OpenAPI** to generate interactive API documentation
 - **UserDetail**: Profile information (One-to-One with User).
 - **Role & Capability**: RBAC system (Many-to-Many).
 - **Webinar**: Managed by Organizers (Users) and attended by Participants (Users).
-- **Token**: Used for account-related workflows.
+- **Token**: Used for account-related workflows. 
+  (The backend already includes token infrastructure for account activation and password reset.
+  Full email-based activation and password reset flows are planned as future enhancements.)
 
 All persistent domain entities inherit from two common base classes:
 
