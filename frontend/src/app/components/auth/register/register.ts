@@ -48,6 +48,10 @@ export class Register {
       nonNullable: true,
       validators: [Validators.pattern(/^\+?[0-9]{7,15}$/)],
     }),
+    acceptTerms: new FormControl(false, {
+      nonNullable: true,
+      validators: [Validators.requiredTrue],
+    }),
   });
 
   /**
@@ -62,7 +66,9 @@ export class Register {
       return;
     }
 
-    this.userService.createUser(this.registerForm.getRawValue()).subscribe({
+    const { acceptTerms, ...userInsert } = this.registerForm.getRawValue();
+
+    this.userService.createUser(userInsert).subscribe({
       next: () => {
         this.successMessage = 'Ο λογαριασμός δημιουργήθηκε επιτυχώς.';
         this.router.navigate(['/login']);
