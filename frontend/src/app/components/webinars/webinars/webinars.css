@@ -1,0 +1,12 @@
+/* Page layout */
+
+.page-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #f5f7fa;
+}
+
+.page-content {
+  flex: 1;
+  padding: 2rem;
+}
