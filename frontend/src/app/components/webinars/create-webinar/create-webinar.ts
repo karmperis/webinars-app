@@ -59,7 +59,7 @@ export class CreateWebinar {
 
     if (scheduledDate <= new Date()) {
       this.errorMessage =
-        'Η ημερομηνία και ώρα διεξαγωγής του webinar πρέπει να είναι μεταγενέστερη από την τρέχουσα ημερομηνία και ώρα.';
+        'Η ημερομηνία και ώρα διεξαγωγής του σεμιναρίου πρέπει να είναι μεταγενέστερη από την τρέχουσα ημερομηνία και ώρα.';
       return;
     }
     const webinarInsert = {
@@ -72,7 +72,7 @@ export class CreateWebinar {
         this.router.navigate(['/webinars']);
       },
       error: () => {
-        this.errorMessage = 'Η δημιουργία του webinar απέτυχε.';
+        this.errorMessage = 'Η δημιουργία του σεμιναρίου απέτυχε.';
       },
     });
   }

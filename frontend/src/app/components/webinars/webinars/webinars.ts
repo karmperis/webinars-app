@@ -41,7 +41,7 @@ export class Webinars implements OnInit {
         },
         error: (error) => {
           console.error('Failed to load webinars', error);
-          this.loadError.set('Απέτυχε η φόρτωση των webinars.');
+          this.loadError.set('Απέτυχε η φόρτωση των σεμιναρίων.');
         },
       });
   }
@@ -62,7 +62,7 @@ export class Webinars implements OnInit {
       },
       error: (error) => {
         console.error('Failed to delete webinar', error);
-        this.loadError.set('Η διαγραφή του σεμινάριου απέτυχε.');
+        this.loadError.set('Η διαγραφή του σεμιναρίου απέτυχε.');
       },
     });
   }
