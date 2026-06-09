@@ -26,11 +26,11 @@ export class CreateWebinar {
   webinarForm = new FormGroup({
     title: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(100)],
+      validators: [Validators.required, Validators.minLength(5), Validators.maxLength(100)],
     }),
     description: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(500)],
+      validators: [Validators.maxLength(1000)],
     }),
     scheduledDate: new FormControl('', {
       nonNullable: true,
@@ -38,7 +38,7 @@ export class CreateWebinar {
     }),
     duration: new FormControl(60, {
       nonNullable: true,
-      validators: [Validators.required, Validators.min(1)],
+      validators: [Validators.required, Validators.min(15), Validators.max(480)],
     }),
   });
 
@@ -53,7 +53,13 @@ export class CreateWebinar {
       return;
     }
 
-    this.webinarService.createWebinar(this.webinarForm.getRawValue()).subscribe({
+    const formValue = this.webinarForm.getRawValue();
+    const webinarInsert = {
+      ...formValue,
+      scheduledDate: new Date(formValue.scheduledDate).toISOString(),
+    };
+
+    this.webinarService.createWebinar(webinarInsert).subscribe({
       next: () => {
         this.router.navigate(['/webinars']);
       },
