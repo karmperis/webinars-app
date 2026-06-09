@@ -5,14 +5,13 @@ import { WebinarReadOnly } from '../../../shared/interfaces/webinar-read-only';
 import { Webinar } from '../../../shared/services/webinar';
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
-import { RouterLink } from '@angular/router';
 
 /**
  * Component responsible for displaying webinar-related functionality.
  */
 @Component({
   selector: 'app-webinars',
-  imports: [Navbar, DatePipe, RouterLink],
+  imports: [Navbar, DatePipe],
   templateUrl: './webinars.html',
   styleUrl: './webinars.css',
 })
@@ -45,5 +44,26 @@ export class Webinars implements OnInit {
           this.loadError.set('Απέτυχε η φόρτωση των webinars.');
         },
       });
+  }
+
+  /**
+   * Deletes a webinar and refreshes the displayed list.
+   *
+   * @param uuid webinar UUID
+   */
+  deleteWebinar(uuid: string): void {
+    if (!confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το σεμινάριο;')) {
+      return;
+    }
+
+    this.webinarService.deleteWebinar(uuid).subscribe({
+      next: () => {
+        this.loadWebinars();
+      },
+      error: (error) => {
+        console.error('Failed to delete webinar', error);
+        this.loadError.set('Η διαγραφή του σεμινάριου απέτυχε.');
+      },
+    });
   }
 }

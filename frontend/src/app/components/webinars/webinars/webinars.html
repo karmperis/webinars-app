@@ -7,11 +7,11 @@
     </div>
 
     @if (isLoading()) {
-      <div class="empty-state">Φόρτωση webinars...</div>
+      <div class="empty-state">Φόρτωση σεμιναρίων...</div>
     } @else if (loadError()) {
       <div class="empty-state">{{ loadError() }}</div>
     } @else if (webinars().length === 0) {
-      <div class="empty-state">Δεν υπάρχουν διαθέσιμα webinars.</div>
+      <div class="empty-state">Δεν υπάρχουν διαθέσιμα σεμινάρια.</div>
     } @else {
       <div class="table-container">
         <table class="table table-hover align-middle">
@@ -22,6 +22,7 @@
               <th>Ημερομηνία</th>
               <th>Διάρκεια</th>
               <th>Διοργανωτής</th>
+              <th>Ενέργειες</th>
             </tr>
           </thead>
 
@@ -35,6 +36,15 @@
                 <td>
                   {{ webinar.organizer.firstname }}
                   {{ webinar.organizer.lastname }}
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="deleteWebinar(webinar.uuid)"
+                  >
+                    Διαγραφή
+                  </button>
                 </td>
               </tr>
             }

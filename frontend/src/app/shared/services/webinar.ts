@@ -35,4 +35,14 @@ export class Webinar {
   createWebinar(webinar: WebinarInsert): Observable<WebinarReadOnly> {
     return this.http.post<WebinarReadOnly>(this.webinarsUrl, webinar);
   }
+
+  /**
+   * Deletes a webinar by its UUID.
+   *
+   * @param uuid webinar UUID
+   * @returns observable completed when deletion succeeds
+   */
+  deleteWebinar(uuid: string): Observable<void> {
+    return this.http.delete<void>(`${this.webinarsUrl}/${uuid}`);
+  }
 }
