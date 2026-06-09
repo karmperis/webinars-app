@@ -1,0 +1,78 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <div class="content-header">
+      <div>
+        <h1>Δημιουργία σεμιναρίου</h1>
+        <p>Συμπληρώστε τα στοιχεία του νέου webinar.</p>
+      </div>
+
+      <a routerLink="/webinars" class="btn btn-outline-dark">Επιστροφή</a>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <div class="form-card">
+      <form [formGroup]="webinarForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label">Τίτλος</label>
+          <input type="text" class="form-control form-input" formControlName="title" />
+
+          @if (webinarForm.controls.title.invalid && webinarForm.controls.title.touched) {
+            <div class="text-danger small mt-1">Ο τίτλος πρέπει να περιέχει 5-100 χαρακτήρες.</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Περιγραφή</label>
+          <textarea
+            class="form-control form-input"
+            rows="4"
+            formControlName="description"
+          ></textarea>
+
+          @if (
+            webinarForm.controls.description.invalid && webinarForm.controls.description.touched
+          ) {
+            <div class="text-danger small mt-1">
+              Η περιγραφή δεν μπορεί να ξεπερνά τους 1000 χαρακτήρες.
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Ημερομηνία και ώρα</label>
+          <input
+            type="datetime-local"
+            class="form-control form-input"
+            formControlName="scheduledDate"
+          />
+
+          @if (
+            webinarForm.controls.scheduledDate.invalid && webinarForm.controls.scheduledDate.touched
+          ) {
+            <div class="text-danger small mt-1">Η ημερομηνία και η ώρα είναι υποχρεωτική.</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Διάρκεια σε λεπτά</label>
+          <input type="number" class="form-control form-input" formControlName="duration" />
+
+          @if (webinarForm.controls.duration.invalid && webinarForm.controls.duration.touched) {
+            <div class="text-danger small mt-1">
+              Η διάρκεια πρέπει να είναι μεταξύ 15 και 480 λεπτών.
+            </div>
+          }
+        </div>
+
+        <button type="submit" class="btn submit-button">Δημιουργία</button>
+      </form>
+    </div>
+  </main>
+</div>
