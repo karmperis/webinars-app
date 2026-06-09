@@ -4,13 +4,14 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 
 import { Webinar } from '../../../shared/services/webinar';
+import { Navbar } from '../../layout/navbar/navbar';
 
 /**
  * Component responsible for creating new webinars.
  */
 @Component({
   selector: 'app-create-webinar',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Navbar],
   templateUrl: './create-webinar.html',
   styleUrl: './create-webinar.css',
 })
@@ -54,6 +55,13 @@ export class CreateWebinar {
     }
 
     const formValue = this.webinarForm.getRawValue();
+    const scheduledDate = new Date(formValue.scheduledDate);
+
+    if (scheduledDate <= new Date()) {
+      this.errorMessage =
+        'Η ημερομηνία και ώρα διεξαγωγής του webinar πρέπει να είναι μεταγενέστερη από την τρέχουσα ημερομηνία και ώρα.';
+      return;
+    }
     const webinarInsert = {
       ...formValue,
       scheduledDate: new Date(formValue.scheduledDate).toISOString(),
