@@ -5,13 +5,14 @@ import { WebinarReadOnly } from '../../../shared/interfaces/webinar-read-only';
 import { Webinar } from '../../../shared/services/webinar';
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 /**
  * Component responsible for displaying webinar-related functionality.
  */
 @Component({
   selector: 'app-webinars',
-  imports: [Navbar, DatePipe],
+  imports: [Navbar, DatePipe, RouterLink],
   templateUrl: './webinars.html',
   styleUrl: './webinars.css',
 })
