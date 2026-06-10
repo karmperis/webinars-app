@@ -30,11 +30,13 @@ public class JwtService {
      *
      * @param username the subject of the token
      * @param role     the role claim to include
+     * @param uuid     the user UUID claim to include
      * @return the signed JWT
      */
-    public String generateToken(String username, String role) {
+    public String generateToken(String username, String role, String uuid) {
         var claims = new HashMap<String, Object>();
         claims.put("role", role);
+        claims.put("uuid", uuid);
         return Jwts
                 .builder()
                 .issuer("https://api.webinarsapp.com")
@@ -57,18 +59,7 @@ public class JwtService {
         final String subject = extractSubject(token);
         return (subject.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
-
-    /**
-     * Extract a string claim from the token.
-     *
-     * @param token the JWT
-     * @param claim the claim name
-     * @return the claim value
-     */
-    public String getStringClaim(String token, String claim) {
-        return extractAllClaims(token).get(claim, String.class);
-    }
-
+    
     /**
      * Extract the subject (username) from the token.
      *
