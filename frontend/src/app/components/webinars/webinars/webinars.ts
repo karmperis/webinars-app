@@ -5,6 +5,7 @@ import { WebinarReadOnly } from '../../../shared/interfaces/webinar-read-only';
 import { Webinar } from '../../../shared/services/webinar';
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
+import { Router } from '@angular/router';
 
 /**
  * Component responsible for displaying webinar-related functionality.
@@ -17,6 +18,7 @@ import { finalize } from 'rxjs';
 })
 export class Webinars implements OnInit {
   private readonly webinarService = inject(Webinar);
+  private readonly router = inject(Router);
   readonly webinars = signal<WebinarReadOnly[]>([]);
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
@@ -65,5 +67,14 @@ export class Webinars implements OnInit {
         this.loadError.set('Η διαγραφή του σεμιναρίου απέτυχε.');
       },
     });
+  }
+
+  /**
+   * Navigates to the webinar edit page.
+   *
+   * @param uuid webinar UUID
+   */
+  editWebinar(uuid: string): void {
+    this.router.navigate(['/webinars', uuid, 'edit']);
   }
 }

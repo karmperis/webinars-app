@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { PageResponse } from '../interfaces/page-response';
 import { WebinarReadOnly } from '../interfaces/webinar-read-only';
 import { WebinarInsert } from '../interfaces/webinar-insert';
+import { WebinarEdit } from '../interfaces/webinar-edit';
 
 /**
  * Service responsible for webinar-related API operations.
@@ -44,5 +45,26 @@ export class Webinar {
    */
   deleteWebinar(uuid: string): Observable<void> {
     return this.http.delete<void>(`${this.webinarsUrl}/${uuid}`);
+  }
+
+  /**
+   * Retrieves a webinar by its UUID.
+   *
+   * @param uuid webinar UUID
+   * @returns observable containing the requested webinar
+   */
+  getWebinarByUuid(uuid: string): Observable<WebinarReadOnly> {
+    return this.http.get<WebinarReadOnly>(`${this.webinarsUrl}/${uuid}`);
+  }
+
+  /**
+   * Updates an existing webinar.
+   *
+   * @param uuid webinar UUID
+   * @param webinar payload containing updated webinar data
+   * @returns observable containing the updated webinar
+   */
+  updateWebinar(uuid: string, webinar: WebinarEdit): Observable<WebinarReadOnly> {
+    return this.http.put<WebinarReadOnly>(`${this.webinarsUrl}/${uuid}`, webinar);
   }
 }
