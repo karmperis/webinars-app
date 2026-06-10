@@ -67,4 +67,15 @@ export class Webinar {
   updateWebinar(uuid: string, webinar: WebinarEdit): Observable<WebinarReadOnly> {
     return this.http.put<WebinarReadOnly>(`${this.webinarsUrl}/${uuid}`, webinar);
   }
+
+  /**
+   * Enrolls a user in a webinar.
+   *
+   * @param webinarUuid the webinar UUID
+   * @param userUuid the user UUID
+   * @returns completion observable
+   */
+  enrollInWebinar(webinarUuid: string, userUuid: string): Observable<void> {
+    return this.http.post<void>(`${this.webinarsUrl}/${webinarUuid}/participants/${userUuid}`, {});
+  }
 }

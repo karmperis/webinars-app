@@ -6,6 +6,7 @@ import { Webinar } from '../../../shared/services/webinar';
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
 import { Router } from '@angular/router';
+import { Auth } from '../../../shared/services/auth';
 
 /**
  * Component responsible for displaying webinar-related functionality.
@@ -18,6 +19,7 @@ import { Router } from '@angular/router';
 })
 export class Webinars implements OnInit {
   private readonly webinarService = inject(Webinar);
+  private readonly authService = inject(Auth);
   private readonly router = inject(Router);
   readonly webinars = signal<WebinarReadOnly[]>([]);
   readonly isLoading = signal(true);
@@ -68,6 +70,31 @@ export class Webinars implements OnInit {
       },
     });
   }
+
+  /**
+ * Enrolls the current authenticated user in a webinar.
+ *
+ * @param webinarUuid webinar UUID
+ */
+enrollInWebinar(webinarUuid: string): void {
+  const userUuid = this.authService.getCurrentUserUuid();
+
+  if (!userUuid) {
+    this.loadError.set('Δεν ήταν δυνατή η αναγνώριση του συνδεδεμένου χρήστη.');
+    return;
+  }
+
+  this.webinarService.enrollInWebinar(webinarUuid, userUuid).subscribe({
+    next: () => {
+      alert('Η εγγραφή στο σεμινάριο ολοκληρώθηκε με επιτυχία.');
+      this.loadWebinars();
+    },
+    error: (error) => {
+      console.error('Failed to enroll in webinar', error);
+      this.loadError.set('Η εγγραφή στο σεμινάριο απέτυχε.');
+    },
+  });
+}
 
   /**
    * Navigates to the webinar edit page.

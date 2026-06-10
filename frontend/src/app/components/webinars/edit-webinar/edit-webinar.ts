@@ -127,6 +127,8 @@ export class EditWebinar implements OnInit {
    */
   private toDateTimeLocalValue(value: string): string {
     const date = new Date(value);
-    return date.toISOString().slice(0, 16);
+    const timezoneOffsetInMs = date.getTimezoneOffset() * 60_000;
+    const localDate = new Date(date.getTime() - timezoneOffsetInMs);
+    return localDate.toISOString().slice(0, 16);
   }
 }

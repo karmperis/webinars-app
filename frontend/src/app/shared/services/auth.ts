@@ -61,4 +61,34 @@ export class Auth {
   isAuthenticated(): boolean {
     return this.getToken() !== null;
   }
+
+  /**
+   * Returns the decoded JWT payload.
+   *
+   * @returns decoded JWT payload or null if token is invalid
+   */
+  private getTokenPayload(): Record<string, any> | null {
+    const token = this.getToken();
+
+    if (!token) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Returns the UUID of the currently authenticated user.
+   *
+   * @returns user UUID or null if unavailable
+   */
+  getCurrentUserUuid(): string | null {
+    const payload = this.getTokenPayload();
+
+    return payload?.['uuid'] ?? null;
+  }
 }
