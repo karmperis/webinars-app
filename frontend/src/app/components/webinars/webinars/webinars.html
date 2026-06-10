@@ -14,7 +14,7 @@
       <div class="empty-state">Δεν υπάρχουν διαθέσιμα σεμινάρια.</div>
     } @else {
       <div class="table-container">
-        <table class="table table-hover align-middle">
+        <table class="table table-hover align-middle text-center">
           <thead>
             <tr>
               <th>Τίτλος</th>
@@ -37,14 +37,25 @@
                   {{ webinar.organizer.firstname }}
                   {{ webinar.organizer.lastname }}
                 </td>
+
                 <td>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-danger"
-                    (click)="deleteWebinar(webinar.uuid)"
-                  >
-                    Διαγραφή
-                  </button>
+                  <div class="d-flex justify-content-center gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      (click)="editWebinar(webinar.uuid)"
+                    >
+                      Επεξεργασία
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="deleteWebinar(webinar.uuid)"
+                    >
+                      Διαγραφή
+                    </button>
+                  </div>
                 </td>
               </tr>
             }
