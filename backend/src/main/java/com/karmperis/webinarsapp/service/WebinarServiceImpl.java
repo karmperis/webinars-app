@@ -250,4 +250,29 @@ public class WebinarServiceImpl implements IWebinarService {
             throw new EntityInvalidArgumentException("Webinar", "Webinar duration must be between 15 and 480 minutes");
         }
     }
+
+    /**
+     * Retrieve a page of non-deleted webinars where a specific user is enrolled as participant.
+     *
+     * @param userUuid the UUID of the participant
+     * @param pageable paging and sorting information
+     * @return a page of active webinars as read-only DTOs
+     * @throws EntityNotFoundException if the participant does not exist
+     */
+    @Override
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('VIEW_WEBINARS') and (#userUuid == authentication.principal.uuid or hasRole('ADMIN'))")
+    public Page<WebinarReadOnlyDTO> findAllWebinarsByParticipant(UUID userUuid, Pageable pageable)
+            throws EntityNotFoundException {
+        log.info("Fetching active webinars for participant with UUID: {}", userUuid);
+
+        User participant = userRepository.findByUuidAndDeletedAtIsNull(userUuid)
+                .orElseThrow(() -> {
+                    log.warn("Participant with UUID {} not found", userUuid);
+                    return new EntityNotFoundException("User", "Participant with UUID " + userUuid + " not found");
+                });
+
+        return webinarRepository.findAllByParticipantsContainingAndDeletedAtIsNull(participant, pageable)
+                .map(webinarMapper::mapToWebinarReadOnlyDTO);
+    }
 }

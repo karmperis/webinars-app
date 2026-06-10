@@ -139,6 +139,26 @@ public class WebinarRestController {
     }
 
     /**
+     * Returns a paginated list of active webinars where a specific user is enrolled as participant.
+     *
+     * @param userUuid the UUID of the participant
+     * @param pageable pagination and sorting configuration
+     * @return HTTP 200 with a page of webinars
+     * @throws EntityNotFoundException if the participant is not found
+     */
+    @Operation(
+            summary = "Get webinars by participant",
+            description = "Returns a paginated list of webinars where a specific user is enrolled as participant."
+    )
+    @GetMapping("/participants/{userUuid}")
+    public ResponseEntity<Page<WebinarReadOnlyDTO>> getWebinarsByParticipant(
+            @PathVariable UUID userUuid,
+            @ParameterObject Pageable pageable
+    ) throws EntityNotFoundException {
+        return ResponseEntity.ok(webinarService.findAllWebinarsByParticipant(userUuid, pageable));
+    }
+
+    /**
      * Updates an existing webinar.
      *
      * @param uuid          the webinar UUID

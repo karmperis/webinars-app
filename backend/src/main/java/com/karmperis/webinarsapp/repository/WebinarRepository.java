@@ -59,6 +59,16 @@ public interface WebinarRepository extends JpaRepository<Webinar, Long> {
     Page<Webinar> findAllByUserAndDeletedAtIsNull(User user, Pageable pageable);
 
     /**
+     * Return a paginated list of non-deleted webinars where the given user is enrolled as participant.
+     *
+     * @param participant the enrolled participant
+     * @param pageable    pagination and sorting instructions
+     * @return a page of webinars where the user participates
+     */
+    @EntityGraph(attributePaths = {"user", "user.userDetail", "user.role"})
+    Page<Webinar> findAllByParticipantsContainingAndDeletedAtIsNull(User participant, Pageable pageable);
+
+    /**
      * Check whether a non-deleted webinar exists for the given webinar UUID and organizer user UUID.
      *
      * @param webinarUuid the webinar UUID

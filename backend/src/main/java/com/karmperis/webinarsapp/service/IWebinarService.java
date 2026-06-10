@@ -86,4 +86,15 @@ public interface IWebinarService {
      * @throws EntityNotFoundException if either the webinar or the user is not found
      */
     void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException;
+
+    /**
+     * Retrieve a page of non-deleted webinars where a specific user is enrolled as participant.
+     *
+     * @param userUuid the UUID of the participant
+     * @param pageable paging and sorting information
+     * @return a page of active webinars as read-only DTOs
+     * @throws EntityNotFoundException if the participant does not exist
+     */
+    Page<WebinarReadOnlyDTO> findAllWebinarsByParticipant(UUID userUuid, Pageable pageable)
+            throws EntityNotFoundException;
 }
