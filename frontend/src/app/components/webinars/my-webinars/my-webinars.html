@@ -35,7 +35,10 @@
                 <td>{{ webinar.description }}</td>
                 <td>{{ webinar.scheduledDate | date: 'dd/MM/yyyy HH:mm' }}</td>
                 <td>{{ webinar.duration }} λεπτά</td>
-                <td>{{ webinar.organizer.username }}</td>
+                <td>
+                  {{ webinar.organizer.firstname }}
+                  {{ webinar.organizer.lastname }}
+                </td>
               </tr>
             }
           </tbody>
