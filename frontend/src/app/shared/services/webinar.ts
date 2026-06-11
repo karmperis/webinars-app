@@ -78,4 +78,16 @@ export class Webinar {
   enrollInWebinar(webinarUuid: string, userUuid: string): Observable<void> {
     return this.http.post<void>(`${this.webinarsUrl}/${webinarUuid}/participants/${userUuid}`, {});
   }
+
+  /**
+   * Retrieves webinars where a user is enrolled as participant.
+   *
+   * @param userUuid the participant user UUID
+   * @returns observable containing the user's enrolled webinars
+   */
+  getWebinarsByParticipant(userUuid: string): Observable<PageResponse<WebinarReadOnly>> {
+    return this.http.get<PageResponse<WebinarReadOnly>>(
+      `${this.webinarsUrl}/participants/${userUuid}`,
+    );
+  }
 }

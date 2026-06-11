@@ -6,6 +6,7 @@ import { Webinars } from './components/webinars/webinars/webinars';
 import { authGuard } from './shared/guards/auth-guard';
 import { CreateWebinar } from './components/webinars/create-webinar/create-webinar';
 import { EditWebinar } from './components/webinars/edit-webinar/edit-webinar';
+import { MyWebinars } from './components/webinars/my-webinars/my-webinars';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -13,6 +14,7 @@ export const routes: Routes = [
   { path: 'webinars', component: Webinars, canActivate: [authGuard] },
   { path: 'webinars/create', component: CreateWebinar, canActivate: [authGuard] },
   { path: 'webinars/:uuid/edit', component: EditWebinar, canActivate: [authGuard] },
+  { path: 'my-webinars', component: MyWebinars, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];
