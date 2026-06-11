@@ -23,6 +23,10 @@
 
 /* Webinar table */
 
+.table {
+  --bs-table-hover-bg: #fff9db;
+}
+
 .table-container {
   background: #ffffff;
   border: 1px solid #dcdcdc;
