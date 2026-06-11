@@ -3,21 +3,26 @@
     <h2 class="sidebar-title">Webinars App</h2>
     <ul class="sidebar-menu">
       <li>
-        <a routerLink="/webinars">Λίστα σεμιναρίων</a>
+        <a routerLink="/webinars">Σεμινάρια</a>
       </li>
 
       @if (isAdmin() || isOrganizer()) {
         <li>
-          <a routerLink="/webinars/create"> Δημιουργία σεμιναρίου </a>
+          <a routerLink="/webinars/create">Προσθήκη νέου</a>
         </li>
 
         <li>
-          <a routerLink="/my-webinars"> Τα σεμινάρια μου </a>
+          <a routerLink="/my-webinars">Παρακολούθηση</a>
         </li>
       }
       @if (isAdmin() || isParticipant()) {
         <li>
-          <a routerLink="/organizer-webinars">Σεμινάρια διοργανωτή</a>
+          <a routerLink="/organizer-webinars">Διοργανώση</a>
+        </li>
+      }
+      @if (isAdmin()) {
+        <li>
+          <a routerLink="/users">Χρήστες</a>
         </li>
       }
     </ul>
