@@ -10,14 +10,15 @@
         <li>
           <a routerLink="/webinars/create">Προσθήκη νέου</a>
         </li>
-
+      }
+        @if (isAdmin() || isParticipant()){
         <li>
           <a routerLink="/my-webinars">Παρακολούθηση</a>
         </li>
       }
-      @if (isAdmin() || isParticipant()) {
+      @if (isAdmin() || isOrganizer()) {
         <li>
-          <a routerLink="/organizer-webinars">Διοργανώση</a>
+          <a routerLink="/organizer-webinars">Διοργάνωση</a>
         </li>
       }
       @if (isAdmin()) {
