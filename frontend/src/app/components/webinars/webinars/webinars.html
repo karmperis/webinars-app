@@ -41,29 +41,32 @@
 
                 <td>
                   <div class="d-flex justify-content-center gap-2">
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-primary"
-                      (click)="editWebinar(webinar.uuid)"
-                    >
-                      Επεξεργασία
-                    </button>
+                    @if (canManageWebinar(webinar)) {
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-primary"
+                        (click)="editWebinar(webinar.uuid)"
+                      >
+                        Επεξεργασία
+                      </button>
 
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-danger"
-                      (click)="deleteWebinar(webinar.uuid)"
-                    >
-                      Διαγραφή
-                    </button>
-
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-success"
-                      (click)="enrollInWebinar(webinar.uuid)"
-                    >
-                      Εγγραφή
-                    </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="deleteWebinar(webinar.uuid)"
+                      >
+                        Διαγραφή
+                      </button>
+                    }
+                    @if (canEnrollInWebinars()) {
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-success"
+                        (click)="enrollInWebinar(webinar.uuid)"
+                      >
+                        Εγγραφή
+                      </button>
+                    }
                   </div>
                 </td>
               </tr>

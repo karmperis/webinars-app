@@ -30,6 +30,26 @@ export class Webinars implements OnInit {
   }
 
   /**
+   * Checks whether the current user can manage webinars.
+   *
+   * @param webinar webinar to check
+   * @returns true if the user is ADMIN or owns the webinar as organizer
+   */
+  canManageWebinar(webinar: WebinarReadOnly): boolean {
+    const currentUserUuid = this.authService.getCurrentUserUuid();
+    return this.authService.hasRole('ADMIN') || currentUserUuid === webinar.organizer.uuid;
+  }
+
+  /**
+   * Checks whether the current user can enroll in webinars.
+   *
+   * @returns true for ADMIN and PARTICIPANT users
+   */
+  canEnrollInWebinars(): boolean {
+    return this.authService.hasRole('ADMIN') || this.authService.hasRole('PARTICIPANT');
+  }
+
+  /**
    * Loads webinars from the backend API.
    */
   private loadWebinars(): void {
@@ -72,29 +92,29 @@ export class Webinars implements OnInit {
   }
 
   /**
- * Enrolls the current authenticated user in a webinar.
- *
- * @param webinarUuid webinar UUID
- */
-enrollInWebinar(webinarUuid: string): void {
-  const userUuid = this.authService.getCurrentUserUuid();
+   * Enrolls the current authenticated user in a webinar.
+   *
+   * @param webinarUuid webinar UUID
+   */
+  enrollInWebinar(webinarUuid: string): void {
+    const userUuid = this.authService.getCurrentUserUuid();
 
-  if (!userUuid) {
-    this.loadError.set('Δεν ήταν δυνατή η αναγνώριση του συνδεδεμένου χρήστη.');
-    return;
+    if (!userUuid) {
+      this.loadError.set('Δεν ήταν δυνατή η αναγνώριση του συνδεδεμένου χρήστη.');
+      return;
+    }
+
+    this.webinarService.enrollInWebinar(webinarUuid, userUuid).subscribe({
+      next: () => {
+        alert('Η εγγραφή στο σεμινάριο ολοκληρώθηκε με επιτυχία.');
+        this.loadWebinars();
+      },
+      error: (error) => {
+        console.error('Failed to enroll in webinar', error);
+        this.loadError.set('Η εγγραφή στο σεμινάριο απέτυχε.');
+      },
+    });
   }
-
-  this.webinarService.enrollInWebinar(webinarUuid, userUuid).subscribe({
-    next: () => {
-      alert('Η εγγραφή στο σεμινάριο ολοκληρώθηκε με επιτυχία.');
-      this.loadWebinars();
-    },
-    error: (error) => {
-      console.error('Failed to enroll in webinar', error);
-      this.loadError.set('Η εγγραφή στο σεμινάριο απέτυχε.');
-    },
-  });
-}
 
   /**
    * Navigates to the webinar edit page.
