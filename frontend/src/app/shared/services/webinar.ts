@@ -90,4 +90,15 @@ export class Webinar {
       `${this.webinarsUrl}/participants/${userUuid}`,
     );
   }
+  /**
+   * Retrieves webinars organized by a specific user.
+   *
+   * @param organizerUuid organizer UUID
+   * @returns observable containing the organizer webinars
+   */
+  getWebinarsByOrganizer(organizerUuid: string): Observable<PageResponse<WebinarReadOnly>> {
+    return this.http.get<PageResponse<WebinarReadOnly>>(
+      `${this.webinarsUrl}/organizer/${organizerUuid}`,
+    );
+  }
 }
