@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../shared/services/auth';
 
@@ -15,6 +15,10 @@ import { Auth } from '../../../shared/services/auth';
 export class Navbar {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
+
+  readonly isAdmin = computed(() => this.auth.hasRole('ADMIN'));
+  readonly isOrganizer = computed(() => this.auth.hasRole('ORGANIZER'));
+  readonly isParticipant = computed(() => this.auth.hasRole('PARTICIPANT'));
 
   /**
    * Logs out the current user by removing the stored JWT token

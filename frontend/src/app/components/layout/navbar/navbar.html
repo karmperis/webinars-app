@@ -5,15 +5,21 @@
       <li>
         <a routerLink="/webinars">Λίστα σεμιναρίων</a>
       </li>
-      <li>
-        <a routerLink="/webinars/create"> Δημιουργία σεμιναρίου </a>
-      </li>
-      <li>
-        <a routerLink="/my-webinars"> Τα σεμινάρια μου </a>
-      </li>
-      <li>
-        <a routerLink="/organizer-webinars">Σεμινάρια διοργανωτή</a>
-      </li>
+
+      @if (isAdmin() || isOrganizer()) {
+        <li>
+          <a routerLink="/webinars/create"> Δημιουργία σεμιναρίου </a>
+        </li>
+
+        <li>
+          <a routerLink="/my-webinars"> Τα σεμινάρια μου </a>
+        </li>
+      }
+      @if (isAdmin() || isParticipant()) {
+        <li>
+          <a routerLink="/organizer-webinars">Σεμινάρια διοργανωτή</a>
+        </li>
+      }
     </ul>
   </div>
 

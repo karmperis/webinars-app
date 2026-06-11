@@ -91,4 +91,25 @@ export class Auth {
 
     return payload?.['uuid'] ?? null;
   }
+
+  /**
+   * Returns the role of the currently authenticated user.
+   *
+   * @returns user role or null if unavailable
+   */
+  getCurrentUserRole(): string | null {
+    const payload = this.getTokenPayload();
+
+    return payload?.['role'] ?? null;
+  }
+
+  /**
+   * Checks whether the current user has the given role.
+   *
+   * @param role role name to check
+   * @returns true if the current user has the given role
+   */
+  hasRole(role: string): boolean {
+    return this.getCurrentUserRole() === role;
+  }
 }
