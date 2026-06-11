@@ -2,14 +2,12 @@
   <app-navbar />
 
   <main class="page-content">
-    <div class="content-header">
-      <div>
-        <h1>Επεξεργασία Σεμιναρίου</h1>
-        <p>Επεξεργασία των στοιχείων του σεμιναρίου.</p>
-      </div>
+    <header class="content-header">
+      <h1>Επεξεργασία Σεμιναρίου</h1>
+      <p>Επεξεργασία των στοιχείων του σεμιναρίου.</p>
 
       <a routerLink="/webinars" class="btn btn-outline-dark">Επιστροφή</a>
-    </div>
+    </header>
 
     @if (isLoading()) {
       <div class="empty-state">Φόρτωση σεμιναρίου...</div>
@@ -35,9 +33,15 @@
 
           <div class="mb-3">
             <label class="form-label">Περιγραφή</label>
-            <textarea class="form-control form-input" rows="4" formControlName="description"></textarea>
+            <textarea
+              class="form-control form-input"
+              rows="4"
+              formControlName="description"
+            ></textarea>
 
-            @if (webinarForm.controls.description.invalid && webinarForm.controls.description.touched) {
+            @if (
+              webinarForm.controls.description.invalid && webinarForm.controls.description.touched
+            ) {
               <div class="text-danger small mt-1">
                 Η περιγραφή δεν μπορεί να ξεπερνά τους 1000 χαρακτήρες.
               </div>
@@ -46,12 +50,17 @@
 
           <div class="mb-3">
             <label class="form-label">Ημερομηνία και ώρα</label>
-            <input type="datetime-local" class="form-control form-input" formControlName="scheduledDate" />
+            <input
+              type="datetime-local"
+              class="form-control form-input"
+              formControlName="scheduledDate"
+            />
 
-            @if (webinarForm.controls.scheduledDate.invalid && webinarForm.controls.scheduledDate.touched) {
-              <div class="text-danger small mt-1">
-                Η ημερομηνία και η ώρα είναι υποχρεωτική.
-              </div>
+            @if (
+              webinarForm.controls.scheduledDate.invalid &&
+              webinarForm.controls.scheduledDate.touched
+            ) {
+              <div class="text-danger small mt-1">Η ημερομηνία και η ώρα είναι υποχρεωτική.</div>
             }
           </div>
 
@@ -66,9 +75,7 @@
             }
           </div>
 
-          <button type="submit" class="btn submit-button">
-            Αποθήκευση αλλαγών
-          </button>
+          <button type="submit" class="btn submit-button">Αποθήκευση αλλαγών</button>
         </form>
       </div>
     }
