@@ -111,6 +111,15 @@ export class Webinars implements OnInit {
       },
       error: (error) => {
         console.error('Failed to enroll in webinar', error);
+        if (error.status === 409) {
+          this.loadError.set('Έχετε ήδη εγγραφεί σε αυτό το σεμινάριο.');
+
+          setTimeout(() => {
+            this.loadError.set(null);
+            this.loadWebinars();
+          }, 1000);
+          return;
+        }
         this.loadError.set('Η εγγραφή στο σεμινάριο απέτυχε.');
       },
     });
