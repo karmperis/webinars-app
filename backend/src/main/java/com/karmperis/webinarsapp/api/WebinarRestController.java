@@ -218,7 +218,7 @@ public class WebinarRestController {
     })
     @PostMapping("/{webinarUuid}/participants/{userUuid}")
     public ResponseEntity<Void> enrollUser(@PathVariable UUID webinarUuid, @PathVariable UUID userUuid)
-            throws EntityNotFoundException {
+            throws EntityNotFoundException, EntityAlreadyExistsException {
         webinarService.enrollUserInWebinar(webinarUuid, userUuid);
         return ResponseEntity.noContent().build();
     }

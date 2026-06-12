@@ -212,7 +212,7 @@ public class WebinarServiceImpl implements IWebinarService {
     @Override
     @Transactional(rollbackFor = EntityNotFoundException.class)
     @PreAuthorize("hasAuthority('ENROLL_IN_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnProfile(#userUuid, authentication))")
-    public void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException {
+    public void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException, EntityAlreadyExistsException {
         log.info("Enrolling user {} in webinar {}", userUuid, webinarUuid);
 
         Webinar webinar = webinarRepository.findByUuidAndDeletedAtIsNull(webinarUuid)
@@ -227,6 +227,12 @@ public class WebinarServiceImpl implements IWebinarService {
                     return new EntityNotFoundException("User", "User with UUID " + userUuid + " not found");
                 });
 
+        if (webinar.hasParticipant(user)) {
+            throw new EntityAlreadyExistsException(
+                    "Enrollment",
+                    "User is already enrolled in this webinar"
+            );
+        }
         webinar.addParticipant(user);
         webinarRepository.save(webinar);
 

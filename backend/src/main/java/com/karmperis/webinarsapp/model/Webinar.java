@@ -80,4 +80,14 @@ public class Webinar extends AbstractUuidEntity {
         participants.remove(participant);
         participant.dropWebinar(this);
     }
+
+    /**
+     * Checks whether the given user is already enrolled as participant.
+     *
+     * @param user the user to check
+     * @return true if the user is already enrolled
+     */
+    public boolean hasParticipant(User user) {
+        return participants.contains(user);
+    }
 }
