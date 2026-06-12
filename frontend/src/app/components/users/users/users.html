@@ -42,9 +42,9 @@
                 <td>{{ user.roleName }}</td>
                 <td>
                   @if (user.active) {
-                    Ναι
+                    <span class="badge text-bg-success">Ενεργός</span>
                   } @else {
-                    Όχι
+                    <span class="badge text-bg-danger">Ανενεργός</span>
                   }
                 </td>
 
