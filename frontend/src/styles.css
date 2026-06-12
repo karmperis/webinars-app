@@ -1,1 +1,131 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global layout */
+
+.page-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #f5f7fa;
+}
+
+.page-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Headers */
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.content-header h1 {
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.content-header p {
+  margin: 0;
+  color: #6c757d;
+}
+
+/* Cards */
+
+.table-container,
+.form-card,
+.empty-state {
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+}
+
+.table-container {
+  padding: 1rem;
+}
+
+.form-card {
+  max-width: 900px;
+  padding: 2rem;
+}
+
+/* States */
+
+.empty-state {
+  padding: 2rem;
+  font-weight: 600;
+}
+
+.error-state {
+  color: #842029;
+  border-color: #f5c2c7;
+  background: #f8d7da;
+}
+
+/* Tables */
+
+.table-hover > tbody > tr:hover > * {
+  background-color: #fff9db !important;
+}
+
+/* Forms */
+
+.form-input,
+.login-input {
+  border-radius: 0 !important;
+  background: #eaf1fb !important;
+  border: 1px solid #c8c8c8 !important;
+  padding: 0.85rem 1rem !important;
+}
+
+.login-input {
+  font-weight: 600 !important;
+}
+
+.form-label,
+.form-check-label {
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Buttons */
+
+.submit-button,
+.login-button {
+  border-radius: 0 !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  padding: 0.8rem 2rem !important;
+}
+
+.login-button {
+  width: 100% !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.submit-button:hover,
+.login-button:hover {
+  background: #222222 !important;
+  color: #ffffff !important;
+}
+
+.register-button {
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  padding: 0.8rem !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+.register-button:hover {
+  background: #eeeeee !important;
+}
