@@ -2,14 +2,14 @@
   <app-navbar />
 
   <main class="page-content">
-    <div class="content-header">
+    <header class="content-header d-flex justify-content-between align-items-start">
       <div>
-        <h1>Δημιουργία σεμιναρίου</h1>
-        <p>Συμπληρώστε τα στοιχεία του νέου σεμιναρίου.</p>
+        <h1>Δημιουργία νέου σεμιναρίου</h1>
+        <p>Συμπληρώστε τα στοιχεία του σεμιναρίου.</p>
       </div>
 
       <a routerLink="/webinars" class="btn btn-outline-dark">Επιστροφή</a>
-    </div>
+    </header>
 
     @if (errorMessage) {
       <div class="alert alert-danger">

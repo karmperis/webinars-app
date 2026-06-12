@@ -3,22 +3,20 @@
 
   <main class="page-content">
     <header class="content-header">
-      <h1>Χρήστες</h1>
-      <p>Διαχείριση χρηστών.</p>
+      <div>
+        <h1>Χρήστες</h1>
+        <p>Διαχείριση χρηστών.</p>
+      </div>
     </header>
 
     @if (isLoading()) {
-      <div class="empty-state">
-        Φόρτωση χρηστών...
-      </div>
+      <div class="empty-state">Φόρτωση χρηστών...</div>
     } @else if (loadError()) {
-      <div class="empty-state">
+      <div class="empty-state error-state">
         {{ loadError() }}
       </div>
     } @else if (users().length === 0) {
-      <div class="empty-state">
-        Δεν υπάρχουν διαθέσιμοι χρήστες.
-      </div>
+      <div class="empty-state">Δεν υπάρχουν διαθέσιμοι χρήστες.</div>
     } @else {
       <div class="table-container">
         <table class="table table-striped table-hover align-middle mb-0 text-center">

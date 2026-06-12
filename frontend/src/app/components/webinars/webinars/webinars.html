@@ -3,14 +3,16 @@
 
   <main class="page-content">
     <header class="content-header">
-      <h1>Σεμινάρια</h1>
-      <p>Λίστα διαθέσιμων σεμιναρίων.</p>
+      <div>
+        <h1>Σεμινάρια</h1>
+        <p>Λίστα ενεργών σεμιναρίων.</p>
+      </div>
     </header>
 
     @if (isLoading()) {
       <div class="empty-state">Φόρτωση σεμιναρίων...</div>
     } @else if (loadError()) {
-      <div class="empty-state">{{ loadError() }}</div>
+      <div class="empty-state error-state">{{ loadError() }}</div>
     } @else if (webinars().length === 0) {
       <div class="empty-state">Δεν υπάρχουν διαθέσιμα σεμινάρια.</div>
     } @else {
