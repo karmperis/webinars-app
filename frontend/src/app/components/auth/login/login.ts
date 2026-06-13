@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -18,7 +18,7 @@ export class Login {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
 
-  errorMessage = '';
+  readonly errorMessage = signal<string | null>(null);
 
   /**
    * Reactive login form containing username and password fields.
@@ -38,6 +38,7 @@ export class Login {
    * Submits the login form and stores the JWT token on success.
    */
   onSubmit(): void {
+    this.errorMessage.set(null);
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
@@ -49,7 +50,7 @@ export class Login {
         this.router.navigate(['/webinars']);
       },
       error: () => {
-        this.errorMessage = 'Τα στοιχεία σύνδεσης δεν είναι σωστά.';
+        this.errorMessage.set('Τα στοιχεία σύνδεσης δεν είναι σωστά.');
       },
     });
   }

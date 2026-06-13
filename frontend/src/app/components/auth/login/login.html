@@ -4,9 +4,9 @@
       <div class="col-12 col-md-7 login-left">
         <h2 class="text-center mb-4">Σύνδεση</h2>
 
-        @if (errorMessage) {
+        @if (errorMessage()) {
           <div class="alert alert-danger">
-            {{ errorMessage }}
+            {{ errorMessage() }}
           </div>
         }
 
