@@ -5,7 +5,7 @@ export interface UserReadOnly {
   uuid: string;
   username: string;
   active: boolean;
-  roleId: number;
+  roleUuid: string;
   roleName: string;
   firstname: string;
   lastname: string;

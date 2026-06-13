@@ -9,6 +9,7 @@ import { EditWebinar } from './components/webinars/edit-webinar/edit-webinar';
 import { MyWebinars } from './components/webinars/my-webinars/my-webinars';
 import { OrganizerWebinars } from './components/webinars/organizer-webinars/organizer-webinars';
 import { Users } from './components/users/users/users';
+import { EditUserAccess } from './components/users/edit-user-access/edit-user-access';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: 'my-webinars', component: MyWebinars, canActivate: [authGuard] },
   { path: 'organizer-webinars', component: OrganizerWebinars, canActivate: [authGuard] },
   { path: 'users', component: Users, canActivate: [authGuard] },
+  { path: 'users/:uuid/access', component: EditUserAccess, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

@@ -52,6 +52,14 @@
                   <div class="d-flex justify-content-center gap-2">
                     <button
                       type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      (click)="editUserAccess(user.uuid)"
+                    >
+                      Διαχείριση πρόσβασης
+                    </button>
+
+                    <button
+                      type="button"
                       class="btn btn-sm btn-outline-danger"
                       (click)="deleteUser(user.uuid)"
                     >

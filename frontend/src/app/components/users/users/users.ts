@@ -6,6 +6,7 @@ import { Navbar } from '../../layout/navbar/navbar';
 
 import { User } from '../../../shared/services/user';
 import { UserReadOnly } from '../../../shared/interfaces/user-read-only';
+import { Router } from '@angular/router';
 
 /**
  * Component responsible for displaying registered users.
@@ -18,6 +19,7 @@ import { UserReadOnly } from '../../../shared/interfaces/user-read-only';
 })
 export class Users implements OnInit {
   private readonly userService = inject(User);
+  private readonly router = inject(Router);
 
   readonly users = signal<UserReadOnly[]>([]);
   readonly isLoading = signal(true);
@@ -67,5 +69,14 @@ export class Users implements OnInit {
         this.loadError.set('Η διαγραφή του χρήστη απέτυχε.');
       },
     });
+  }
+
+  /**
+   * Navigates to the user access edit page.
+   *
+   * @param uuid user UUID
+   */
+  editUserAccess(uuid: string): void {
+    this.router.navigate(['/users', uuid, 'access']);
   }
 }

@@ -1,0 +1,48 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <header class="content-header">
+      <div>
+        <h1>Διαχείριση πρόσβασης χρήστη</h1>
+        <p>Ενημέρωση ρόλου και κατάστασης λογαριασμού.</p>
+      </div>
+
+      <a routerLink="/users" class="btn btn-outline-dark"> Επιστροφή </a>
+    </header>
+
+    @if (isLoading()) {
+      <div class="empty-state">Φόρτωση χρήστη...</div>
+    } @else {
+      @if (errorMessage()) {
+        <div class="alert alert-danger">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="form-card">
+        <form [formGroup]="accessForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label">Ρόλος</label>
+
+            <select class="form-select form-input" formControlName="roleUuid">
+              @for (role of roles(); track role.uuid) {
+                <option [value]="role.uuid">
+                  {{ role.name }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="form-check mb-4">
+            <input id="active" type="checkbox" class="form-check-input" formControlName="active" />
+
+            <label class="form-check-label" for="active">Ενεργός/Ανενεργός</label>
+          </div>
+
+          <button type="submit" class="btn submit-button">Αποθήκευση</button>
+        </form>
+      </div>
+    }
+  </main>
+</div>
