@@ -1,0 +1,62 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <header class="content-header">
+      <div>
+        <h1>Προφίλ</h1>
+        <p>Ενημέρωση προσωπικών στοιχείων.</p>
+      </div>
+
+      <a routerLink="/webinars" class="btn btn-outline-dark"> Επιστροφή </a>
+    </header>
+
+    @if (isLoading()) {
+      <div class="empty-state">Φόρτωση στοιχείων χρήστη...</div>
+    } @else {
+      @if (errorMessage()) {
+        <div class="alert alert-danger">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="form-card">
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label">Όνομα</label>
+
+            <input type="text" class="form-control form-input" formControlName="firstname" />
+
+            @if (profileForm.controls.firstname.invalid && profileForm.controls.firstname.touched) {
+              <div class="text-danger small mt-1">Το όνομα είναι υποχρεωτικό.</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Επώνυμο</label>
+
+            <input type="text" class="form-control form-input" formControlName="lastname" />
+
+            @if (profileForm.controls.lastname.invalid && profileForm.controls.lastname.touched) {
+              <div class="text-danger small mt-1">Το επώνυμο είναι υποχρεωτικό.</div>
+            }
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Τηλέφωνο</label>
+
+            <input type="tel" class="form-control form-input" formControlName="phoneNumber" />
+
+            @if (
+              profileForm.controls.phoneNumber.invalid && profileForm.controls.phoneNumber.touched
+            ) {
+              <div class="text-danger small mt-1">Εισάγετε έγκυρο αριθμό τηλεφώνου.</div>
+            }
+          </div>
+
+          <button type="submit" class="btn submit-button">Αποθήκευση αλλαγών</button>
+        </form>
+      </div>
+    }
+  </main>
+</div>

@@ -11,7 +11,7 @@
           <a routerLink="/webinars/create">Προσθήκη νέου</a>
         </li>
       }
-        @if (isAdmin() || isParticipant()){
+      @if (isAdmin() || isParticipant()) {
         <li>
           <a routerLink="/my-webinars">Παρακολούθηση</a>
         </li>
@@ -24,6 +24,10 @@
       @if (isAdmin()) {
         <li>
           <a routerLink="/users">Χρήστες</a>
+        </li>
+
+        <li>
+          <a routerLink="/profile">Προφίλ</a>
         </li>
       }
     </ul>
