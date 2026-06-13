@@ -7,6 +7,8 @@ import com.karmperis.webinarsapp.model.User;
 import com.karmperis.webinarsapp.model.UserDetail;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 /**
  * Mapper component responsible for converting between user-related DTOs and domain entities.
  */
@@ -58,14 +60,14 @@ public class UserMapper {
             phoneNumber = user.getUserDetail().getPhoneNumber();
         }
 
-        Long roleId = (user.getRole() != null) ? user.getRole().getId() : null;
+        UUID roleUuid = (user.getRole() != null) ? user.getRole().getUuid() : null;
         String roleName = (user.getRole() != null) ? user.getRole().getName() : null;
 
         return new UserReadOnlyDTO(
                 user.getUuid(),
                 user.getUsername(),
                 user.getActive(),
-                roleId,
+                roleUuid,
                 roleName,
                 firstname,
                 lastname,

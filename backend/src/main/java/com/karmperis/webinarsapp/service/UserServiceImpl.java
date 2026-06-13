@@ -178,7 +178,7 @@ public class UserServiceImpl implements IUserService {
      * Intended for Administrator use only.
      *
      * @param uuid user UUID
-     * @param dto  updated user access data (roleId, active)
+     * @param dto  updated user access data (roleUuid, active)
      * @return the updated user mapped to a read-only DTO
      * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
      * @throws EntityInvalidArgumentException if the provided role data is invalid
@@ -197,7 +197,7 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("User", "User not found"));
 
-        Role role = roleRepository.findById(dto.roleId())
+        Role role = roleRepository.findByUuidAndDeletedAtIsNull(dto.roleUuid())
                 .orElseThrow(() -> new EntityInvalidArgumentException("Role", "Role not found"));
 
         user.setRole(role);
