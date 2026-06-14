@@ -54,14 +54,30 @@ export class Auth {
   }
 
   /**
-   * Checks whether a JWT token exists in browser local storage.
+   * Checks whether the stored JWT token is valid and not expired.
    *
-   * @returns true if the user has a stored token
+   * @returns true if the user has a valid non-expired token
    */
   isAuthenticated(): boolean {
-    return this.getToken() !== null;
+    return this.isTokenValid();
   }
 
+  /**
+   * Checks whether the stored JWT token is valid and not expired.
+   *
+   * @returns true if the JWT token exists, can be decoded and has not expired
+   */
+  isTokenValid(): boolean {
+    const payload = this.getTokenPayload();
+
+    if (!payload || !payload['exp']) {
+      return false;
+    }
+
+    const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+
+    return payload['exp'] > currentTimeInSeconds;
+  }
   /**
    * Returns the decoded JWT payload.
    *

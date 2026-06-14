@@ -1,18 +1,18 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-
-const TOKEN_KEY = 'jwtToken';
+import { Auth } from '../services/auth';
 
 /**
- * Prevents unauthenticated users from accessing protected routes.
+ * Prevents unauthenticated users or users with expired tokens from accessing protected routes.
  */
 export const authGuard: CanActivateFn = () => {
+  const auth = inject(Auth);
   const router = inject(Router);
-  const token = localStorage.getItem(TOKEN_KEY);
 
-  if (token) {
+  if (auth.isAuthenticated()) {
     return true;
   }
+  auth.logout();
   router.navigate(['/login']);
   return false;
 };
