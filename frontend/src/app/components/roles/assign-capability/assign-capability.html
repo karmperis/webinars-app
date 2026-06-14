@@ -1,0 +1,51 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <header class="content-header">
+      <div>
+        <h1>Ανάθεση δικαιώματος</h1>
+        <p>Επιλέξτε δικαίωμα για ανάθεση στον ρόλο.</p>
+      </div>
+
+      <a routerLink="/roles" class="btn btn-outline-dark">Επιστροφή</a>
+    </header>
+
+    @if (isLoading()) {
+      <div class="empty-state">Φόρτωση δικαιωμάτων...</div>
+    } @else {
+      @if (errorMessage()) {
+        <div class="alert alert-danger">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="form-card">
+        <form [formGroup]="assignForm" (ngSubmit)="onSubmit()">
+          <div class="mb-4">
+            <label class="form-label">Δικαίωμα</label>
+
+            <select class="form-select form-input" formControlName="capabilityUuid">
+              <option value="" disabled>Επιλέξτε δικαίωμα</option>
+
+              @for (capability of capabilities(); track capability.uuid) {
+                <option [value]="capability.uuid">
+                  {{ capability.name }}
+                </option>
+              }
+            </select>
+
+            @if (
+              assignForm.controls.capabilityUuid.invalid &&
+              assignForm.controls.capabilityUuid.touched
+            ) {
+              <div class="text-danger small mt-1">Το δικαίωμα είναι υποχρεωτικό.</div>
+            }
+          </div>
+
+          <button type="submit" class="btn submit-button">Ανάθεση</button>
+        </form>
+      </div>
+    }
+  </main>
+</div>

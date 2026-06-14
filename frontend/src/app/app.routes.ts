@@ -14,6 +14,10 @@ import { EditProfile } from './components/users/edit-profile/edit-profile';
 import { Roles } from './components/roles/roles/roles';
 import { CreateRole } from './components/roles/create-role/create-role';
 import { EditRole } from './components/roles/edit-role/edit-role';
+import { Capabilities } from './components/capabilities/capabilities/capabilities';
+import { CreateCapability } from './components/capabilities/create-capability/create-capability';
+import { EditCapability } from './components/capabilities/edit-capability/edit-capability';
+import { AssignCapability } from './components/roles/assign-capability/assign-capability';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -29,6 +33,10 @@ export const routes: Routes = [
   { path: 'roles', component: Roles, canActivate: [authGuard] },
   { path: 'roles/create', component: CreateRole, canActivate: [authGuard] },
   { path: 'roles/:uuid/edit', component: EditRole, canActivate: [authGuard] },
+  { path: 'capabilities', component: Capabilities, canActivate: [authGuard] },
+  { path: 'capabilities/create', component: CreateCapability, canActivate: [authGuard] },
+  { path: 'capabilities/:uuid/edit', component: EditCapability, canActivate: [authGuard] },
+  { path: 'roles/:uuid/capabilities', component: AssignCapability, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

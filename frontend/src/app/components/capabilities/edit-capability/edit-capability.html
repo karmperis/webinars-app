@@ -1,0 +1,59 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <header class="content-header">
+      <div>
+        <h1>Επεξεργασία δικαιώματος</h1>
+        <p>Ενημέρωση στοιχείων δικαιώματος.</p>
+      </div>
+
+      <a routerLink="/capabilities" class="btn btn-outline-dark"> Επιστροφή </a>
+    </header>
+
+    @if (isLoading()) {
+      <div class="empty-state">Φόρτωση δικαιώματος...</div>
+    } @else {
+      @if (errorMessage()) {
+        <div class="alert alert-danger">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="form-card">
+        <form [formGroup]="capabilityForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label">Όνομα</label>
+
+            <input type="text" class="form-control form-input" formControlName="name" />
+
+            @if (capabilityForm.controls.name.invalid && capabilityForm.controls.name.touched) {
+              <div class="text-danger small mt-1">Το όνομα πρέπει να περιέχει 4-50 χαρακτήρες.</div>
+            }
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Περιγραφή</label>
+
+            <textarea
+              rows="4"
+              class="form-control form-input"
+              formControlName="description"
+            ></textarea>
+
+            @if (
+              capabilityForm.controls.description.invalid &&
+              capabilityForm.controls.description.touched
+            ) {
+              <div class="text-danger small mt-1">
+                Η περιγραφή δεν μπορεί να ξεπερνά τους 255 χαρακτήρες.
+              </div>
+            }
+          </div>
+
+          <button type="submit" class="btn submit-button">Αποθήκευση αλλαγών</button>
+        </form>
+      </div>
+    }
+  </main>
+</div>
