@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -19,7 +19,8 @@ export class CreateWebinar {
   private readonly webinarService = inject(Webinar);
   private readonly router = inject(Router);
 
-  errorMessage = '';
+  readonly errorMessage = signal<string | null>(null);
+  readonly isSubmitting = signal(false);
 
   /**
    * Reactive form based on the backend WebinarInsertDTO.
@@ -47,7 +48,7 @@ export class CreateWebinar {
    * Submits the webinar form and creates a new webinar.
    */
   onSubmit(): void {
-    this.errorMessage = '';
+    this.errorMessage.set(null);
 
     if (this.webinarForm.invalid) {
       this.webinarForm.markAllAsTouched();
@@ -58,21 +59,25 @@ export class CreateWebinar {
     const scheduledDate = new Date(formValue.scheduledDate);
 
     if (scheduledDate <= new Date()) {
-      this.errorMessage =
-        'Η ημερομηνία και ώρα διεξαγωγής του σεμιναρίου πρέπει να είναι μεταγενέστερη από την τρέχουσα ημερομηνία και ώρα.';
+      this.errorMessage.set(
+        'Η ημερομηνία και ώρα διεξαγωγής του σεμιναρίου πρέπει να είναι μεταγενέστερη από την τρέχουσα ημερομηνία και ώρα.',
+      );
       return;
     }
     const webinarInsert = {
       ...formValue,
-      scheduledDate: new Date(formValue.scheduledDate).toISOString(),
+      scheduledDate: scheduledDate.toISOString(),
     };
+
+    this.isSubmitting.set(true);
 
     this.webinarService.createWebinar(webinarInsert).subscribe({
       next: () => {
         this.router.navigate(['/webinars']);
       },
       error: () => {
-        this.errorMessage = 'Η δημιουργία του σεμιναρίου απέτυχε.';
+        this.errorMessage.set('Η δημιουργία του σεμιναρίου απέτυχε.');
+        this.isSubmitting.set(false);
       },
     });
   }

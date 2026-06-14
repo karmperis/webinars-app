@@ -11,9 +11,9 @@
       <a routerLink="/webinars" class="btn btn-outline-dark">Επιστροφή</a>
     </header>
 
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <div class="alert alert-danger">
-        {{ errorMessage }}
+        {{ errorMessage() }}
       </div>
     }
 
@@ -71,7 +71,7 @@
           }
         </div>
 
-        <button type="submit" class="btn submit-button">Δημιουργία</button>
+        <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">Δημιουργία</button>
       </form>
     </div>
   </main>
