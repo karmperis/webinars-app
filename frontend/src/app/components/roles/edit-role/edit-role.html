@@ -1,0 +1,40 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <header class="content-header">
+      <div>
+        <h1>Επεξεργασία ρόλου</h1>
+        <p>Ενημέρωση στοιχείων ρόλου.</p>
+      </div>
+
+      <a routerLink="/roles" class="btn btn-outline-dark"> Επιστροφή </a>
+    </header>
+
+    @if (isLoading()) {
+      <div class="empty-state">Φόρτωση ρόλου...</div>
+    } @else {
+      @if (errorMessage()) {
+        <div class="alert alert-danger">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="form-card">
+        <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+          <div class="mb-4">
+            <label class="form-label">Όνομα ρόλου</label>
+
+            <input type="text" class="form-control form-input" formControlName="name" />
+
+            @if (roleForm.controls.name.invalid && roleForm.controls.name.touched) {
+              <div class="text-danger small mt-1">Το όνομα πρέπει να περιέχει 4-50 χαρακτήρες.</div>
+            }
+          </div>
+
+          <button type="submit" class="btn submit-button">Αποθήκευση αλλαγών</button>
+        </form>
+      </div>
+    }
+  </main>
+</div>

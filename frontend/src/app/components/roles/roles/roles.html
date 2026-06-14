@@ -1,0 +1,61 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <header class="content-header">
+      <div>
+        <h1>Ρόλοι</h1>
+        <p>Διαχείριση ρόλων χρηστών.</p>
+      </div>
+
+      <a routerLink="/roles/create" class="btn btn-outline-dark"> Νέος ρόλος </a>
+    </header>
+
+    @if (isLoading()) {
+      <div class="empty-state">Φόρτωση ρόλων...</div>
+    } @else if (errorMessage()) {
+      <div class="empty-state error-state">
+        {{ errorMessage() }}
+      </div>
+    } @else if (roles().length === 0) {
+      <div class="empty-state">Δεν υπάρχουν διαθέσιμοι ρόλοι.</div>
+    } @else {
+      <div class="table-container">
+        <table class="table table-striped table-hover align-middle mb-0 text-center">
+          <thead>
+            <tr>
+              <th>Όνομα ρόλου</th>
+              <th>Ενέργειες</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (role of roles(); track role.uuid) {
+              <tr>
+                <td>{{ role.name }}</td>
+                <td>
+                  <div class="d-flex justify-content-center gap-2">
+                    <a
+                      [routerLink]="['/roles', role.uuid, 'edit']"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      Επεξεργασία
+                    </a>
+
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="deleteRole(role.uuid)"
+                    >
+                      Διαγραφή
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+</div>
