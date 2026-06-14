@@ -24,6 +24,7 @@ export class Webinars implements OnInit {
   readonly webinars = signal<WebinarReadOnly[]>([]);
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadWebinars();
@@ -82,6 +83,7 @@ export class Webinars implements OnInit {
 
     this.webinarService.deleteWebinar(uuid).subscribe({
       next: () => {
+        this.successMessage.set('Το σεμινάριο διαγράφηκε επιτυχώς.');
         this.loadWebinars();
       },
       error: (error) => {
@@ -97,6 +99,9 @@ export class Webinars implements OnInit {
    * @param webinarUuid webinar UUID
    */
   enrollInWebinar(webinarUuid: string): void {
+    this.loadError.set(null);
+    this.successMessage.set(null);
+
     const userUuid = this.authService.getCurrentUserUuid();
 
     if (!userUuid) {
@@ -106,18 +111,13 @@ export class Webinars implements OnInit {
 
     this.webinarService.enrollInWebinar(webinarUuid, userUuid).subscribe({
       next: () => {
-        alert('Η εγγραφή στο σεμινάριο ολοκληρώθηκε με επιτυχία.');
+        this.successMessage.set('Η εγγραφή στο σεμινάριο ολοκληρώθηκε με επιτυχία.');
         this.loadWebinars();
       },
       error: (error) => {
         console.error('Failed to enroll in webinar', error);
         if (error.status === 409) {
           this.loadError.set('Έχετε ήδη εγγραφεί σε αυτό το σεμινάριο.');
-
-          setTimeout(() => {
-            this.loadError.set(null);
-            this.loadWebinars();
-          }, 1000);
           return;
         }
         this.loadError.set('Η εγγραφή στο σεμινάριο απέτυχε.');

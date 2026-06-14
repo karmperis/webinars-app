@@ -9,6 +9,12 @@
       </div>
     </header>
 
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        {{ successMessage() }}
+      </div>
+    }
+
     @if (isLoading()) {
       <div class="empty-state">Φόρτωση σεμιναρίων...</div>
     } @else if (loadError()) {
