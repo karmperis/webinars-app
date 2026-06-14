@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 import { Navbar } from '../../layout/navbar/navbar';
 
@@ -16,9 +17,8 @@ import { finalize } from 'rxjs';
  */
 @Component({
   selector: 'app-my-webinars',
-  imports: [Navbar, DatePipe],
+  imports: [Navbar, DatePipe, RouterLink],
   templateUrl: './my-webinars.html',
-  styleUrl: './my-webinars.css',
 })
 export class MyWebinars implements OnInit {
   private readonly webinarService = inject(Webinar);
