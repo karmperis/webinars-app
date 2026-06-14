@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 import { Navbar } from '../../layout/navbar/navbar';
 import { Auth } from '../../../shared/services/auth';
@@ -11,7 +12,7 @@ import { User } from '../../../shared/services/user';
  */
 @Component({
   selector: 'app-edit-profile',
-  imports: [ReactiveFormsModule, Navbar],
+  imports: [ReactiveFormsModule, RouterLink, Navbar],
   templateUrl: './edit-profile.html',
 })
 export class EditProfile implements OnInit {
