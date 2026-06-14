@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -18,8 +18,9 @@ export class Register {
   private readonly userService = inject(User);
   private readonly router = inject(Router);
 
-  errorMessage = '';
-  successMessage = '';
+  readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
+  readonly isSubmitting = signal(false);
 
   /**
    * Reactive registration form based on the backend UserInsertDTO.
@@ -58,8 +59,8 @@ export class Register {
    * Submits the registration form and creates a new user account.
    */
   onSubmit(): void {
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
@@ -68,13 +69,15 @@ export class Register {
 
     const { acceptTerms, ...userInsert } = this.registerForm.getRawValue();
 
+    this.isSubmitting.set(true);
+
     this.userService.createUser(userInsert).subscribe({
       next: () => {
-        this.successMessage = 'Ο λογαριασμός δημιουργήθηκε επιτυχώς.';
+        this.successMessage.set('Ο λογαριασμός δημιουργήθηκε επιτυχώς.');
         this.router.navigate(['/login']);
       },
       error: () => {
-        this.errorMessage = 'Η εγγραφή απέτυχε. Ελέγξτε τα στοιχεία σας.';
+        this.errorMessage.set('Η εγγραφή απέτυχε. Ελέγξτε τα στοιχεία σας.');
       },
     });
   }

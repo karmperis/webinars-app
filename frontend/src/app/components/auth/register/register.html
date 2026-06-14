@@ -13,15 +13,15 @@
       <div class="col-12 col-md-7 login-left">
         <h2 class="text-center mb-4">Εγγραφή</h2>
 
-        @if (errorMessage) {
+        @if (errorMessage()) {
           <div class="alert alert-danger">
-            {{ errorMessage }}
+            {{ errorMessage() }}
           </div>
         }
 
-        @if (successMessage) {
+        @if (successMessage()) {
           <div class="alert alert-success">
-            {{ successMessage }}
+            {{ successMessage() }}
           </div>
         }
 
@@ -34,7 +34,9 @@
               formControlName="firstname"
             />
 
-            @if (registerForm.controls.firstname.invalid && registerForm.controls.firstname.touched) {
+            @if (
+              registerForm.controls.firstname.invalid && registerForm.controls.firstname.touched
+            ) {
               <div class="text-danger small mt-1">Το όνομα είναι υποχρεωτικό.</div>
             }
           </div>
@@ -60,10 +62,10 @@
               formControlName="phoneNumber"
             />
 
-            @if (registerForm.controls.phoneNumber.invalid && registerForm.controls.phoneNumber.touched) {
-              <div class="text-danger small mt-1">
-                Εισάγετε έγκυρο αριθμό τηλεφώνου.
-              </div>
+            @if (
+              registerForm.controls.phoneNumber.invalid && registerForm.controls.phoneNumber.touched
+            ) {
+              <div class="text-danger small mt-1">Εισάγετε έγκυρο αριθμό τηλεφώνου.</div>
             }
           </div>
 
@@ -92,8 +94,8 @@
 
             @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
               <div class="text-danger small mt-1">
-                Ο κωδικός πρέπει να περιέχει τουλάχιστον 12 χαρακτήρες, κεφαλαίο,
-                πεζό, αριθμό και ειδικό χαρακτήρα.
+                Ο κωδικός πρέπει να περιέχει τουλάχιστον 12 χαρακτήρες, κεφαλαίο, πεζό, αριθμό και
+                ειδικό χαρακτήρα.
               </div>
             }
           </div>
@@ -110,15 +112,14 @@
               Έχω διαβάσει και αποδέχομαι τους Όρους Χρήσης.
             </label>
 
-            @if (registerForm.controls.acceptTerms.invalid &&
-            registerForm.controls.acceptTerms.touched) {
-              <div class="text-danger small mt-1">
-                Πρέπει να αποδεχθείτε τους όρους χρήσης.
-              </div>
+            @if (
+              registerForm.controls.acceptTerms.invalid && registerForm.controls.acceptTerms.touched
+            ) {
+              <div class="text-danger small mt-1">Πρέπει να αποδεχθείτε τους όρους χρήσης.</div>
             }
           </div>
 
-          <button type="submit" class="btn login-button w-100">
+          <button type="submit" class="btn login-button w-100" [disabled]="isSubmitting()">
             Εγγραφή
           </button>
         </form>
