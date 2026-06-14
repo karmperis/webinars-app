@@ -78,6 +78,7 @@ export class Register {
       },
       error: () => {
         this.errorMessage.set('Η εγγραφή απέτυχε. Ελέγξτε τα στοιχεία σας.');
+        this.isSubmitting.set(false);
       },
     });
   }
