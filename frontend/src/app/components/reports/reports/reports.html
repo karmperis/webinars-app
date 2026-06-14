@@ -1,0 +1,138 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <header class="content-header">
+      <div>
+        <h1>Αναφορές</h1>
+        <p>Δημιουργία και προβολή αναφορών συστήματος.</p>
+      </div>
+    </header>
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="form-card mb-4">
+      <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+        <div class="mb-4">
+          <label class="form-label">Τύπος αναφοράς</label>
+
+          <select class="form-select form-input" formControlName="type">
+            <option value="popularity">Δημοφιλή σεμινάρια</option>
+            <option value="productive">Παραγωγικοί διοργανωτές</option>
+            <option value="inactive">Ανενεργές εγγραφές</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn submit-button">
+          Δημιουργία αναφοράς
+        </button>
+      </form>
+    </div>
+
+    @if (isLoading()) {
+      <div class="empty-state">Δημιουργία αναφοράς...</div>
+    }
+
+    @if (reportResult()) {
+      <div class="table-container">
+        <h5 class="mb-3">Κατάσταση: {{ reportResult()?.status }}</h5>
+
+        @if (reportResult()?.data?.length === 0) {
+          <div class="empty-state">
+            Δεν υπάρχουν δεδομένα για την αναφορά.
+          </div>
+        } @else {
+          @if (selectedReportType() === 'popularity') {
+            <table class="table table-striped table-hover align-middle mb-0 text-center">
+              <thead>
+                <tr>
+                  <th>Σεμινάριο</th>
+                  <th>Διοργανωτής</th>
+                  <th>Συμμετέχοντες</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (row of reportResult()?.data ?? []; track $index) {
+                  <tr>
+                    <td>{{ row.webinarTitle }}</td>
+                    <td>
+                      {{ row.organizerFirstName }}
+                      {{ row.organizerLastName }}
+                      @if (row.organizerUsername) {
+                        ({{ row.organizerUsername }})
+                      }
+                    </td>
+                    <td>{{ row.totalParticipants }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+          @if (selectedReportType() === 'productive') {
+            <table class="table table-striped table-hover align-middle mb-0 text-center">
+              <thead>
+                <tr>
+                  <th>Διοργανωτής</th>
+                  <th>Σύνολο σεμιναρίων</th>
+                  <th>Συνολική διάρκεια</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (row of reportResult()?.data ?? []; track $index) {
+                  <tr>
+                    <td>
+                      {{ row.organizerFirstName }}
+                      {{ row.organizerLastName }}
+                      @if (row.organizerUsername) {
+                        ({{ row.organizerUsername }})
+                      }
+                    </td>
+                    <td>{{ row.totalWebinars }}</td>
+                    <td>{{ row.totalDuration }} λεπτά</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+          @if (selectedReportType() === 'inactive') {
+            <table class="table table-striped table-hover align-middle mb-0 text-center">
+              <thead>
+                <tr>
+                  <th>Σεμινάριο</th>
+                  <th>Διοργανωτής</th>
+                  <th>Κατάσταση σεμιναρίου</th>
+                  <th>Κατάσταση χρήστη</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (row of reportResult()?.data ?? []; track $index) {
+                  <tr>
+                    <td>{{ row.webinarTitle }}</td>
+                    <td>
+                      {{ row.organizerFirstName }}
+                      {{ row.organizerLastName }}
+                      @if (row.organizerUsername) {
+                        ({{ row.organizerUsername }})
+                      }
+                    </td>
+                    <td>{{ row.webinarStatus }}</td>
+                    <td>{{ row.userStatus }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        }
+      </div>
+    }
+  </main>
+</div>

@@ -18,6 +18,7 @@ import { Capabilities } from './components/capabilities/capabilities/capabilitie
 import { CreateCapability } from './components/capabilities/create-capability/create-capability';
 import { EditCapability } from './components/capabilities/edit-capability/edit-capability';
 import { AssignCapability } from './components/roles/assign-capability/assign-capability';
+import { Reports } from './components/reports/reports/reports';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -37,6 +38,7 @@ export const routes: Routes = [
   { path: 'capabilities/create', component: CreateCapability, canActivate: [authGuard] },
   { path: 'capabilities/:uuid/edit', component: EditCapability, canActivate: [authGuard] },
   { path: 'roles/:uuid/capabilities', component: AssignCapability, canActivate: [authGuard] },
+  { path: 'reports', component: Reports, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];
