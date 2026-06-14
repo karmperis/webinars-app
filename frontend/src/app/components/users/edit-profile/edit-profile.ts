@@ -1,10 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
-
 import { Auth } from '../../../shared/services/auth';
 import { User } from '../../../shared/services/user';
 
@@ -13,19 +11,20 @@ import { User } from '../../../shared/services/user';
  */
 @Component({
   selector: 'app-edit-profile',
-  imports: [ReactiveFormsModule, RouterLink, Navbar],
+  imports: [ReactiveFormsModule, Navbar],
   templateUrl: './edit-profile.html',
-  styleUrl: './edit-profile.css',
 })
 export class EditProfile implements OnInit {
   private readonly authService = inject(Auth);
   private readonly userService = inject(User);
-  private readonly router = inject(Router);
 
   private userUuid = '';
 
   readonly isLoading = signal(true);
+  readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
+  readonly warningMessage = signal<string | null>(null);
 
   /**
    * Reactive form based on the backend UserEditDTO.
@@ -88,20 +87,37 @@ export class EditProfile implements OnInit {
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
+    this.warningMessage.set(null);
 
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
       return;
     }
 
-    this.userService.updateUser(this.userUuid, this.profileForm.getRawValue()).subscribe({
-      next: () => {
-        this.router.navigate(['/webinars']);
-      },
-      error: (error) => {
-        console.error('Failed to update user profile', error);
-        this.errorMessage.set('Η ενημέρωση του προφίλ απέτυχε.');
-      },
-    });
+    if (!this.profileForm.dirty) {
+      this.warningMessage.set('Δεν υπάρχουν αλλαγές για αποθήκευση.');
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
+    this.userService
+      .updateUser(this.userUuid, this.profileForm.getRawValue())
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.successMessage.set('Το προφίλ ενημερώθηκε επιτυχώς.');
+          this.profileForm.markAsPristine();
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 1500);
+        },
+        error: (error) => {
+          console.error('Failed to update user profile', error);
+          this.errorMessage.set('Η ενημέρωση του προφίλ απέτυχε.');
+        },
+      });
   }
 }
