@@ -17,64 +17,66 @@
       <div class="empty-state">Δεν υπάρχουν διαθέσιμα σεμινάρια.</div>
     } @else {
       <div class="table-container">
-        <table class="table table-striped table-hover align-middle mb-0 text-center">
-          <thead>
-            <tr>
-              <th>Τίτλος</th>
-              <th>Περιγραφή</th>
-              <th>Ημερομηνία</th>
-              <th>Διάρκεια</th>
-              <th>Διοργανωτής</th>
-              <th>Ενέργειες</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            @for (webinar of webinars(); track webinar.uuid) {
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0 text-center">
+            <thead>
               <tr>
-                <td>{{ webinar.title }}</td>
-                <td>{{ webinar.description }}</td>
-                <td>{{ webinar.scheduledDate | date: 'dd/MM/yyyy HH:mm' }}</td>
-                <td>{{ webinar.duration }} λεπτά</td>
-                <td>
-                  {{ webinar.organizer.firstname }}
-                  {{ webinar.organizer.lastname }}
-                </td>
-
-                <td>
-                  <div class="d-flex justify-content-center gap-2">
-                    @if (canManageWebinar(webinar)) {
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-primary"
-                        (click)="editWebinar(webinar.uuid)"
-                      >
-                        Επεξεργασία
-                      </button>
-
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger"
-                        (click)="deleteWebinar(webinar.uuid)"
-                      >
-                        Διαγραφή
-                      </button>
-                    }
-                    @if (canEnrollInWebinars()) {
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-success"
-                        (click)="enrollInWebinar(webinar.uuid)"
-                      >
-                        Εγγραφή
-                      </button>
-                    }
-                  </div>
-                </td>
+                <th>Τίτλος</th>
+                <th>Περιγραφή</th>
+                <th>Ημερομηνία</th>
+                <th>Διάρκεια</th>
+                <th>Διοργανωτής</th>
+                <th>Ενέργειες</th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              @for (webinar of webinars(); track webinar.uuid) {
+                <tr>
+                  <td>{{ webinar.title }}</td>
+                  <td>{{ webinar.description }}</td>
+                  <td>{{ webinar.scheduledDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ webinar.duration }} λεπτά</td>
+                  <td>
+                    {{ webinar.organizer.firstname }}
+                    {{ webinar.organizer.lastname }}
+                  </td>
+
+                  <td>
+                    <div class="d-flex justify-content-center gap-2">
+                      @if (canManageWebinar(webinar)) {
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary"
+                          (click)="editWebinar(webinar.uuid)"
+                        >
+                          Επεξεργασία
+                        </button>
+
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger"
+                          (click)="deleteWebinar(webinar.uuid)"
+                        >
+                          Διαγραφή
+                        </button>
+                      }
+                      @if (canEnrollInWebinars()) {
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-success"
+                          (click)="enrollInWebinar(webinar.uuid)"
+                        >
+                          Εγγραφή
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     }
   </main>
