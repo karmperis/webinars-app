@@ -1,11 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
-
 import { Report } from '../../../shared/services/report';
-
 import { JobStatus } from '../../../shared/interfaces/job-status';
 
 /**
@@ -14,7 +12,7 @@ import { JobStatus } from '../../../shared/interfaces/job-status';
 
 @Component({
   selector: 'app-reports',
-  imports: [ReactiveFormsModule, RouterLink, Navbar],
+  imports: [ReactiveFormsModule, Navbar],
   templateUrl: './reports.html',
 })
 export class Reports {
@@ -68,16 +66,17 @@ export class Reports {
    * @param jobId report job identifier
    */
   private loadReport(jobId: string): void {
-    this.reportService.getReport(jobId).subscribe({
-      next: (report) => {
-        this.reportResult.set(report);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        console.error('Failed to load report', error);
-        this.errorMessage.set('Η φόρτωση της αναφοράς απέτυχε.');
-        this.isLoading.set(false);
-      },
-    });
+    this.reportService
+      .getReport(jobId)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (report) => {
+          this.reportResult.set(report);
+        },
+        error: (error) => {
+          console.error('Failed to load report', error);
+          this.errorMessage.set('Η φόρτωση της αναφοράς απέτυχε.');
+        },
+      });
   }
 }
