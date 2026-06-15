@@ -6,5 +6,5 @@ export interface UserInsert {
   password: string;
   firstname: string;
   lastname: string;
-  phoneNumber: string;
+  phoneNumber: string | null;
 }

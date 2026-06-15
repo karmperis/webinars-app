@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { User } from '../../../shared/services/user';
 
@@ -14,7 +15,7 @@ import { User } from '../../../shared/services/user';
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
-export class Register {
+export class Register implements OnInit {
   private readonly userService = inject(User);
   private readonly router = inject(Router);
 
@@ -55,6 +56,12 @@ export class Register {
     }),
   });
 
+  ngOnInit(): void {
+    this.registerForm.valueChanges.subscribe(() => {
+      this.errorMessage.set(null);
+      this.successMessage.set(null);
+    });
+  }
   /**
    * Submits the registration form and creates a new user account.
    */
@@ -67,19 +74,35 @@ export class Register {
       return;
     }
 
-    const { acceptTerms, ...userInsert } = this.registerForm.getRawValue();
+    const { acceptTerms, ...formValue } = this.registerForm.getRawValue();
+
+    const userInsert = {
+      ...formValue,
+      phoneNumber: formValue.phoneNumber.trim() || null,
+    };
 
     this.isSubmitting.set(true);
 
-    this.userService.createUser(userInsert).subscribe({
-      next: () => {
-        this.successMessage.set('Ο λογαριασμός δημιουργήθηκε επιτυχώς.');
-        this.router.navigate(['/login']);
-      },
-      error: () => {
-        this.errorMessage.set('Η εγγραφή απέτυχε. Ελέγξτε τα στοιχεία σας.');
-        this.isSubmitting.set(false);
-      },
-    });
+    this.userService
+      .createUser(userInsert)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.successMessage.set(
+            'Ο λογαριασμός δημιουργήθηκε επιτυχώς. Θα μεταφερθείτε στη σελίδα σύνδεσης.',
+          );
+
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+        },
+        error: (error) => {
+          if (error.status === 409) {
+            this.errorMessage.set('Το όνομα χρήστη χρησιμοποιείται ήδη.');
+            return;
+          }
+          this.errorMessage.set('Η εγγραφή απέτυχε. Ελέγξτε τα στοιχεία σας.');
+        },
+      });
   }
 }
