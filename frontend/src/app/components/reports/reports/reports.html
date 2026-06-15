@@ -127,8 +127,8 @@
                           ({{ row.organizerUsername }})
                         }
                       </td>
-                      <td>{{ row.webinarStatus }}</td>
-                      <td>{{ row.userStatus }}</td>
+                      <td>{{ formatWebinarStatus(row.webinarStatus) }}</td>
+                      <td>{{ formatUserStatus(row.userStatus) }}</td>
                     </tr>
                   }
                 </tbody>

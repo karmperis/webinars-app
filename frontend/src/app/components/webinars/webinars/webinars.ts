@@ -15,7 +15,6 @@ import { Auth } from '../../../shared/services/auth';
   selector: 'app-webinars',
   imports: [Navbar, DatePipe],
   templateUrl: './webinars.html',
-  styleUrl: './webinars.css',
 })
 export class Webinars implements OnInit {
   private readonly webinarService = inject(Webinar);

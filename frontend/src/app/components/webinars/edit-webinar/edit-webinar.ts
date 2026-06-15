@@ -13,7 +13,6 @@ import { Webinar } from '../../../shared/services/webinar';
   selector: 'app-edit-webinar',
   imports: [ReactiveFormsModule, RouterLink, Navbar],
   templateUrl: './edit-webinar.html',
-  styleUrl: './edit-webinar.css',
 })
 export class EditWebinar implements OnInit {
   private readonly webinarService = inject(Webinar);

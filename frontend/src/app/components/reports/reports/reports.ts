@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { finalize, switchMap, takeWhile, timer } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
 import { Report } from '../../../shared/services/report';
@@ -66,12 +66,19 @@ export class Reports {
    * @param jobId report job identifier
    */
   private loadReport(jobId: string): void {
-    this.reportService
-      .getReport(jobId)
-      .pipe(finalize(() => this.isLoading.set(false)))
+    timer(0, 800)
+      .pipe(
+        switchMap(() => this.reportService.getReport(jobId)),
+        takeWhile((report) => report.status === 'IN_PROGRESS', true),
+        finalize(() => this.isLoading.set(false)),
+      )
       .subscribe({
         next: (report) => {
           this.reportResult.set(report);
+
+          if (report.status === 'FAILED') {
+            this.errorMessage.set('Η δημιουργία της αναφοράς απέτυχε.');
+          }
         },
         error: (error) => {
           console.error('Failed to load report', error);
@@ -79,4 +86,40 @@ export class Reports {
         },
       });
   }
+
+  /**
+ * Converts backend webinar status keys to Greek UI labels.
+ *
+ * @param status backend status key
+ * @returns Greek display label
+ */
+formatWebinarStatus(status?: string): string {
+  switch (status) {
+    case 'status.webinar.DELETED':
+      return 'Διαγραμμένο';
+    case 'status.webinar.ACTIVE':
+      return 'Ενεργό';
+    default:
+      return '-';
+  }
+}
+
+/**
+ * Converts backend user status keys to Greek UI labels.
+ *
+ * @param status backend status key
+ * @returns Greek display label
+ */
+formatUserStatus(status?: string): string {
+  switch (status) {
+    case 'status.user.DELETED':
+      return 'Διαγραμμένος';
+    case 'status.user.INACTIVE':
+      return 'Ανενεργός';
+    case 'status.user.ACTIVE':
+      return 'Ενεργός';
+    default:
+      return '-';
+  }
+}
 }

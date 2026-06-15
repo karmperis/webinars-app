@@ -17,7 +17,6 @@ import { RoleReadOnly } from '../../../shared/interfaces/role-read-only';
   selector: 'app-edit-user-access',
   imports: [ReactiveFormsModule, RouterLink, Navbar],
   templateUrl: './edit-user-access.html',
-  styleUrl: './edit-user-access.css',
 })
 export class EditUserAccess implements OnInit {
   private readonly userService = inject(User);

@@ -18,7 +18,6 @@ import { WebinarReadOnly } from '../../../shared/interfaces/webinar-read-only';
   selector: 'app-organizer-webinars',
   imports: [Navbar, DatePipe],
   templateUrl: './organizer-webinars.html',
-  styleUrl: './organizer-webinars.css',
 })
 export class OrganizerWebinars implements OnInit {
   private readonly webinarService = inject(Webinar);
