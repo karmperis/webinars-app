@@ -1,6 +1,5 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-
-const TOKEN_KEY = 'jwtToken';
+import { TOKEN_KEY } from '../constants/auth.constants';
 
 /**
  * Adds the JWT bearer token to outgoing HTTP requests when available.
