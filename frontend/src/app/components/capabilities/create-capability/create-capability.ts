@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
 
@@ -19,6 +20,7 @@ export class CreateCapability {
   private readonly router = inject(Router);
 
   readonly errorMessage = signal<string | null>(null);
+  readonly isSubmitting = signal(false);
 
   /**
    * Reactive form based on the backend CapabilityInsertDTO.
@@ -45,14 +47,19 @@ export class CreateCapability {
       return;
     }
 
-    this.capabilityService.createCapability(this.capabilityForm.getRawValue()).subscribe({
-      next: () => {
-        this.router.navigate(['/capabilities']);
-      },
-      error: (error) => {
-        console.error('Failed to create capability', error);
-        this.errorMessage.set('Η δημιουργία του δικαιώματος απέτυχε.');
-      },
-    });
+    this.isSubmitting.set(true);
+
+    this.capabilityService
+      .createCapability(this.capabilityForm.getRawValue())
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/capabilities']);
+        },
+        error: (error) => {
+          console.error('Failed to create capability', error);
+          this.errorMessage.set('Η δημιουργία του δικαιώματος απέτυχε.');
+        },
+      });
   }
 }

@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
 import { Webinar } from '../../../shared/services/webinar';
@@ -23,6 +24,7 @@ export class EditWebinar implements OnInit {
 
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
+  readonly isSubmitting = signal(false);
 
   /**
    * Reactive form based on the backend WebinarEditDTO.
@@ -62,23 +64,23 @@ export class EditWebinar implements OnInit {
    * Loads the selected webinar and fills the edit form.
    */
   private loadWebinar(): void {
-    this.webinarService.getWebinarByUuid(this.webinarUuid).subscribe({
-      next: (webinar) => {
-        this.webinarForm.patchValue({
-          title: webinar.title,
-          description: webinar.description,
-          scheduledDate: this.toDateTimeLocalValue(webinar.scheduledDate),
-          duration: webinar.duration,
-        });
-
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        console.error('Failed to load webinar', error);
-        this.errorMessage.set('Απέτυχε η φόρτωση του σεμιναρίου.');
-        this.isLoading.set(false);
-      },
-    });
+    this.webinarService
+      .getWebinarByUuid(this.webinarUuid)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (webinar) => {
+          this.webinarForm.patchValue({
+            title: webinar.title,
+            description: webinar.description,
+            scheduledDate: this.toDateTimeLocalValue(webinar.scheduledDate),
+            duration: webinar.duration,
+          });
+        },
+        error: (error) => {
+          console.error('Failed to load webinar', error);
+          this.errorMessage.set('Απέτυχε η φόρτωση του σεμιναρίου.');
+        },
+      });
   }
 
   /**
@@ -107,15 +109,20 @@ export class EditWebinar implements OnInit {
       scheduledDate: scheduledDate.toISOString(),
     };
 
-    this.webinarService.updateWebinar(this.webinarUuid, webinarEdit).subscribe({
-      next: () => {
-        this.router.navigate(['/webinars']);
-      },
-      error: (error) => {
-        console.error('Failed to update webinar', error);
-        this.errorMessage.set('Η ενημέρωση του σεμιναρίου απέτυχε.');
-      },
-    });
+    this.isSubmitting.set(true);
+
+    this.webinarService
+      .updateWebinar(this.webinarUuid, webinarEdit)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/webinars']);
+        },
+        error: (error) => {
+          console.error('Failed to update webinar', error);
+          this.errorMessage.set('Η ενημέρωση του σεμιναρίου απέτυχε.');
+        },
+      });
   }
 
   /**

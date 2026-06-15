@@ -48,7 +48,9 @@
           }
         </div>
 
-        <button type="submit" class="btn submit-button">Δημιουργία</button>
+        <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">
+          Δημιουργία
+        </button>
       </form>
     </div>
   </main>

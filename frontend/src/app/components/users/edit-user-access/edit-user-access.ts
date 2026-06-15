@@ -28,6 +28,7 @@ export class EditUserAccess implements OnInit {
 
   readonly roles = signal<RoleReadOnly[]>([]);
   readonly isLoading = signal(true);
+  readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
   /**
@@ -94,14 +95,19 @@ export class EditUserAccess implements OnInit {
       return;
     }
 
-    this.userService.updateUserAccess(this.userUuid, this.accessForm.getRawValue()).subscribe({
-      next: () => {
-        this.router.navigate(['/users']);
-      },
-      error: (error) => {
-        console.error('Failed to update user access', error);
-        this.errorMessage.set('Η ενημέρωση πρόσβασης χρήστη απέτυχε.');
-      },
-    });
+    this.isSubmitting.set(true);
+    
+    this.userService
+      .updateUserAccess(this.userUuid, this.accessForm.getRawValue())
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/users']);
+        },
+        error: (error) => {
+          console.error('Failed to update user access', error);
+          this.errorMessage.set('Η ενημέρωση πρόσβασης χρήστη απέτυχε.');
+        },
+      });
   }
 }

@@ -23,6 +23,7 @@ export class EditCapability implements OnInit {
   private capabilityUuid = '';
 
   readonly isLoading = signal(true);
+  readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
   /**
@@ -31,11 +32,7 @@ export class EditCapability implements OnInit {
   capabilityForm = new FormGroup({
     name: new FormControl('', {
       nonNullable: true,
-      validators: [
-        Validators.required,
-        Validators.minLength(4),
-        Validators.maxLength(50),
-      ],
+      validators: [Validators.required, Validators.minLength(4), Validators.maxLength(50)],
     }),
     description: new FormControl('', {
       nonNullable: true,
@@ -90,8 +87,11 @@ export class EditCapability implements OnInit {
       return;
     }
 
+    this.isSubmitting.set(true);
+
     this.capabilityService
       .updateCapability(this.capabilityUuid, this.capabilityForm.getRawValue())
+      .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
           this.router.navigate(['/capabilities']);

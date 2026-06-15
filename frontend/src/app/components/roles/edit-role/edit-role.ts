@@ -24,6 +24,7 @@ export class EditRole implements OnInit {
 
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
+  readonly isSubmitting = signal(false);
 
   /**
    * Reactive form based on the backend RoleEditDTO.
@@ -81,14 +82,19 @@ export class EditRole implements OnInit {
       return;
     }
 
-    this.roleService.updateRole(this.roleUuid, this.roleForm.getRawValue()).subscribe({
-      next: () => {
-        this.router.navigate(['/roles']);
-      },
-      error: (error) => {
-        console.error('Failed to update role', error);
-        this.errorMessage.set('Η ενημέρωση του ρόλου απέτυχε.');
-      },
-    });
+    this.isSubmitting.set(true);
+
+    this.roleService
+      .updateRole(this.roleUuid, this.roleForm.getRawValue())
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/roles']);
+        },
+        error: (error) => {
+          console.error('Failed to update role', error);
+          this.errorMessage.set('Η ενημέρωση του ρόλου απέτυχε.');
+        },
+      });
   }
 }

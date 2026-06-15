@@ -40,7 +40,9 @@
             <label class="form-check-label" for="active">Ενεργός/Ανενεργός</label>
           </div>
 
-          <button type="submit" class="btn submit-button">Αποθήκευση</button>
+          <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">
+            Αποθήκευση
+          </button>
         </form>
       </div>
     }

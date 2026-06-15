@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize, forkJoin } from 'rxjs';
+import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
 
@@ -28,6 +28,7 @@ export class AssignCapability implements OnInit {
 
   readonly capabilities = signal<CapabilityReadOnly[]>([]);
   readonly isLoading = signal(true);
+  readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
   /**
@@ -86,14 +87,19 @@ export class AssignCapability implements OnInit {
 
     const capabilityUuid = this.assignForm.controls.capabilityUuid.value;
 
-    this.roleService.assignCapabilityToRole(this.roleUuid, capabilityUuid).subscribe({
-      next: () => {
-        this.router.navigate(['/roles']);
-      },
-      error: (error) => {
-        console.error('Failed to assign capability to role', error);
-        this.errorMessage.set('Η ανάθεση δικαιώματος στον ρόλο απέτυχε.');
-      },
-    });
+    this.isSubmitting.set(true);
+
+    this.roleService
+      .assignCapabilityToRole(this.roleUuid, capabilityUuid)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/roles']);
+        },
+        error: (error) => {
+          console.error('Failed to assign capability to role', error);
+          this.errorMessage.set('Η ανάθεση δικαιώματος στον ρόλο απέτυχε.');
+        },
+      });
   }
 }

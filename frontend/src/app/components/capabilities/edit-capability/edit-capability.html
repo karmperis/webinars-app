@@ -51,7 +51,9 @@
             }
           </div>
 
-          <button type="submit" class="btn submit-button">Αποθήκευση αλλαγών</button>
+          <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">
+            Αποθήκευση αλλαγών
+          </button>
         </form>
       </div>
     }

@@ -43,7 +43,9 @@
             }
           </div>
 
-          <button type="submit" class="btn submit-button">Ανάθεση</button>
+          <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">
+            Ανάθεση
+          </button>
         </form>
       </div>
     }

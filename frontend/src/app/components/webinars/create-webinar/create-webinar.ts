@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Webinar } from '../../../shared/services/webinar';
 import { Navbar } from '../../layout/navbar/navbar';
@@ -71,14 +72,16 @@ export class CreateWebinar {
 
     this.isSubmitting.set(true);
 
-    this.webinarService.createWebinar(webinarInsert).subscribe({
-      next: () => {
-        this.router.navigate(['/webinars']);
-      },
-      error: () => {
-        this.errorMessage.set('Η δημιουργία του σεμιναρίου απέτυχε.');
-        this.isSubmitting.set(false);
-      },
-    });
+    this.webinarService
+      .createWebinar(webinarInsert)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/webinars']);
+        },
+        error: () => {
+          this.errorMessage.set('Η δημιουργία του σεμιναρίου απέτυχε.');
+        },
+      });
   }
 }
