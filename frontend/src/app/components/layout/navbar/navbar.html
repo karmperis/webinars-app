@@ -45,5 +45,17 @@
     </ul>
   </div>
 
+  @if (currentUser()) {
+  <div class="sidebar-user">
+    <div class="sidebar-user-name">
+      {{ currentUser()?.firstname }} {{ currentUser()?.lastname }}
+    </div>
+
+    <div class="sidebar-user-role">
+      {{ currentUser()?.roleName }}
+    </div>
+  </div>
+}
+
   <button type="button" class="logout-button" (click)="logout()">Αποσύνδεση</button>
 </nav>

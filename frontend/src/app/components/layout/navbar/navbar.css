@@ -52,3 +52,25 @@
   background: #ffffff;
   color: #000000;
 }
+
+/* Current user */
+
+.sidebar-user {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-user-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.sidebar-user-role {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #cfcfcf;
+  letter-spacing: 0.05rem;
+}
