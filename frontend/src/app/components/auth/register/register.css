@@ -32,3 +32,61 @@
   text-align: center;
   gap: 2rem;
 }
+
+/* Register input groups */
+
+.register-icon {
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf1fb !important;
+  border: 1px solid #c8c8c8 !important;
+  border-radius: 0 !important;
+}
+
+.register-icon i {
+  font-size: 1rem;
+  color: #111827;
+}
+
+/* Password visibility button */
+
+.password-toggle-button {
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf1fb !important;
+  border: 1px solid #c8c8c8 !important;
+  border-left: 0 !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+}
+
+.password-toggle-button:hover {
+  background: #dde8f8 !important;
+}
+
+.password-toggle-button:focus {
+  box-shadow: none !important;
+}
+
+.password-toggle-button i {
+  font-size: 1rem;
+  color: #111827;
+}
+
+/* Focus states */
+
+.form-input:focus,
+.login-input:focus {
+  box-shadow: none !important;
+  border-color: #c8c8c8 !important;
+}
+
+.input-group:focus-within .register-icon,
+.input-group:focus-within .password-toggle-button {
+  border-color: #c8c8c8 !important;
+  box-shadow: none !important;
+}

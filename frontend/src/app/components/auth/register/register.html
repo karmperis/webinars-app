@@ -27,12 +27,18 @@
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="mb-3">
-            <input
-              type="text"
-              class="form-control login-input"
-              placeholder="Όνομα"
-              formControlName="firstname"
-            />
+            <div class="input-group">
+              <span class="input-group-text register-icon">
+                <i class="fa-solid fa-circle-user"></i>
+              </span>
+
+              <input
+                type="text"
+                class="form-control login-input"
+                placeholder="Όνομα"
+                formControlName="firstname"
+              />
+            </div>
 
             @if (
               registerForm.controls.firstname.invalid && registerForm.controls.firstname.touched
@@ -42,12 +48,18 @@
           </div>
 
           <div class="mb-3">
-            <input
-              type="text"
-              class="form-control login-input"
-              placeholder="Επώνυμο"
-              formControlName="lastname"
-            />
+            <div class="input-group">
+              <span class="input-group-text register-icon">
+                <i class="fa-solid fa-circle-user"></i>
+              </span>
+
+              <input
+                type="text"
+                class="form-control login-input"
+                placeholder="Επώνυμο"
+                formControlName="lastname"
+              />
+            </div>
 
             @if (registerForm.controls.lastname.invalid && registerForm.controls.lastname.touched) {
               <div class="text-danger small mt-1">Το επώνυμο είναι υποχρεωτικό.</div>
@@ -55,12 +67,18 @@
           </div>
 
           <div class="mb-3">
-            <input
-              type="tel"
-              class="form-control login-input"
-              placeholder="Τηλέφωνο"
-              formControlName="phoneNumber"
-            />
+            <div class="input-group">
+              <span class="input-group-text register-icon">
+                <i class="fa-solid fa-phone"></i>
+              </span>
+
+              <input
+                type="tel"
+                class="form-control login-input"
+                placeholder="Τηλέφωνο"
+                formControlName="phoneNumber"
+              />
+            </div>
 
             @if (
               registerForm.controls.phoneNumber.invalid && registerForm.controls.phoneNumber.touched
@@ -70,12 +88,18 @@
           </div>
 
           <div class="mb-3">
-            <input
-              type="text"
-              class="form-control login-input"
-              placeholder="Όνομα χρήστη"
-              formControlName="username"
-            />
+            <div class="input-group">
+              <span class="input-group-text register-icon">
+                <i class="fa-solid fa-user"></i>
+              </span>
+
+              <input
+                type="text"
+                class="form-control login-input"
+                placeholder="Όνομα χρήστη"
+                formControlName="username"
+              />
+            </div>
 
             @if (registerForm.controls.username.invalid && registerForm.controls.username.touched) {
               <div class="text-danger small mt-1">
@@ -85,12 +109,26 @@
           </div>
 
           <div class="mb-3">
-            <input
-              type="password"
-              class="form-control login-input"
-              placeholder="Κωδικός πρόσβασης"
-              formControlName="password"
-            />
+            <div class="input-group">
+              <span class="input-group-text register-icon">
+                <i class="fa-solid fa-lock"></i>
+              </span>
+
+              <input
+                [type]="showPassword() ? 'text' : 'password'"
+                class="form-control login-input"
+                placeholder="Κωδικός πρόσβασης"
+                formControlName="password"
+              />
+
+              <button
+                type="button"
+                class="password-toggle-button"
+                (click)="togglePasswordVisibility()"
+              >
+                <i [class]="!showPassword() ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+              </button>
+            </div>
 
             @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
               <div class="text-danger small mt-1">
@@ -119,8 +157,7 @@
             }
           </div>
 
-          <button type="submit" class="btn login-button w-100" [disabled]="isSubmitting()">
-            Εγγραφή
+          <button type="submit" class="btn login-button w-100" [disabled]="isSubmitting()">{{ isSubmitting() ? 'Γίνεται εγγραφή...' : 'Εγγραφή' }}
           </button>
         </form>
       </div>

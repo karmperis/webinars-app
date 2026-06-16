@@ -22,6 +22,7 @@ export class Register implements OnInit {
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
   readonly isSubmitting = signal(false);
+  readonly showPassword = signal(false);
 
   /**
    * Reactive registration form based on the backend UserInsertDTO.
@@ -62,6 +63,14 @@ export class Register implements OnInit {
       this.successMessage.set(null);
     });
   }
+
+  /**
+   * Toggles the visibility of the password field.
+   */
+  togglePasswordVisibility(): void {
+    this.showPassword.update((currentValue) => !currentValue);
+  }
+
   /**
    * Submits the registration form and creates a new user account.
    */
