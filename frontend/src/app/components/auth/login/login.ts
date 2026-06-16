@@ -19,6 +19,7 @@ export class Login {
   private readonly router = inject(Router);
 
   readonly errorMessage = signal<string | null>(null);
+  readonly showPassword = signal(false);
 
   /**
    * Reactive login form containing username and password fields.
@@ -32,6 +33,9 @@ export class Login {
       nonNullable: true,
       validators: [Validators.required],
     }),
+    rememberMe: new FormControl(false, {
+      nonNullable: true,
+    }),
   });
 
   /**
@@ -44,14 +48,22 @@ export class Login {
       return;
     }
 
-    this.auth.login(this.loginForm.getRawValue()).subscribe({
+    const { rememberMe, ...credentials } = this.loginForm.getRawValue();
+
+    this.auth.login(credentials).subscribe({
       next: (response) => {
-        this.auth.saveToken(response.token);
+        this.auth.saveToken(response.token, rememberMe);
         this.router.navigate(['/webinars']);
       },
       error: () => {
         this.errorMessage.set('Τα στοιχεία σύνδεσης δεν είναι σωστά.');
       },
     });
+  }
+  /**
+   * Toggles password visibility in the login form.
+   */
+  togglePasswordVisibility(): void {
+    this.showPassword.update((value) => !value);
   }
 }

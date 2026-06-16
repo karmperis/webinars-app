@@ -5,7 +5,8 @@ import { TOKEN_KEY } from '../constants/auth.constants';
  * Adds the JWT bearer token to outgoing HTTP requests when available.
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem(TOKEN_KEY);
+  const token = localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
+
   if (!token) {
     return next(req);
   }

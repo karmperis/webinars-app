@@ -28,28 +28,31 @@ export class Auth {
   }
 
   /**
-   * Stores the JWT token in browser local storage.
+   * Stores the JWT token either persistently or for the current browser session.
    *
    * @param token JWT token returned by the backend
+   * @param rememberMe whether the token should persist after closing the browser
    */
-  saveToken(token: string): void {
-    localStorage.setItem(TOKEN_KEY, token);
+  saveToken(token: string, rememberMe: boolean = false): void {
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem(TOKEN_KEY, token);
   }
 
   /**
-   * Retrieves the JWT token from browser local storage.
+   * Retrieves the JWT token from browser storage.
    *
    * @returns stored JWT token or null if the user is not authenticated
    */
   getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
   }
 
   /**
-   * Removes the JWT token from browser local storage.
+   * Removes the JWT token from browser storage.
    */
   logout(): void {
     localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
   }
 
   /**
