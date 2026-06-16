@@ -71,7 +71,9 @@
             <label class="form-check-label" for="rememberMe"> Να με θυμάσαι </label>
           </div>
 
-          <button type="submit" class="btn login-button w-100 mt-4">Σύνδεση</button>
+          <button type="submit" class="btn login-button w-100 mt-4" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Γίνεται σύνδεση...' : 'Σύνδεση' }}
+          </button>
         </form>
       </div>
 

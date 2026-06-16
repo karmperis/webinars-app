@@ -1,23 +1,24 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 import { Auth } from '../../../shared/services/auth';
 
+/**
+ * Login component responsible for authenticating users and storing JWT tokens.
+ */
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-
-/**
- * Login component responsible for authenticating users and storing JWT tokens.
- */
 export class Login {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
 
+  readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly showPassword = signal(false);
 
@@ -39,6 +40,13 @@ export class Login {
   });
 
   /**
+   * Toggles password visibility in the login form.
+   */
+  togglePasswordVisibility(): void {
+    this.showPassword.update((currentValue) => !currentValue);
+  }
+
+  /**
    * Submits the login form and stores the JWT token on success.
    */
   onSubmit(): void {
@@ -50,20 +58,19 @@ export class Login {
 
     const { rememberMe, ...credentials } = this.loginForm.getRawValue();
 
-    this.auth.login(credentials).subscribe({
-      next: (response) => {
-        this.auth.saveToken(response.token, rememberMe);
-        this.router.navigate(['/webinars']);
-      },
-      error: () => {
-        this.errorMessage.set('Τα στοιχεία σύνδεσης δεν είναι σωστά.');
-      },
-    });
-  }
-  /**
-   * Toggles password visibility in the login form.
-   */
-  togglePasswordVisibility(): void {
-    this.showPassword.update((value) => !value);
+    this.isSubmitting.set(true);
+
+    this.auth
+      .login(credentials)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.auth.saveToken(response.token, rememberMe);
+          this.router.navigate(['/webinars']);
+        },
+        error: () => {
+          this.errorMessage.set('Τα στοιχεία σύνδεσης δεν είναι σωστά.');
+        },
+      });
   }
 }
