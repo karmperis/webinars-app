@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { Navbar } from '../../layout/navbar/navbar';
 import { Auth } from '../../../shared/services/auth';
@@ -18,6 +18,7 @@ import { User } from '../../../shared/services/user';
 export class EditProfile implements OnInit {
   private readonly authService = inject(Auth);
   private readonly userService = inject(User);
+  private readonly router = inject(Router);
 
   private userUuid = '';
 
@@ -112,7 +113,7 @@ export class EditProfile implements OnInit {
           this.profileForm.markAsPristine();
 
           setTimeout(() => {
-            this.successMessage.set(null);
+            this.router.navigate(['/webinars']);
           }, 1500);
         },
         error: (error) => {
