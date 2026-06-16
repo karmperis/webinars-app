@@ -5,7 +5,7 @@
     <header class="content-header">
       <div>
         <h1>Σεμινάρια</h1>
-        <p>Λίστα ενεργών σεμιναρίων.</p>
+        <p>Λίστα σεμιναρίων για εγγραφή.</p>
       </div>
     </header>
 
@@ -70,10 +70,13 @@
                       @if (canEnrollInWebinars()) {
                         <button
                           type="button"
-                          class="btn btn-sm btn-outline-success"
+                          class="btn btn-sm"
+                          [class.btn-outline-success]="!isAlreadyEnrolled(webinar.uuid)"
+                          [class.btn-outline-secondary]="isAlreadyEnrolled(webinar.uuid)"
+                          [disabled]="isAlreadyEnrolled(webinar.uuid)"
                           (click)="enrollInWebinar(webinar.uuid)"
                         >
-                          Εγγραφή
+                          {{ isAlreadyEnrolled(webinar.uuid) ? 'Εγγεγραμμένος' : 'Εγγραφή' }}
                         </button>
                       }
                     </div>

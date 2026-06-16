@@ -21,12 +21,14 @@ export class Webinars implements OnInit {
   private readonly authService = inject(Auth);
   private readonly router = inject(Router);
   readonly webinars = signal<WebinarReadOnly[]>([]);
+  readonly enrolledWebinarUuids = signal<Set<string>>(new Set());
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadWebinars();
+    this.loadEnrolledWebinars();
   }
 
   /**
@@ -50,6 +52,16 @@ export class Webinars implements OnInit {
   }
 
   /**
+   * Checks whether the current user is already enrolled in the given webinar.
+   *
+   * @param webinarUuid webinar UUID
+   * @returns true if the current user is already enrolled
+   */
+  isAlreadyEnrolled(webinarUuid: string): boolean {
+    return this.enrolledWebinarUuids().has(webinarUuid);
+  }
+
+  /**
    * Loads webinars from the backend API.
    */
   private loadWebinars(): void {
@@ -68,6 +80,29 @@ export class Webinars implements OnInit {
           this.loadError.set('Απέτυχε η φόρτωση των σεμιναρίων.');
         },
       });
+  }
+
+  /**
+   * Loads the webinars where the current user is already enrolled.
+   */
+  private loadEnrolledWebinars(): void {
+    const userUuid = this.authService.getCurrentUserUuid();
+
+    if (!userUuid) {
+      this.enrolledWebinarUuids.set(new Set());
+      return;
+    }
+
+    this.webinarService.getWebinarsByParticipant(userUuid).subscribe({
+      next: (page) => {
+        const enrolledUuids = new Set((page.content ?? []).map((webinar) => webinar.uuid));
+        this.enrolledWebinarUuids.set(enrolledUuids);
+      },
+      error: (error) => {
+        console.error('Failed to load enrolled webinars', error);
+        this.enrolledWebinarUuids.set(new Set());
+      },
+    });
   }
 
   /**
@@ -112,6 +147,11 @@ export class Webinars implements OnInit {
       next: () => {
         this.successMessage.set('Η εγγραφή στο σεμινάριο ολοκληρώθηκε με επιτυχία.');
         this.loadWebinars();
+        this.loadEnrolledWebinars();
+
+        setTimeout(() => {
+            this.successMessage.set(null);
+          }, 1500);
       },
       error: (error) => {
         console.error('Failed to enroll in webinar', error);
