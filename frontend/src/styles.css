@@ -49,6 +49,25 @@
   padding: 2rem;
 }
 
+/* Auth layout */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #f5f7fa;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 1000px;
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
 /* States */
 
 .empty-state {
@@ -86,6 +105,59 @@
 .form-check-label {
   font-weight: 600 !important;
   margin-bottom: 0.5rem !important;
+}
+
+/* Auth input groups */
+
+.login-icon,
+.register-icon {
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf1fb !important;
+  border: 1px solid #c8c8c8 !important;
+  border-radius: 0 !important;
+}
+
+.login-icon i,
+.register-icon i,
+.password-toggle-button i {
+  font-size: 1rem;
+  color: #111827;
+}
+
+.password-toggle-button {
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf1fb !important;
+  border: 1px solid #c8c8c8 !important;
+  border-left: 0 !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+}
+
+.password-toggle-button:hover {
+  background: #dde8f8 !important;
+}
+
+.password-toggle-button:focus {
+  box-shadow: none !important;
+}
+
+.form-input:focus,
+.login-input:focus {
+  background-color: #fff3bf !important;
+  box-shadow: 0 0 0 0.10rem rgba(255, 212, 59, 0.35) !important;
+}
+
+.input-group:focus-within .login-icon,
+.input-group:focus-within .register-icon,
+.input-group:focus-within .password-toggle-button {
+  background-color: #fff3bf !important;
+  box-shadow: 0 0 0 0.10rem rgba(255, 212, 59, 0.35) !important;
 }
 
 /* Buttons */

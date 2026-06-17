@@ -1,22 +1,5 @@
 /* Login page layout */
 
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: #f5f7fa;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 1000px;
-  background: #ffffff;
-  border: 1px solid #dcdcdc;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
-}
-
 .login-left {
   padding: 3rem 2.5rem;
 }
@@ -31,60 +14,4 @@
   align-items: center;
   text-align: center;
   gap: 2rem;
-}
-
-/* Login input groups */
-
-.login-icon {
-  min-width: 48px;
-  justify-content: center;
-  background: #eaf1fb !important;
-  border: 1px solid #c8c8c8 !important;
-  border-radius: 0 !important;
-}
-
-.login-icon i {
-  font-size: 1rem;
-  color: #111827;
-}
-
-/* Password visibility button */
-
-.password-toggle-button {
-  min-width: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #eaf1fb !important;
-  border: 1px solid #c8c8c8 !important;
-  border-left: 0 !important;
-  border-radius: 0 !important;
-  cursor: pointer;
-}
-
-.password-toggle-button:hover {
-  background: #dde8f8 !important;
-}
-
-.password-toggle-button:focus {
-  box-shadow: none !important;
-}
-
-.password-toggle-button i {
-  font-size: 1rem;
-  color: #111827;
-}
-
-/* Focus states */
-
-.form-input:focus,
-.login-input:focus {
-  box-shadow: none !important;
-  border-color: #c8c8c8 !important;
-}
-
-.input-group:focus-within .login-icon,
-.input-group:focus-within .password-toggle-button {
-  border-color: #c8c8c8 !important;
-  box-shadow: none !important;
 }
