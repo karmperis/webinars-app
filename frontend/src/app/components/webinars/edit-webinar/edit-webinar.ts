@@ -94,6 +94,7 @@ export class EditWebinar implements OnInit {
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.webinarForm.invalid) {
       this.webinarForm.markAllAsTouched();
