@@ -26,7 +26,6 @@ export class EditProfile implements OnInit {
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
-  readonly warningMessage = signal<string | null>(null);
 
   /**
    * Reactive form based on the backend UserEditDTO.
@@ -90,15 +89,9 @@ export class EditProfile implements OnInit {
   onSubmit(): void {
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    this.warningMessage.set(null);
 
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
-      return;
-    }
-
-    if (!this.profileForm.dirty) {
-      this.warningMessage.set('Δεν υπάρχουν αλλαγές για αποθήκευση.');
       return;
     }
 
@@ -113,9 +106,10 @@ export class EditProfile implements OnInit {
           this.profileForm.markAsPristine();
 
           setTimeout(() => {
-            this.router.navigate(['/webinars']);
-          }, 1500);
+            this.successMessage.set(null);
+          }, 2000);
         },
+
         error: (error) => {
           console.error('Failed to update user profile', error);
           this.errorMessage.set('Η ενημέρωση του προφίλ απέτυχε.');

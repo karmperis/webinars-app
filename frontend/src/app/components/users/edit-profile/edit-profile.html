@@ -5,7 +5,7 @@
     <header class="content-header">
       <div>
         <h1>Προφίλ</h1>
-        <p>Ενημέρωση προσωπικών στοιχείων χρήστη.</p>
+        <p>Ενημέρωση στοιχείων προφίλ χρήστη.</p>
       </div>
 
       <a routerLink="/webinars" class="btn btn-outline-dark"> Επιστροφή </a>
@@ -14,12 +14,6 @@
     @if (successMessage()) {
       <div class="alert alert-success">
         {{ successMessage() }}
-      </div>
-    }
-
-    @if (warningMessage()) {
-      <div class="alert alert-warning">
-        {{ warningMessage() }}
       </div>
     }
 
@@ -66,7 +60,13 @@
             }
           </div>
 
-          <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">Αποθήκευση αλλαγών</button>
+          <button
+            type="submit"
+            class="btn submit-button"
+            [disabled]="isSubmitting() || !profileForm.dirty"
+          >
+            {{ isSubmitting() ? 'Αποθήκευση σε εξέλιξη...' : 'Αποθήκευση αλλαγών' }}
+          </button>
         </form>
       </div>
     }
