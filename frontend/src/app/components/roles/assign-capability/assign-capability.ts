@@ -30,6 +30,7 @@ export class AssignCapability implements OnInit {
   readonly isLoading = signal(true);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   /**
    * Reactive form used to select the capability that will be assigned to the role.
@@ -50,6 +51,10 @@ export class AssignCapability implements OnInit {
       return;
     }
 
+    this.assignForm.valueChanges.subscribe(() => {
+      this.errorMessage.set(null);
+    });
+
     this.loadCapabilities();
   }
 
@@ -66,6 +71,7 @@ export class AssignCapability implements OnInit {
       .subscribe({
         next: (capabilities) => {
           this.capabilities.set(capabilities);
+          this.assignForm.markAsPristine();
         },
         error: (error) => {
           console.error('Failed to load capabilities', error);
@@ -79,9 +85,14 @@ export class AssignCapability implements OnInit {
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.assignForm.invalid) {
       this.assignForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.assignForm.dirty) {
       return;
     }
 
@@ -94,10 +105,21 @@ export class AssignCapability implements OnInit {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/roles']);
+          this.successMessage.set('Το δικαίωμα ανατέθηκε επιτυχώς στον ρόλο.');
+          this.assignForm.reset({
+            capabilityUuid: '',
+          });
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 2000);
         },
         error: (error) => {
           console.error('Failed to assign capability to role', error);
+          if (error.status === 409) {
+            this.errorMessage.set('Το δικαίωμα έχει ήδη ανατεθεί στον συγκεκριμένο ρόλο.');
+            return;
+          }
           this.errorMessage.set('Η ανάθεση δικαιώματος στον ρόλο απέτυχε.');
         },
       });

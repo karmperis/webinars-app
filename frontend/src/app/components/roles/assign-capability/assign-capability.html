@@ -20,13 +20,19 @@
         </div>
       }
 
+      @if (successMessage()) {
+        <div class="alert alert-success">
+          {{ successMessage() }}
+        </div>
+      }
+
       <div class="form-card">
         <form [formGroup]="assignForm" (ngSubmit)="onSubmit()">
           <div class="mb-4">
             <label class="form-label">Δικαίωμα</label>
             <div class="select-wrapper">
               <select class="form-select form-input" formControlName="capabilityUuid">
-                <option value="" disabled>Επιλέξτε δικαίωμα</option>
+                <option value="" disabled>Επιλογή από λίστα</option>
 
                 @for (capability of capabilities(); track capability.uuid) {
                   <option [value]="capability.uuid">
@@ -45,8 +51,12 @@
             </div>
           </div>
 
-          <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">
-            Ανάθεση
+          <button
+            type="submit"
+            class="btn submit-button"
+            [disabled]="isSubmitting() || !assignForm.dirty"
+          >
+            {{ isSubmitting() ? 'Ανάθεση σε εξέλιξη...' : 'Ανάθεση' }}
           </button>
         </form>
       </div>
