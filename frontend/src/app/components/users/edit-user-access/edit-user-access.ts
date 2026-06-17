@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
@@ -22,7 +22,6 @@ export class EditUserAccess implements OnInit {
   private readonly userService = inject(User);
   private readonly roleService = inject(Role);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
   private userUuid = '';
 
@@ -30,6 +29,7 @@ export class EditUserAccess implements OnInit {
   readonly isLoading = signal(true);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   /**
    * Reactive form based on the backend UserAdminEditDTO.
@@ -54,6 +54,9 @@ export class EditUserAccess implements OnInit {
     }
 
     this.loadUserAccessData();
+    this.accessForm.valueChanges.subscribe(() => {
+      this.errorMessage.set(null);
+    });
   }
 
   /**
@@ -76,6 +79,8 @@ export class EditUserAccess implements OnInit {
             roleUuid: user.roleUuid,
             active: user.active,
           });
+
+          this.accessForm.markAsPristine();
         },
         error: (error) => {
           console.error('Failed to load user access data', error);
@@ -89,20 +94,30 @@ export class EditUserAccess implements OnInit {
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.accessForm.invalid) {
       this.accessForm.markAllAsTouched();
       return;
     }
 
+    if (!this.accessForm.dirty) {
+      return;
+    }
+
     this.isSubmitting.set(true);
-    
+
     this.userService
       .updateUserAccess(this.userUuid, this.accessForm.getRawValue())
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/users']);
+          this.successMessage.set('Η πρόσβαση χρήστη ενημερώθηκε επιτυχώς.');
+          this.accessForm.markAsPristine();
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 2000);
         },
         error: (error) => {
           console.error('Failed to update user access', error);
