@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
@@ -18,12 +18,12 @@ import { Webinar } from '../../../shared/services/webinar';
 export class EditWebinar implements OnInit {
   private readonly webinarService = inject(Webinar);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
   private webinarUuid = '';
 
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
   /**
@@ -58,6 +58,10 @@ export class EditWebinar implements OnInit {
     }
 
     this.loadWebinar();
+
+    this.webinarForm.valueChanges.subscribe(() => {
+      this.errorMessage.set(null);
+    });
   }
 
   /**
@@ -75,6 +79,8 @@ export class EditWebinar implements OnInit {
             scheduledDate: this.toDateTimeLocalValue(webinar.scheduledDate),
             duration: webinar.duration,
           });
+
+          this.webinarForm.markAsPristine();
         },
         error: (error) => {
           console.error('Failed to load webinar', error);
@@ -91,6 +97,10 @@ export class EditWebinar implements OnInit {
 
     if (this.webinarForm.invalid) {
       this.webinarForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.webinarForm.dirty) {
       return;
     }
 
@@ -116,10 +126,19 @@ export class EditWebinar implements OnInit {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/webinars']);
+          this.successMessage.set('Το σεμινάριο ενημερώθηκε επιτυχώς.');
+          this.webinarForm.markAsPristine();
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 2000);
         },
         error: (error) => {
           console.error('Failed to update webinar', error);
+          if (error.status === 409) {
+            this.errorMessage.set('Υπάρχει ήδη σεμινάριο με αυτόν τον τίτλο.');
+            return;
+          }
           this.errorMessage.set('Η ενημέρωση του σεμιναρίου απέτυχε.');
         },
       });

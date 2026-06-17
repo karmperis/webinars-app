@@ -20,6 +20,12 @@
         </div>
       }
 
+      @if (successMessage()) {
+        <div class="alert alert-success">
+          {{ successMessage() }}
+        </div>
+      }
+
       <div class="form-card">
         <form [formGroup]="webinarForm" (ngSubmit)="onSubmit()">
           <div class="mb-3">
@@ -77,7 +83,13 @@
             }
           </div>
 
-          <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">Αποθήκευση αλλαγών</button>
+          <button
+            type="submit"
+            class="btn submit-button"
+            [disabled]="isSubmitting() || !webinarForm.dirty"
+          >
+            {{ isSubmitting() ? 'Αποθήκευση σε εξέλιξη...' : 'Αποθήκευση αλλαγών' }}
+          </button>
         </form>
       </div>
     }
