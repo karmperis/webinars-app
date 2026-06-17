@@ -42,6 +42,16 @@ public class Role extends AbstractUuidEntity {
     }
 
     /**
+     * Checks whether this role already contains the given capability.
+     *
+     * @param capability capability to check
+     * @return true if the capability is already assigned to this role
+     */
+    public boolean hasCapability(Capability capability) {
+        return capabilities.contains(capability);
+    }
+
+    /**
      * Add a capability to this role.
      *
      * @param capability capability to add

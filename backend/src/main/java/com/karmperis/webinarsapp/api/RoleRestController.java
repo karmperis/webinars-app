@@ -241,7 +241,7 @@ public class RoleRestController {
     @PostMapping("/{roleUuid}/capabilities/{capabilityUuid}")
     public ResponseEntity<Void> assignCapability(
             @PathVariable UUID roleUuid,
-            @PathVariable UUID capabilityUuid) throws EntityNotFoundException {
+            @PathVariable UUID capabilityUuid) throws EntityNotFoundException, EntityAlreadyExistsException {
 
         roleService.assignCapabilityToRole(roleUuid, capabilityUuid);
         return ResponseEntity.ok().build();

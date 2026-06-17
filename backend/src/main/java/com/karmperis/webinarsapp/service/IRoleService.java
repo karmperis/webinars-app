@@ -51,7 +51,6 @@ public interface IRoleService {
      * @throws EntityAlreadyExistsException   if the new name is already taken by another non-deleted role
      * @throws EntityInvalidArgumentException if the provided role data is invalid
      */
-
     RoleReadOnlyDTO updateRole(UUID uuid, RoleEditDTO dto)
             throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
 
@@ -64,11 +63,12 @@ public interface IRoleService {
     void softDeleteRoleByUuid(UUID uuid) throws EntityNotFoundException;
 
     /**
-     * Assigns a capability to a role.
+     * Assign a capability to a role.
      *
-     * @param roleUuid       the UUID of the role
-     * @param capabilityUuid the UUID of the capability to assign
-     * @throws EntityNotFoundException if either the role or capability is not found
+     * @param roleUuid       the role UUID
+     * @param capabilityUuid the capability UUID
+     * @throws EntityNotFoundException      if the role or capability does not exist or is soft-deleted
+     * @throws EntityAlreadyExistsException if the capability is already assigned to the role
      */
-    void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException;
+    void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException, EntityAlreadyExistsException;
 }
