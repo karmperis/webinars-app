@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { finalize, switchMap, takeWhile, timer } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
@@ -12,7 +13,7 @@ import { JobStatus } from '../../../shared/interfaces/job-status';
 
 @Component({
   selector: 'app-reports',
-  imports: [ReactiveFormsModule, Navbar],
+  imports: [ReactiveFormsModule, Navbar, RouterLink],
   templateUrl: './reports.html',
 })
 export class Reports {
@@ -21,13 +22,13 @@ export class Reports {
   readonly reportResult = signal<JobStatus | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
-  readonly selectedReportType = signal<string>('popularity');
+  readonly selectedReportType = signal<string>('');
 
   /**
    * Reactive form used to select the report type.
    */
   reportForm = new FormGroup({
-    type: new FormControl('popularity', {
+    type: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -88,38 +89,60 @@ export class Reports {
   }
 
   /**
- * Converts backend webinar status keys to Greek UI labels.
- *
- * @param status backend status key
- * @returns Greek display label
- */
-formatWebinarStatus(status?: string): string {
-  switch (status) {
-    case 'status.webinar.DELETED':
-      return 'Διαγραμμένο';
-    case 'status.webinar.ACTIVE':
-      return 'Ενεργό';
-    default:
-      return '-';
-  }
-}
+   * Converts backend report status values to Greek UI labels.
+   *
+   * @param status backend report status
+   * @returns Greek display label
+   */
+  formatReportStatus(status?: string): string {
+    switch (status) {
+      case 'COMPLETED':
+        return 'Ολοκληρώθηκε';
 
-/**
- * Converts backend user status keys to Greek UI labels.
- *
- * @param status backend status key
- * @returns Greek display label
- */
-formatUserStatus(status?: string): string {
-  switch (status) {
-    case 'status.user.DELETED':
-      return 'Διαγραμμένος';
-    case 'status.user.INACTIVE':
-      return 'Ανενεργός';
-    case 'status.user.ACTIVE':
-      return 'Ενεργός';
-    default:
-      return '-';
+      case 'IN_PROGRESS':
+        return 'Σε εξέλιξη';
+
+      case 'FAILED':
+        return 'Απέτυχε';
+
+      default:
+        return status ?? '-';
+    }
   }
-}
+
+  /**
+   * Converts backend webinar status keys to Greek UI labels.
+   *
+   * @param status backend status key
+   * @returns Greek display label
+   */
+  formatWebinarStatus(status?: string): string {
+    switch (status) {
+      case 'status.webinar.DELETED':
+        return 'Διαγραμμένο';
+      case 'status.webinar.ACTIVE':
+        return 'Ενεργό';
+      default:
+        return '-';
+    }
+  }
+
+  /**
+   * Converts backend user status keys to Greek UI labels.
+   *
+   * @param status backend status key
+   * @returns Greek display label
+   */
+  formatUserStatus(status?: string): string {
+    switch (status) {
+      case 'status.user.DELETED':
+        return 'Διαγραμμένος';
+      case 'status.user.INACTIVE':
+        return 'Ανενεργός';
+      case 'status.user.ACTIVE':
+        return 'Ενεργός';
+      default:
+        return '-';
+    }
+  }
 }

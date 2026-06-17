@@ -7,6 +7,7 @@
         <h1>Αναφορές</h1>
         <p>Δημιουργία και προβολή αναφορών συστήματος.</p>
       </div>
+      <a routerLink="/webinars" class="btn btn-outline-dark"> Επιστροφή </a>
     </header>
 
     @if (errorMessage()) {
@@ -21,14 +22,19 @@
           <label class="form-label">Τύπος αναφοράς</label>
 
           <select class="form-select form-input" formControlName="type">
+            <option value="">Επιλογή από λίστα</option>
             <option value="popularity">Δημοφιλή σεμινάρια</option>
             <option value="productive">Παραγωγικοί διοργανωτές</option>
             <option value="inactive">Ανενεργές εγγραφές</option>
           </select>
         </div>
 
-        <button type="submit" class="btn submit-button" [disabled]="isLoading()">
-          Δημιουργία αναφοράς
+        <button
+          type="submit"
+          class="btn submit-button"
+          [disabled]="reportForm.invalid || isLoading()"
+        >
+          {{ isLoading() ? 'Δημιουργία σε εξέλιξη...' : 'Δημιουργία αναφοράς' }}
         </button>
       </form>
     </div>
@@ -39,7 +45,7 @@
 
     @if (reportResult()) {
       <div class="table-container">
-        <h5 class="mb-3">Κατάσταση: {{ reportResult()?.status }}</h5>
+        <h5 class="mb-3">Κατάσταση: {{ formatReportStatus(reportResult()?.status) }}</h5>
 
         @if (reportResult()?.data?.length === 0) {
           <div class="empty-state">Δεν υπάρχουν δεδομένα για την αναφορά.</div>
