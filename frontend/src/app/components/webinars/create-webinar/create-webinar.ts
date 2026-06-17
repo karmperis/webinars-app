@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Webinar } from '../../../shared/services/webinar';
@@ -16,11 +16,11 @@ import { Navbar } from '../../layout/navbar/navbar';
   templateUrl: './create-webinar.html',
   styleUrl: './create-webinar.css',
 })
-export class CreateWebinar {
+export class CreateWebinar implements OnInit {
   private readonly webinarService = inject(Webinar);
-  private readonly router = inject(Router);
 
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
   /**
@@ -45,14 +45,25 @@ export class CreateWebinar {
     }),
   });
 
+  ngOnInit(): void {
+    this.webinarForm.valueChanges.subscribe(() => {
+      this.errorMessage.set(null);
+    });
+  }
+
   /**
    * Submits the webinar form and creates a new webinar.
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.webinarForm.invalid) {
       this.webinarForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.webinarForm.dirty) {
       return;
     }
 
@@ -77,9 +88,26 @@ export class CreateWebinar {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/webinars']);
+          this.successMessage.set('Το σεμινάριο δημιουργήθηκε επιτυχώς.');
+          this.webinarForm.reset({
+            title: '',
+            description: '',
+            scheduledDate: '',
+            duration: 60,
+          });
+          this.webinarForm.markAsPristine();
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 2000);
         },
-        error: () => {
+        error: (error) => {
+          console.error('Failed to create webinar', error);
+          if (error.status === 409) {
+            this.errorMessage.set('Υπάρχει ήδη σεμινάριο με αυτόν τον τίτλο.');
+            return;
+          }
+
           this.errorMessage.set('Η δημιουργία του σεμιναρίου απέτυχε.');
         },
       });
