@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { finalize } from 'rxjs';
-
+import { RouterLink } from '@angular/router';
 import { Navbar } from '../../layout/navbar/navbar';
 
 import { User } from '../../../shared/services/user';
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
  */
 @Component({
   selector: 'app-users',
-  imports: [Navbar],
+  imports: [Navbar, RouterLink],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })

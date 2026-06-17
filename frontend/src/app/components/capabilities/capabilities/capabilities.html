@@ -8,7 +8,10 @@
         <p>Διαχείριση διαθέσιμων δικαιωμάτων συστήματος.</p>
       </div>
 
-      <a routerLink="/capabilities/create" class="btn btn-outline-dark"> Νέο δικαίωμα </a>
+      <div class="d-flex gap-2">
+        <a routerLink="/capabilities/create" class="btn btn-outline-primary"> Νέο δικαίωμα </a>
+        <a routerLink="/webinars" class="btn btn-outline-dark"> Επιστροφή </a>
+      </div>
     </header>
 
     @if (isLoading()) {
@@ -23,42 +26,42 @@
       <div class="table-container">
         <div class="table-responsive">
           <table class="table table-striped table-hover align-middle mb-0 text-center">
-          <thead>
-            <tr>
-              <th>Όνομα</th>
-              <th>Περιγραφή</th>
-              <th>Ενέργειες</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            @for (capability of capabilities(); track capability.uuid) {
+            <thead>
               <tr>
-                <td>{{ capability.name }}</td>
-                <td>{{ capability.description }}</td>
-                <td>
-                  <div class="d-flex justify-content-center gap-2">
-                    <a
-                      [routerLink]="['/capabilities', capability.uuid, 'edit']"
-                      class="btn btn-sm btn-outline-primary"
-                    >
-                      Επεξεργασία
-                    </a>
-
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-danger"
-                      (click)="deleteCapability(capability.uuid)"
-                    >
-                      Διαγραφή
-                    </button>
-                  </div>
-                </td>
+                <th>Όνομα</th>
+                <th>Περιγραφή</th>
+                <th>Ενέργειες</th>
               </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            <tbody>
+              @for (capability of capabilities(); track capability.uuid) {
+                <tr>
+                  <td>{{ capability.name }}</td>
+                  <td>{{ capability.description }}</td>
+                  <td>
+                    <div class="d-flex justify-content-center gap-2">
+                      <a
+                        [routerLink]="['/capabilities', capability.uuid, 'edit']"
+                        class="btn btn-sm btn-outline-primary"
+                      >
+                        Επεξεργασία
+                      </a>
+
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="deleteCapability(capability.uuid)"
+                      >
+                        Διαγραφή
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     }
   </main>

@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 import { Navbar } from '../../layout/navbar/navbar';
 
@@ -16,7 +17,7 @@ import { WebinarReadOnly } from '../../../shared/interfaces/webinar-read-only';
  */
 @Component({
   selector: 'app-organizer-webinars',
-  imports: [Navbar, DatePipe],
+  imports: [Navbar, DatePipe, RouterLink],
   templateUrl: './organizer-webinars.html',
 })
 export class OrganizerWebinars implements OnInit {
