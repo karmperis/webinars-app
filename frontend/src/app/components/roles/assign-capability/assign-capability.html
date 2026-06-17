@@ -24,23 +24,25 @@
         <form [formGroup]="assignForm" (ngSubmit)="onSubmit()">
           <div class="mb-4">
             <label class="form-label">Δικαίωμα</label>
+            <div class="select-wrapper">
+              <select class="form-select form-input" formControlName="capabilityUuid">
+                <option value="" disabled>Επιλέξτε δικαίωμα</option>
 
-            <select class="form-select form-input" formControlName="capabilityUuid">
-              <option value="" disabled>Επιλέξτε δικαίωμα</option>
+                @for (capability of capabilities(); track capability.uuid) {
+                  <option [value]="capability.uuid">
+                    {{ capability.name }}
+                  </option>
+                }
+              </select>
 
-              @for (capability of capabilities(); track capability.uuid) {
-                <option [value]="capability.uuid">
-                  {{ capability.name }}
-                </option>
+              @if (
+                assignForm.controls.capabilityUuid.invalid &&
+                assignForm.controls.capabilityUuid.touched
+              ) {
+                <div class="text-danger small mt-1">Το δικαίωμα είναι υποχρεωτικό.</div>
               }
-            </select>
-
-            @if (
-              assignForm.controls.capabilityUuid.invalid &&
-              assignForm.controls.capabilityUuid.touched
-            ) {
-              <div class="text-danger small mt-1">Το δικαίωμα είναι υποχρεωτικό.</div>
-            }
+              <i class="fa-solid fa-chevron-down select-icon"></i>
+            </div>
           </div>
 
           <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">

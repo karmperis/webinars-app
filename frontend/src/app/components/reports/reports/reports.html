@@ -21,12 +21,15 @@
         <div class="mb-4">
           <label class="form-label">Τύπος αναφοράς</label>
 
-          <select class="form-select form-input" formControlName="type">
-            <option value="">Επιλογή από λίστα</option>
-            <option value="popularity">Δημοφιλή σεμινάρια</option>
-            <option value="productive">Παραγωγικοί διοργανωτές</option>
-            <option value="inactive">Ανενεργές εγγραφές</option>
-          </select>
+          <div class="select-wrapper">
+            <select class="form-select form-input" formControlName="type">
+              <option value="">Επιλογή από λίστα</option>
+              <option value="popularity">Δημοφιλή σεμινάρια</option>
+              <option value="productive">Παραγωγικοί διοργανωτές</option>
+              <option value="inactive">Ανενεργοί χρήστες ή σεμινάρια</option>
+            </select>
+            <i class="fa-solid fa-chevron-down select-icon"></i>
+          </div>
         </div>
 
         <button

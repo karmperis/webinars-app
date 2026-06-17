@@ -160,6 +160,25 @@
   box-shadow: 0 0 0 0.10rem rgba(255, 212, 59, 0.35) !important;
 }
 
+/* Select controls */
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-icon {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #6c757d;
+}
+
+.select-wrapper select {
+  padding-right: 3rem !important;
+}
+
 /* Buttons */
 
 .submit-button,
