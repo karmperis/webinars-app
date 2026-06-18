@@ -3,8 +3,8 @@
 .app-sidebar {
   width: 260px;
   min-height: 100vh;
-  background: #000000;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--white);
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -27,7 +27,7 @@
 
 .sidebar-menu a {
   display: block;
-  color: #ffffff;
+  color: var(--white);
   text-decoration: none;
   font-weight: 600;
   padding: 0.75rem 0;
@@ -40,17 +40,17 @@
 /* Sidebar actions */
 
 .logout-button {
-  border: 1px solid #ffffff;
+  border: 1px solid var(--white);
   background: transparent;
-  color: #ffffff;
+  color: var(--white);
   font-weight: 700;
   padding: 0.75rem;
   border-radius: 0 !important;
 }
 
 .logout-button:hover {
-  background: #ffffff;
-  color: #000000;
+  background: var(--white);
+  color: var(--primary);
 }
 
 /* Current user */
@@ -59,7 +59,7 @@
   margin-top: 2rem;
   margin-bottom: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--sidebar-border);
 }
 
 .sidebar-user-name {
@@ -71,6 +71,6 @@
 .sidebar-user-role {
   margin-top: 0.25rem;
   font-size: 0.8rem;
-  color: #cfcfcf;
+  color: var(--sidebar-muted);
   letter-spacing: 0.05rem;
 }

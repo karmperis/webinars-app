@@ -14,7 +14,6 @@ import { Navbar } from '../../layout/navbar/navbar';
   selector: 'app-create-webinar',
   imports: [ReactiveFormsModule, RouterLink, Navbar],
   templateUrl: './create-webinar.html',
-  styleUrl: './create-webinar.css',
 })
 export class CreateWebinar implements OnInit {
   private readonly webinarService = inject(Webinar);

@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
   selector: 'app-users',
   imports: [Navbar, RouterLink],
   templateUrl: './users.html',
-  styleUrl: './users.css',
 })
 export class Users implements OnInit {
   private readonly userService = inject(User);
