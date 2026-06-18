@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
@@ -18,12 +18,12 @@ import { Role } from '../../../shared/services/role';
 export class EditRole implements OnInit {
   private readonly roleService = inject(Role);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
   private roleUuid = '';
 
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
   /**
@@ -46,6 +46,10 @@ export class EditRole implements OnInit {
     }
 
     this.loadRole();
+    this.roleForm.valueChanges.subscribe(() => {
+      this.errorMessage.set(null);
+      this.successMessage.set(null);
+    });
   }
 
   /**
@@ -63,6 +67,7 @@ export class EditRole implements OnInit {
           this.roleForm.patchValue({
             name: role.name,
           });
+          this.roleForm.markAsPristine();
         },
         error: (error) => {
           console.error('Failed to load role', error);
@@ -76,9 +81,14 @@ export class EditRole implements OnInit {
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.roleForm.invalid) {
       this.roleForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.roleForm.dirty) {
       return;
     }
 
@@ -89,10 +99,21 @@ export class EditRole implements OnInit {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/roles']);
+          this.successMessage.set('Ο ρόλος ενημερώθηκε επιτυχώς.');
+          this.roleForm.markAsPristine();
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 2000);
         },
         error: (error) => {
           console.error('Failed to update role', error);
+
+          if (error.status === 409) {
+            this.errorMessage.set('Υπάρχει ήδη ρόλος με αυτό το όνομα.');
+            return;
+          }
+          
           this.errorMessage.set('Η ενημέρωση του ρόλου απέτυχε.');
         },
       });

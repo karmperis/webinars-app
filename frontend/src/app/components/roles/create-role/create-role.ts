@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
@@ -15,11 +15,11 @@ import { Role } from '../../../shared/services/role';
   imports: [ReactiveFormsModule, RouterLink, Navbar],
   templateUrl: './create-role.html',
 })
-export class CreateRole {
+export class CreateRole implements OnInit {
   private readonly roleService = inject(Role);
-  private readonly router = inject(Router);
 
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
   /**
@@ -32,14 +32,25 @@ export class CreateRole {
     }),
   });
 
+  ngOnInit(): void {
+    this.roleForm.valueChanges.subscribe(() => {
+      this.errorMessage.set(null);
+    });
+  }
+
   /**
    * Submits the form and creates a new role.
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.roleForm.invalid) {
       this.roleForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.roleForm.dirty) {
       return;
     }
 
@@ -50,10 +61,24 @@ export class CreateRole {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/roles']);
+          this.successMessage.set('Ο ρόλος δημιουργήθηκε επιτυχώς.');
+
+          this.roleForm.reset({
+            name: '',
+          });
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 2000);
         },
         error: (error) => {
           console.error('Failed to create role', error);
+
+          if (error.status === 409) {
+            this.errorMessage.set('Υπάρχει ήδη ρόλος με αυτό το όνομα.');
+            return;
+          }
+          
           this.errorMessage.set('Η δημιουργία του ρόλου απέτυχε.');
         },
       });

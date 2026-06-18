@@ -17,6 +17,12 @@
       </div>
     }
 
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        {{ successMessage() }}
+      </div>
+    }
+
     <div class="form-card">
       <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
         <div class="mb-4">
@@ -29,8 +35,12 @@
           }
         </div>
 
-        <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">
-          Δημιουργία
+        <button
+          type="submit"
+          class="btn submit-button"
+          [disabled]="isSubmitting() || !roleForm.dirty"
+        >
+          {{ isSubmitting() ? 'Δημιουργία σε εξέλιξη...' : 'Δημιουργία' }}
         </button>
       </form>
     </div>

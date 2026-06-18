@@ -20,6 +20,12 @@
         </div>
       }
 
+      @if (successMessage()) {
+        <div class="alert alert-success">
+          {{ successMessage() }}
+        </div>
+      }
+
       <div class="form-card">
         <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
           <div class="mb-4">
@@ -32,8 +38,12 @@
             }
           </div>
 
-          <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">
-            Αποθήκευση αλλαγών
+          <button
+            type="submit"
+            class="btn submit-button"
+            [disabled]="isSubmitting() || !roleForm.dirty"
+          >
+            {{ isSubmitting() ? 'Αποθήκευση σε εξέλιξη...' : 'Αποθήκευση αλλαγών' }}
           </button>
         </form>
       </div>
