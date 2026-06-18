@@ -246,4 +246,32 @@ public class RoleRestController {
         roleService.assignCapabilityToRole(roleUuid, capabilityUuid);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * Retrieve all capabilities assigned to a role.
+     *
+     * @param roleUuid role UUID
+     * @return list of capabilities assigned to the role
+     * @throws EntityNotFoundException if the role does not exist or is soft-deleted
+     */
+    @Operation(
+            summary = "Get role capabilities",
+            description = "Retrieves all capabilities assigned to a specific role."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Capabilities retrieved successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Role not found"
+            )
+    })
+    @GetMapping("/{roleUuid}/capabilities")
+    public ResponseEntity<List<CapabilityReadOnlyDTO>> getRoleCapabilities(
+            @PathVariable UUID roleUuid) throws EntityNotFoundException {
+
+        return ResponseEntity.ok(roleService.findCapabilitiesByRoleUuid(roleUuid));
+    }
 }

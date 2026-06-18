@@ -3,6 +3,7 @@ package com.karmperis.webinarsapp.service;
 import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
 import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
 import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
+import com.karmperis.webinarsapp.dto.CapabilityReadOnlyDTO;
 import com.karmperis.webinarsapp.dto.RoleEditDTO;
 import com.karmperis.webinarsapp.dto.RoleInsertDTO;
 import com.karmperis.webinarsapp.dto.RoleReadOnlyDTO;
@@ -40,6 +41,15 @@ public interface IRoleService {
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
     RoleReadOnlyDTO findRoleByUuid(UUID uuid) throws EntityNotFoundException;
+
+    /**
+     * Retrieve all capabilities assigned to a non-deleted role.
+     *
+     * @param roleUuid role UUID
+     * @return list of capabilities assigned to the role
+     * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
+     */
+    List<CapabilityReadOnlyDTO> findCapabilitiesByRoleUuid(UUID roleUuid) throws EntityNotFoundException;
 
     /**
      * Update an existing role. (Update)

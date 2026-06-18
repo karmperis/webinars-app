@@ -3,9 +3,11 @@ package com.karmperis.webinarsapp.service;
 import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
 import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
 import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
+import com.karmperis.webinarsapp.dto.CapabilityReadOnlyDTO;
 import com.karmperis.webinarsapp.dto.RoleEditDTO;
 import com.karmperis.webinarsapp.dto.RoleInsertDTO;
 import com.karmperis.webinarsapp.dto.RoleReadOnlyDTO;
+import com.karmperis.webinarsapp.mapper.CapabilityMapper;
 import com.karmperis.webinarsapp.mapper.RoleMapper;
 import com.karmperis.webinarsapp.model.Capability;
 import com.karmperis.webinarsapp.model.Role;
@@ -33,6 +35,7 @@ public class RoleServiceImpl implements IRoleService {
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
     private final CapabilityRepository capabilityRepository;
+    private final CapabilityMapper capabilityMapper;
 
     /**
      * Create and persist a new role.
@@ -104,6 +107,36 @@ public class RoleServiceImpl implements IRoleService {
                     log.warn("Role with UUID {} not found", uuid);
                     return new EntityNotFoundException("Role", "Role with UUID " + uuid + " not found");
                 });
+    }
+
+    /**
+     * Retrieve all capabilities assigned to a non-deleted role.
+     *
+     * @param roleUuid role UUID
+     * @return list of capabilities assigned to the role
+     * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<CapabilityReadOnlyDTO> findCapabilitiesByRoleUuid(UUID roleUuid)
+            throws EntityNotFoundException {
+
+        log.info("Fetching capabilities for role with UUID: {}", roleUuid);
+
+        Role role = roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)
+                .orElseThrow(() -> {
+                    log.warn("Failed to fetch capabilities: Role with UUID {} not found", roleUuid);
+                    return new EntityNotFoundException(
+                            "Role",
+                            "Role with UUID " + roleUuid + " not found"
+                    );
+                });
+
+        return role.getAllCapabilities()
+                .stream()
+                .filter(capability -> capability.getDeletedAt() == null)
+                .map(capabilityMapper::mapToCapabilityReadOnlyDTO)
+                .toList();
     }
 
     /**
