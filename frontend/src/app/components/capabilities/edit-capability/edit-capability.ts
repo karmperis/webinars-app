@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
@@ -18,13 +18,13 @@ import { Capability } from '../../../shared/services/capability';
 export class EditCapability implements OnInit {
   private readonly capabilityService = inject(Capability);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-
+  
   private capabilityUuid = '';
 
   readonly isLoading = signal(true);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   /**
    * Reactive form based on the backend CapabilityEditDTO.
@@ -50,6 +50,10 @@ export class EditCapability implements OnInit {
     }
 
     this.loadCapability();
+
+    this.capabilityForm.valueChanges.subscribe(() => {
+  this.errorMessage.set(null);
+});
   }
 
   /**
@@ -68,6 +72,9 @@ export class EditCapability implements OnInit {
             name: capability.name,
             description: capability.description,
           });
+
+          this.capabilityForm.markAsPristine();
+
         },
         error: (error) => {
           console.error('Failed to load capability', error);
@@ -81,11 +88,16 @@ export class EditCapability implements OnInit {
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.capabilityForm.invalid) {
       this.capabilityForm.markAllAsTouched();
       return;
     }
+
+    if (!this.capabilityForm.dirty) {
+    return;
+  }
 
     this.isSubmitting.set(true);
 
@@ -94,10 +106,22 @@ export class EditCapability implements OnInit {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/capabilities']);
+         this.successMessage.set('Το δικαίωμα ενημερώθηκε επιτυχώς.');
+        
+         this.capabilityForm.markAsPristine();
+
+        setTimeout(() => {
+          this.successMessage.set(null);
+        }, 2000);
         },
         error: (error) => {
           console.error('Failed to update capability', error);
+
+          if (error.status === 409) {
+          this.errorMessage.set('Υπάρχει ήδη δικαίωμα με αυτό το όνομα.');
+          return;
+        }
+        
           this.errorMessage.set('Η ενημέρωση του δικαιώματος απέτυχε.');
         },
       });

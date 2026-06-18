@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
@@ -15,12 +15,12 @@ import { Capability } from '../../../shared/services/capability';
   imports: [ReactiveFormsModule, RouterLink, Navbar],
   templateUrl: './create-capability.html',
 })
-export class CreateCapability {
+export class CreateCapability implements OnInit {
   private readonly capabilityService = inject(Capability);
-  private readonly router = inject(Router);
 
   readonly errorMessage = signal<string | null>(null);
   readonly isSubmitting = signal(false);
+  readonly successMessage = signal<string | null>(null);
 
   /**
    * Reactive form based on the backend CapabilityInsertDTO.
@@ -36,14 +36,24 @@ export class CreateCapability {
     }),
   });
 
+  ngOnInit(): void {
+    this.capabilityForm.valueChanges.subscribe(() => {
+      this.errorMessage.set(null);
+    });
+  }
+
   /**
    * Submits the form and creates a new capability.
    */
   onSubmit(): void {
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     if (this.capabilityForm.invalid) {
       this.capabilityForm.markAllAsTouched();
+      return;
+    }
+    if (!this.capabilityForm.dirty) {
       return;
     }
 
@@ -54,10 +64,25 @@ export class CreateCapability {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigate(['/capabilities']);
+          this.successMessage.set('Το δικαίωμα δημιουργήθηκε επιτυχώς.');
+
+          this.capabilityForm.reset({
+            name: '',
+            description: '',
+          });
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 2000);
         },
         error: (error) => {
           console.error('Failed to create capability', error);
+          
+          if (error.status === 409) {
+            this.errorMessage.set('Υπάρχει ήδη δικαίωμα με αυτό το όνομα.');
+            return;
+          }
+          
           this.errorMessage.set('Η δημιουργία του δικαιώματος απέτυχε.');
         },
       });

@@ -17,6 +17,12 @@
       </div>
     }
 
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        {{ successMessage() }}
+      </div>
+    }
+
     <div class="form-card">
       <form [formGroup]="capabilityForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
@@ -48,8 +54,12 @@
           }
         </div>
 
-        <button type="submit" class="btn submit-button" [disabled]="isSubmitting()">
-          Δημιουργία
+        <button
+          type="submit"
+          class="btn submit-button"
+          [disabled]="isSubmitting() || !capabilityForm.dirty"
+        >
+          {{ isSubmitting() ? 'Δημιουργία σε εξέλιξη...' : 'Δημιουργία' }}
         </button>
       </form>
     </div>
