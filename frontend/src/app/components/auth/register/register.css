@@ -5,8 +5,8 @@
 }
 
 .login-right {
-  background: #000000;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--white);
   padding: 3rem 2.5rem;
   display: flex;
   flex-direction: column;
