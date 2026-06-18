@@ -47,10 +47,17 @@
                       </a>
 
                       <a
+                        [routerLink]="['/roles', role.uuid, 'capabilities', 'view']"
+                        class="btn btn-sm btn-outline-secondary"
+                      >
+                        Δικαιώματα ρόλου
+                      </a>
+
+                      <a
                         [routerLink]="['/roles', role.uuid, 'capabilities']"
                         class="btn btn-sm btn-outline-success"
                       >
-                        Ρόλοι-Δικαιώματα
+                        Ανάθεση δικαιωμάτων
                       </a>
 
                       <button

@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { RoleReadOnly } from '../interfaces/role-read-only';
 import { RoleInsert } from '../interfaces/role-insert';
 import { RoleEdit } from '../interfaces/role-edit';
+import { CapabilityReadOnly } from '../interfaces/capability-read-only';
 
 /**
  * Service responsible for role-related API operations.
@@ -68,16 +69,22 @@ export class Role {
   }
 
   /**
- * Assigns a capability to a role.
- *
- * @param roleUuid role UUID
- * @param capabilityUuid capability UUID
- * @returns completion observable
- */
-assignCapabilityToRole(roleUuid: string, capabilityUuid: string): Observable<void> {
-  return this.http.post<void>(
-    `${this.rolesUrl}/${roleUuid}/capabilities/${capabilityUuid}`,
-    {}
-  );
-}
+   * Assigns a capability to a role.
+   *
+   * @param roleUuid role UUID
+   * @param capabilityUuid capability UUID
+   * @returns completion observable
+   */
+  assignCapabilityToRole(roleUuid: string, capabilityUuid: string): Observable<void> {
+    return this.http.post<void>(`${this.rolesUrl}/${roleUuid}/capabilities/${capabilityUuid}`, {});
+  }
+  /**
+   * Retrieves all capabilities assigned to a role.
+   *
+   * @param roleUuid role UUID
+   * @returns observable containing the assigned capabilities
+   */
+  getRoleCapabilities(roleUuid: string): Observable<CapabilityReadOnly[]> {
+    return this.http.get<CapabilityReadOnly[]>(`${this.rolesUrl}/${roleUuid}/capabilities`);
+  }
 }

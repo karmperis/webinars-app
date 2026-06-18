@@ -1,0 +1,46 @@
+<div class="page-layout">
+  <app-navbar />
+
+  <main class="page-content">
+    <header class="content-header">
+      <div>
+        <h1>Δικαιώματα ρόλου</h1>
+        <p>Προβολή δικαιωμάτων που έχουν ανατεθεί στον ρόλο.</p>
+      </div>
+
+      <a routerLink="/roles" class="btn btn-outline-dark">Επιστροφή</a>
+    </header>
+
+    @if (isLoading()) {
+      <div class="empty-state">Φόρτωση δικαιωμάτων ρόλου...</div>
+    } @else if (errorMessage()) {
+      <div class="empty-state error-state">
+        {{ errorMessage() }}
+      </div>
+    } @else if (capabilities().length === 0) {
+      <div class="empty-state">Δεν υπάρχουν δικαιώματα για αυτόν τον ρόλο.</div>
+    } @else {
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0 text-center">
+            <thead>
+              <tr>
+                <th>Όνομα δικαιώματος</th>
+                <th>Περιγραφή</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (capability of capabilities(); track capability.uuid) {
+                <tr>
+                  <td>{{ capability.name }}</td>
+                  <td>{{ capability.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </main>
+</div>

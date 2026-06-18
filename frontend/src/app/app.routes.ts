@@ -18,6 +18,7 @@ import { Capabilities } from './components/capabilities/capabilities/capabilitie
 import { CreateCapability } from './components/capabilities/create-capability/create-capability';
 import { EditCapability } from './components/capabilities/edit-capability/edit-capability';
 import { AssignCapability } from './components/roles/assign-capability/assign-capability';
+import { RoleCapabilities } from './components/roles/role-capabilities/role-capabilities';
 import { Reports } from './components/reports/reports/reports';
 
 export const routes: Routes = [
@@ -80,6 +81,12 @@ export const routes: Routes = [
   {
     path: 'roles/:uuid/capabilities',
     component: AssignCapability,
+    canActivate: [authGuard],
+    data: { roles: ['ADMIN'] },
+  },
+  {
+    path: 'roles/:uuid/capabilities/view',
+    component: RoleCapabilities,
     canActivate: [authGuard],
     data: { roles: ['ADMIN'] },
   },
