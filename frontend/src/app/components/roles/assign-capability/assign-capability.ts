@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Navbar } from '../../layout/navbar/navbar';
@@ -22,7 +22,6 @@ export class AssignCapability implements OnInit {
   private readonly roleService = inject(Role);
   private readonly capabilityService = inject(Capability);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
   private roleUuid = '';
 
