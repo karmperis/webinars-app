@@ -1,59 +1,399 @@
-# Frontend
+# WebinarsApp Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.13.
+An Angular frontend for the WebinarsApp platform, developed as an assignment for the AUEB Coding Factory.
 
-## Development server
+The application provides a complete user interface for authentication, webinar management, enrollments, user administration, role and capability management, and asynchronous report generation through integration with the WebinarsApp REST API.
 
-To start a local development server, run:
+## Table of Contents
+
+- [Tech Stack](#tech-stack)
+- [Requirements](#requirements)
+- [Build & Run](#build--run)
+- [Configuration](#configuration)
+- [Application Overview](#application-overview)
+  - [Authentication](#authentication)
+  - [Webinars & Enrollments](#webinars--enrollments)
+  - [Users](#users)
+  - [Roles & Capabilities](#roles--capabilities)
+  - [Reports](#reports)
+
+- [Security](#security)
+- [UI & State Management](#ui--state-management)
+- [Project Structure](#project-structure)
+
+## Tech Stack
+
+- **Angular 21.2**
+- **TypeScript 5.9**
+- **Angular Router**
+- **Angular Reactive Forms**
+- **Angular Signals**
+- **RxJS**
+- **Bootstrap 5.3**
+- **Font Awesome 7**
+- **Vitest**
+- **JWT-based authentication**
+
+## Requirements
+
+- Node.js
+- npm 11+
+- Angular CLI 21+
+- Running WebinarsApp backend API
+
+The frontend expects the backend API to be available at:
+
+```text
+http://localhost:8080/api/v1
+```
+
+## Build & Run
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Start Development Server
+
+```bash
+npm start
+```
+
+or:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+The application will be available at:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 3. Production Build
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+The build output will be generated in the `dist/` directory.
 
-To build the project run:
+## Configuration
 
-```bash
-ng build
+The application uses Angular environment files.
+
+### Development Environment
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8080/api/v1',
+};
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Production Environment
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'http://localhost:8080/api/v1',
+};
 ```
 
-## Running end-to-end tests
+The API base URL is consumed by Angular services under:
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```text
+src/app/shared/services/
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Application Overview
 
-## Additional Resources
+The frontend is organized around standalone Angular components and feature-based folders.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Authentication
+
+| Route       | Access | Description           |
+| :---------- | :----- | :-------------------- |
+| `/login`    | Public | User login            |
+| `/register` | Public | New user registration |
+
+Authentication features include:
+
+- Username/password login
+- User registration
+- JWT token storage
+- Remember Me support
+- Password visibility toggle
+- Token expiration validation
+- Logout functionality
+
+### Webinars & Enrollments
+
+| Route                  | Access            | Description                                 |
+| :--------------------- | :---------------- | :------------------------------------------ |
+| `/webinars`            | Authenticated     | List all webinars                           |
+| `/webinars/create`     | Admin / Organizer | Create a webinar                            |
+| `/webinars/:uuid/edit` | Authenticated     | Edit a webinar                              |
+| `/my-webinars`         | Authenticated     | View enrolled webinars                      |
+| `/organizer-webinars`  | Admin / Organizer | View webinars organized by the current user |
+
+Supported webinar actions:
+
+- View active webinars
+- Create webinars
+- Edit webinars
+- Delete webinars
+- Enroll in webinars
+- View participant enrollments
+- View organizer webinars
+
+Role-based webinar behavior:
+
+| Role          | Permissions                                 |
+| :------------ | :------------------------------------------ |
+| `ADMIN`       | Can manage all webinars                     |
+| `ORGANIZER`   | Can create webinars and manage own webinars |
+| `PARTICIPANT` | Can view and enroll in webinars             |
+
+### Users
+
+| Route                 | Access        | Description                      |
+| :-------------------- | :------------ | :------------------------------- |
+| `/users`              | Admin         | List users                       |
+| `/users/:uuid/access` | Admin         | Edit user role and active status |
+| `/profile`            | Authenticated | Edit current user profile        |
+
+User features include:
+
+- User listing
+- Profile editing
+- User access management
+- Role assignment
+- Active/inactive status management
+- User deletion
+
+### Roles & Capabilities
+
+| Route                            | Access | Description               |
+| :------------------------------- | :----- | :------------------------ |
+| `/roles`                         | Admin  | List roles                |
+| `/roles/create`                  | Admin  | Create role               |
+| `/roles/:uuid/edit`              | Admin  | Edit role                 |
+| `/roles/:uuid/capabilities`      | Admin  | Assign capability to role |
+| `/roles/:uuid/capabilities/view` | Admin  | View role capabilities    |
+| `/capabilities`                  | Admin  | List capabilities         |
+| `/capabilities/create`           | Admin  | Create capability         |
+| `/capabilities/:uuid/edit`       | Admin  | Edit capability           |
+
+Role and capability features include:
+
+- Role CRUD operations
+- Capability CRUD operations
+- Capability assignment to roles
+- Viewing capabilities assigned to a role
+
+### Reports
+
+| Route      | Access | Description                      |
+| :--------- | :----- | :------------------------------- |
+| `/reports` | Admin  | Generate and view system reports |
+
+Supported report types:
+
+- Popularity report
+- Productive users report
+- Inactive users report
+
+Reports are generated asynchronously by the backend. The frontend starts a report job and polls the backend until the result is available.
+
+## Security
+
+The frontend implements client-side authentication and authorization support.
+
+### JWT Authentication
+
+After successful login, the JWT token is stored either in:
+
+- `localStorage`, when Remember Me is selected
+- `sessionStorage`, when Remember Me is not selected
+
+The token is used to identify the authenticated user, extract role information, and authorize API calls.
+
+### Auth Guard
+
+Protected routes use an Angular route guard.
+
+The guard checks:
+
+- whether a valid JWT token exists
+- whether the token is not expired
+- whether the user has the required role for role-protected routes
+
+Unauthorized users are redirected to the login page.
+
+### HTTP Interceptor
+
+The application registers an HTTP interceptor that automatically attaches the JWT token to outgoing API requests.
+
+```http
+Authorization: Bearer <jwt-token>
+```
+
+## UI & State Management
+
+The frontend uses a clean, consistent UI structure based on Bootstrap and custom CSS.
+
+Common UI patterns:
+
+- Page-level layout with navbar/sidebar
+- Reusable empty states
+- Error states
+- Loading states
+- Success and warning alerts
+- Form validation feedback
+- Disabled submit buttons during requests
+- Role-based navigation visibility
+
+State management is handled with Angular Signals for page state such as:
+
+- `isLoading`
+- `isSubmitting`
+- `errorMessage`
+- `successMessage`
+- `warningMessage`
+
+Reactive Forms are used for all form-based screens.
+
+## Project Structure
+
+```text
+src/app/
+├── components/
+│   ├── auth/
+│   │   ├── login/
+│   │   └── register/
+│   │
+│   ├── webinars/
+│   │   ├── webinars/
+│   │   ├── create-webinar/
+│   │   ├── edit-webinar/
+│   │   ├── my-webinars/
+│   │   └── organizer-webinars/
+│   │
+│   ├── users/
+│   │   ├── users/
+│   │   ├── edit-profile/
+│   │   └── edit-user-access/
+│   │
+│   ├── roles/
+│   │   ├── roles/
+│   │   ├── create-role/
+│   │   ├── edit-role/
+│   │   ├── assign-capability/
+│   │   └── role-capabilities/
+│   │
+│   ├── capabilities/
+│   │   ├── capabilities/
+│   │   ├── create-capability/
+│   │   └── edit-capability/
+│   │
+│   ├── reports/
+│   │   └── reports/
+│   │
+│   └── layout/
+│       └── navbar/
+│
+├── shared/
+│   ├── constants/
+│   ├── guards/
+│   ├── interceptors/
+│   ├── interfaces/
+│   └── services/
+│
+├── app.config.ts
+├── app.routes.ts
+└── app.ts
+```
+
+## Shared Layer
+
+The `shared` folder contains reusable application logic.
+
+### Services
+
+```text
+src/app/shared/services/
+├── auth.ts
+├── webinar.ts
+├── user.ts
+├── role.ts
+├── capability.ts
+└── report.ts
+```
+
+### Interfaces
+
+The frontend mirrors backend DTOs using TypeScript interfaces, including:
+
+- Authentication DTOs
+- User DTOs
+- Webinar DTOs
+- Role DTOs
+- Capability DTOs
+- Report DTOs
+- Error response DTOs
+- Paginated response DTOs
+
+## Backend Integration
+
+The frontend integrates with the Spring Boot REST API through the following base path:
+
+```text
+/api/v1
+```
+
+Main backend resources consumed by the frontend:
+
+| Resource       | Base Endpoint   |
+| :------------- | :-------------- |
+| Authentication | `/auth`         |
+| Users          | `/users`        |
+| Webinars       | `/webinars`     |
+| Roles          | `/roles`        |
+| Capabilities   | `/capabilities` |
+| Reports        | `/reports`      |
+
+## Design Notes
+
+The application follows a service-oriented frontend architecture.
+
+Components are responsible for:
+
+- UI rendering
+- user interaction
+- form handling
+- local page state
+
+Services are responsible for:
+
+- HTTP communication
+- API endpoint integration
+- typed request/response handling
+
+Guards and interceptors are responsible for:
+
+- route protection
+- token validation
+- authorization headers
+
+This separation keeps the application maintainable, testable, and aligned with the backend REST API design.
+
+---
+
+**Author**: Nikolaos Karmperis
+**Assignment**: Coding Factory (AUEB) - 2026
+**Frontend**: Angular 21
+**Backend**: Spring Boot REST API
