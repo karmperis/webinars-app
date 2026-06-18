@@ -1,9 +1,47 @@
+/* =========================
+   Variables
+   ========================= */
+
+:root {
+  --primary: #000000;
+  --primary-hover: #222222;
+  --white-hover: #eeeeee;
+
+  --secondary: #6c757d;
+  --success: #198754;
+  --danger: #842029;
+  --warning: #ffd43b;
+
+  --light: #f5f7fa;
+  --dark: #111827;
+  --white: #ffffff;
+
+  --border-color: #dcdcdc;
+  --input-border: #c8c8c8;
+  --sidebar-muted: #cfcfcf;
+  --sidebar-border: rgba(255, 255, 255, 0.2);
+
+  --input-bg: #eaf1fb;
+  --input-bg-hover: #dde8f8;
+  --input-bg-focus: #fff3bf;
+
+  --table-hover-bg: #fff9db;
+
+  --danger-bg: #f8d7da;
+  --danger-border: #f5c2c7;
+
+  --shadow-sm: 0 6px 24px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.08);
+
+  --focus-ring-warning: 0 0 0 0.1rem rgba(255, 212, 59, 0.35);
+}
+
 /* Global layout */
 
 .page-layout {
   min-height: 100vh;
   display: flex;
-  background: #f5f7fa;
+  background: var(--light);
 }
 
 .page-content {
@@ -27,7 +65,7 @@
 
 .content-header p {
   margin: 0;
-  color: #6c757d;
+  color: var(--secondary);
 }
 
 /* Cards */
@@ -35,9 +73,9 @@
 .table-container,
 .form-card,
 .empty-state {
-  background: #ffffff;
-  border: 1px solid #dcdcdc;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .table-container {
@@ -57,15 +95,15 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: #f5f7fa;
+  background: var(--light);
 }
 
 .login-card {
   width: 100%;
   max-width: 1000px;
-  background: #ffffff;
-  border: 1px solid #dcdcdc;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
 }
 
 /* States */
@@ -76,15 +114,15 @@
 }
 
 .error-state {
-  color: #842029;
-  border-color: #f5c2c7;
-  background: #f8d7da;
+  color: var(--danger);
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
 }
 
 /* Tables */
 
 .table-hover > tbody > tr:hover > * {
-  background-color: #fff9db !important;
+  background-color: var(--table-hover-bg) !important;
 }
 
 /* Forms */
@@ -92,8 +130,8 @@
 .form-input,
 .login-input {
   border-radius: 0 !important;
-  background: #eaf1fb !important;
-  border: 1px solid #c8c8c8 !important;
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
   padding: 0.85rem 1rem !important;
 }
 
@@ -115,8 +153,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eaf1fb !important;
-  border: 1px solid #c8c8c8 !important;
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
   border-radius: 0 !important;
 }
 
@@ -124,7 +162,7 @@
 .register-icon i,
 .password-toggle-button i {
   font-size: 1rem;
-  color: #111827;
+  color: var(--dark);
 }
 
 .password-toggle-button {
@@ -132,15 +170,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eaf1fb !important;
-  border: 1px solid #c8c8c8 !important;
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
   border-left: 0 !important;
   border-radius: 0 !important;
   cursor: pointer;
 }
 
 .password-toggle-button:hover {
-  background: #dde8f8 !important;
+  background: var(--input-bg-hover) !important;
 }
 
 .password-toggle-button:focus {
@@ -149,15 +187,15 @@
 
 .form-input:focus,
 .login-input:focus {
-  background-color: #fff3bf !important;
-  box-shadow: 0 0 0 0.10rem rgba(255, 212, 59, 0.35) !important;
+  background-color: var(--input-bg-focus) !important;
+  box-shadow: var(--focus-ring-warning) !important;
 }
 
 .input-group:focus-within .login-icon,
 .input-group:focus-within .register-icon,
 .input-group:focus-within .password-toggle-button {
-  background-color: #fff3bf !important;
-  box-shadow: 0 0 0 0.10rem rgba(255, 212, 59, 0.35) !important;
+  background-color: var(--input-bg-focus) !important;
+  box-shadow: var(--focus-ring-warning) !important;
 }
 
 /* Select controls */
@@ -172,7 +210,7 @@
   right: 1rem;
   transform: translateY(-50%);
   pointer-events: none;
-  color: #6c757d;
+  color: var(--secondary);
 }
 
 .select-wrapper select {
@@ -184,8 +222,8 @@
 .submit-button,
 .login-button {
   border-radius: 0 !important;
-  background: #000000 !important;
-  color: #ffffff !important;
+  background: var(--primary) !important;
+  color: var(--white) !important;
   font-weight: 700 !important;
   padding: 0.8rem 2rem !important;
 }
@@ -200,14 +238,14 @@
 
 .submit-button:hover,
 .login-button:hover {
-  background: #222222 !important;
-  color: #ffffff !important;
+  background: var(--primary-hover) !important;
+  color: var(--white) !important;
 }
 
 .register-button {
   border-radius: 0 !important;
-  background: #ffffff !important;
-  color: #000000 !important;
+  background: var(--white) !important;
+  color: var(--primary) !important;
   font-weight: 700 !important;
   padding: 0.8rem !important;
   height: 50px !important;
@@ -218,5 +256,5 @@
 }
 
 .register-button:hover {
-  background: #eeeeee !important;
+  background: var(--white-hover) !important;
 }
