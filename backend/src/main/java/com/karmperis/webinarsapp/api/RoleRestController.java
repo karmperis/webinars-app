@@ -268,7 +268,7 @@ public class RoleRestController {
                     description = "Role not found"
             )
     })
-    @GetMapping("/{roleUuid}/capabilities")
+    @GetMapping("/{roleUuid}/capabilities/view")
     public ResponseEntity<List<CapabilityReadOnlyDTO>> getRoleCapabilities(
             @PathVariable UUID roleUuid) throws EntityNotFoundException {
 
