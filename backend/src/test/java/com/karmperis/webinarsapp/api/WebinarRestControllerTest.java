@@ -58,7 +58,7 @@ public class WebinarRestControllerTest {
         UUID organizerUuid = UUID.randomUUID();
         UUID webinarUuid = UUID.randomUUID();
         UserReadOnlyDTO organizer = new UserReadOnlyDTO(
-                organizerUuid, "organizer", true, 1L, "ADMIN", "John", "Doe", "+306900000000"
+                organizerUuid, "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000"
         );
 
         WebinarReadOnlyDTO responseDTO = new WebinarReadOnlyDTO(
@@ -97,7 +97,7 @@ public class WebinarRestControllerTest {
     void getWebinarByUuid_ReturnsOk() throws Exception {
         UUID uuid = UUID.randomUUID();
         UserReadOnlyDTO organizer = new UserReadOnlyDTO(
-                UUID.randomUUID(), "organizer", true, 1L, "ADMIN", "John", "Doe", "+306900000000");
+                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
         WebinarReadOnlyDTO responseDTO = new WebinarReadOnlyDTO(
                 uuid, "Title",
                 "Desc",
@@ -111,6 +111,87 @@ public class WebinarRestControllerTest {
         mockMvc.perform(get("/api/v1/webinars/{uuid}", uuid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uuid").value(uuid.toString()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars - Should return paginated webinars")
+    void getAllWebinars_ReturnsPage() throws Exception {
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
+                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
+        );
+        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
+
+        when(webinarService.findAllWebinars(any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/webinars")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Title"));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars/organizer/{organizerUuid} - Should return paginated webinars by organizer")
+    void getWebinarsByOrganizer_ReturnsPage() throws Exception {
+        UUID organizerUuid = UUID.randomUUID();
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                organizerUuid, "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
+                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
+        );
+        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
+
+        when(webinarService.findAllWebinarsByOrganizer(eq(organizerUuid), any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/webinars/organizer/{organizerUuid}", organizerUuid)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].organizer.uuid").value(organizerUuid.toString()));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars/participants/{userUuid} - Should return paginated webinars by participant")
+    void getWebinarsByParticipant_ReturnsPage() throws Exception {
+        UUID userUuid = UUID.randomUUID();
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
+                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
+        );
+        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
+
+        when(webinarService.findAllWebinarsByParticipant(eq(userUuid), any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/webinars/participants/{userUuid}", userUuid)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Title"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/webinars/{uuid} - Should return 200 OK")
+    void updateWebinar_ReturnsOk() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        com.karmperis.webinarsapp.dto.WebinarEditDTO editDTO = new com.karmperis.webinarsapp.dto.WebinarEditDTO(
+                "Updated Title", "Updated Desc", Instant.parse("2026-12-02T10:00:00Z"), 90
+        );
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO responseDTO = new WebinarReadOnlyDTO(
+                uuid, "Updated Title", "Updated Desc", Instant.parse("2026-12-02T10:00:00Z"), 90, organizer
+        );
+
+        when(webinarService.updateWebinar(eq(uuid), any(com.karmperis.webinarsapp.dto.WebinarEditDTO.class))).thenReturn(responseDTO);
+
+        mockMvc.perform(put("/api/v1/webinars/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated Title"));
     }
 
     @Test
