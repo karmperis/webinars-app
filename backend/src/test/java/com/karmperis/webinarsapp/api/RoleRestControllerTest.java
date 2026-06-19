@@ -117,4 +117,16 @@ public class RoleRestControllerTest {
         mockMvc.perform(post("/api/v1/roles/{roleUuid}/capabilities/{capabilityUuid}", roleUuid, capUuid))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("GET /api/v1/roles/{roleUuid}/capabilities/view - Should return list of capabilities")
+    void getRoleCapabilities_ReturnsList() throws Exception {
+        UUID roleUuid = UUID.randomUUID();
+        com.karmperis.webinarsapp.dto.CapabilityReadOnlyDTO capDto = new com.karmperis.webinarsapp.dto.CapabilityReadOnlyDTO(UUID.randomUUID(), "CAN_VIEW_REPORTS", "can view reports");
+        when(roleService.findCapabilitiesByRoleUuid(roleUuid)).thenReturn(List.of(capDto));
+
+        mockMvc.perform(get("/api/v1/roles/{roleUuid}/capabilities/view", roleUuid))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("CAN_VIEW_REPORTS"));
+    }
 }
