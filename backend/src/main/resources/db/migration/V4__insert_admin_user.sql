@@ -6,8 +6,8 @@
 ============================================================================
 Seed Admin User and Profile Details
 ============================================================================
-The password is: Password123!
 */
+
 IF NOT EXISTS
     (SELECT 1
      FROM users
