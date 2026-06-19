@@ -253,8 +253,6 @@ can access the following:
 
 ## Data Model
 
-## Data Model
-
 ### Entity Relationship Overview
 
 ```text
