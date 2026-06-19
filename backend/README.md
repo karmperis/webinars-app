@@ -121,18 +121,19 @@ Base Path: `/api/v1`
 ```json
 {
   "username": "ADMIN",
-  "password": "Password123!"
+  "password": "SecureAdmin123!"
 }
 ```
 
 ### Users
 
-| Method | Endpoint        | Auth          | Description                       |
-|:-------|:----------------|:--------------|:----------------------------------|
-| POST   | `/users`        | Public        | Register a new user               |
-| GET    | `/users/{uuid}` | Authenticated | Get user profile details          |
-| PUT    | `/users/{uuid}` | Authenticated | Update user profile               |
-| DELETE | `/users/{uuid}` | Admin         | Delete user account (soft-delete) |
+| Method | Endpoint               | Auth          | Description                            |
+|:-------|:-----------------------|:--------------|:---------------------------------------|
+| POST   | `/users`               | Public        | Register a new user                    |
+| GET    | `/users/{uuid}`        | Authenticated | Get user profile details               |
+| PUT    | `/users/{uuid}`        | Authenticated | Update user profile                    |
+| PATCH  | `/users/{uuid}/access` | Admin         | Update user access rights (Admin Only) |
+| DELETE | `/users/{uuid}`        | Admin         | Delete user account (soft-delete)      |
 
 ### Webinars & Enrollments
 
@@ -160,6 +161,7 @@ Administrative endpoints are provided for managing roles and capabilities within
 | GET    | `/roles/{uuid}`                                   | Admin | Get role details              |
 | PUT    | `/roles/{uuid}`                                   | Admin | Update role details           |
 | DELETE | `/roles/{uuid}`                                   | Admin | Delete a role                 |
+| GET    | `/roles/{uuid}/capabilities/view`                 | Admin | View role capabilities        |
 | POST   | `/roles/{roleUuid}/capabilities/{capabilityUuid}` | Admin | Assign a capability to a role |
 
 #### Capabilities
@@ -293,3 +295,6 @@ src/main/java/com/karmperis/webinarsapp/
 ---
 **Author**: Nikolaos Karmperis  
 **Assignment**: Coding Factory (AUEB) - 2026
+**Backend**: Spring Boot REST API
+**Frontend**: Angular
+**Database**: MS SQL Server
