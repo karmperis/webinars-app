@@ -58,6 +58,12 @@ If you wish to connect to the database manually:
 - **Password**: `Dev!Password2026`
 - **Database**: `webinars_db`
 
+> **Development Note**
+>
+> The credentials above are provided solely for local development.
+> Production systems should use environment variables or external secret management and
+> should never expose real credentials in source control.
+
 ## Build & Run
 
 ### 1. Start Services with Docker (Recommended)
@@ -76,6 +82,20 @@ The startup sequence automatically:
 4. Starts the Spring Boot API.
 
 The application will be available at: `http://localhost:8080`.
+
+### Stop Services
+
+To stop all running containers:
+
+```bash
+docker compose down
+```
+
+To stop all containers and remove persistent database volumes:
+
+```bash
+docker compose down -v
+```
 
 ### 2. Local Development
 
@@ -105,6 +125,15 @@ The application uses Spring profiles (`dev`, `staging`, `pro`). The `dev` profil
 | `app.security.secret-key`     | JWT Signing Secret   | (predefined in dev)                  |
 | `app.security.jwt-expiration` | JWT Token Validity   | `86400000` (24h)                     |
 | `allowed.origins`             | CORS Allowed Origins | `http://localhost:4200`              |
+
+> **Production Note**
+>
+> Never commit real secrets to source control.
+>
+> Development credentials are provided for local Docker execution and academic evaluation purposes only.
+>
+> In production environments, database credentials, JWT secrets, and other sensitive configuration values
+> should be injected through environment variables or an external secret management solution.
 
 ## API Overview
 
@@ -224,6 +253,27 @@ can access the following:
 
 ## Data Model
 
+## Data Model
+
+### Entity Relationship Overview
+
+```text
+roles ────── 1:N ────── users
+  │
+  └──────< roles_capabilities >────── capabilities
+
+
+users ────── 1:1 ────── users_details
+  │
+  ├────── 1:N ────── tokens
+  │
+  ├────── 1:N ────── webinars
+  │                    (organizer)
+  │
+  └──────< users_webinars >────── webinars
+             (enrollments)
+```
+
 - **User**: Core entity for authentication.
 - **UserDetail**: Profile information (One-to-One with User).
 - **Role & Capability**: RBAC system (Many-to-Many).
@@ -293,8 +343,10 @@ src/main/java/com/karmperis/webinarsapp/
 ```
 
 ---
-**Author**: Nikolaos Karmperis  
-**Assignment**: Coding Factory (AUEB) - 2026
-**Backend**: Spring Boot REST API
-**Frontend**: Angular
-**Database**: MS SQL Server
+**Author:**  Nikolaos Karmperis
+
+**Assignment:**  Coding Factory (AUEB) - 2026
+
+**Backend:**  Spring Boot REST API  
+**Frontend:**  Angular  
+**Database:**  MS SQL Server  
