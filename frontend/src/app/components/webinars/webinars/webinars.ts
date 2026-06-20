@@ -43,12 +43,28 @@ export class Webinars implements OnInit {
   }
 
   /**
-   * Checks whether the current user can enroll in webinars.
+   * Checks whether the current user can enroll in the given webinar.
    *
-   * @returns true for ADMIN and PARTICIPANT users
+   * @param webinar webinar to check
+   * @returns true if the user is ADMIN, PARTICIPANT, or an ORGANIZER who does not own the webinar
    */
-  canEnrollInWebinars(): boolean {
-    return this.authService.hasRole('ADMIN') || this.authService.hasRole('PARTICIPANT');
+  canEnrollInWebinar(webinar: WebinarReadOnly): boolean {
+    const currentUserUuid = this.authService.getCurrentUserUuid();
+    const isOwnWebinar = currentUserUuid === webinar.organizer.uuid;
+
+    if (this.authService.hasRole('ADMIN')) {
+      return true;
+    }
+
+    if (this.authService.hasRole('PARTICIPANT')) {
+      return true;
+    }
+
+    if (this.authService.hasRole('ORGANIZER')) {
+      return !isOwnWebinar;
+    }
+
+    return false;
   }
 
   /**
@@ -150,8 +166,8 @@ export class Webinars implements OnInit {
         this.loadEnrolledWebinars();
 
         setTimeout(() => {
-            this.successMessage.set(null);
-          }, 1500);
+          this.successMessage.set(null);
+        }, 2000);
       },
       error: (error) => {
         console.error('Failed to enroll in webinar', error);
