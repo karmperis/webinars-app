@@ -203,9 +203,9 @@ Role and capability features include:
 
 Supported report types:
 
-- Popularity report
-- Productive users report
-- Inactive users report
+* Popularity report  — shows active webinars sorted by participant count
+* Productive users report — shows active organizers with 4 or more active webinars and their total  webinar duration 
+* Webinar and organizer status report — shows active or deleted webinars organized by active, inactive, or deleted users, highlighting both webinar status and organizer status
 
 Reports are generated asynchronously by the backend. The frontend starts a report job and polls the backend until the result is available.
 
@@ -393,7 +393,8 @@ This separation keeps the application maintainable, testable, and aligned with t
 
 ---
 
-**Author**: Nikolaos Karmperis
-**Assignment**: Coding Factory (AUEB) - 2026
-**Frontend**: Angular 21
-**Backend**: Spring Boot REST API
+**Author:**  Nikolaos Karmperis
+**Assignment:**  AUEB Coding Factory - 2026
+**Backend:**  Spring Boot REST API
+**Frontend:**  Angular 21
+**Database:**  MS SQL Server
