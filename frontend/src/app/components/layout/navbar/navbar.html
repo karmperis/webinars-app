@@ -11,19 +11,19 @@
         <a routerLink="/my-webinars">Σεμινάρια που παρακολουθώ</a>
       </li>
 
-      <li>
-        <a routerLink="/profile">Προφίλ χρήστη</a>
-      </li>
-
       @if (isAdmin() || isOrganizer()) {
-        <li>
-          <a routerLink="/webinars/create">Προσθήκη νέου σεμιναρίου</a>
-        </li>
-
         <li>
           <a routerLink="/organizer-webinars">Σεμινάρια που διοργανώνω</a>
         </li>
+
+        <li>
+          <a routerLink="/webinars/create">Προσθήκη νέου σεμιναρίου</a>
+        </li>
       }
+
+      <li>
+        <a routerLink="/profile">Προφίλ χρήστη</a>
+      </li>
 
       @if (isAdmin()) {
         <li>
@@ -46,16 +46,16 @@
   </div>
 
   @if (currentUser()) {
-  <div class="sidebar-user">
-    <div class="sidebar-user-name">
-      {{ currentUser()?.firstname }} {{ currentUser()?.lastname }}
-    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name">
+        {{ currentUser()?.firstname }} {{ currentUser()?.lastname }}
+      </div>
 
-    <div class="sidebar-user-role">
-      {{ currentUser()?.roleName }}
+      <div class="sidebar-user-role">
+        {{ currentUser()?.roleName }}
+      </div>
     </div>
-  </div>
-}
+  }
 
   <button type="button" class="logout-button" (click)="logout()">Αποσύνδεση</button>
 </nav>
