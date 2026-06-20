@@ -315,9 +315,10 @@ To request a specific language, use the `Accept-Language` header:
 
 To facilitate development and testing, a set of dummy data is provided. This data includes:
 
-- Pre-configured Users (Admins, Organizers, Participants)
-- Sample Webinars
+- Pre-configured users (Organizers, Participants)
+- Sample webinars
 - Enrollment records
+- Inactive/deleted organizer records for reporting scenarios
 
 The SQL script is located at:
 `src/main/resources/data/dummy_data.sql`
@@ -341,10 +342,8 @@ src/main/java/com/karmperis/webinarsapp/
 ```
 
 ---
-**Author:**  Nikolaos Karmperis
-
-**Assignment:**  Coding Factory (AUEB) - 2026
-
+**Author:**  Nikolaos Karmperis  
+**Assignment:**  AUEB Coding Factory - 2026  
 **Backend:**  Spring Boot REST API  
 **Frontend:**  Angular  
 **Database:**  MS SQL Server  
