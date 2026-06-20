@@ -166,7 +166,7 @@ Available reports include:
 
 * Popularity report — shows active webinars sorted by participant count
 * Productive users report — shows active organizers with 4 or more active webinars and their total webinar duration
-* Inactive users report — shows deleted webinars and webinars organized by inactive or deleted users
+* Webinar and organizer status report — shows active or deleted webinars organized by active, inactive, or deleted users, highlighting both webinar status and organizer status
 
 The frontend starts a report job and polls the backend until the result is available.
 
@@ -529,7 +529,11 @@ If the dummy data script is loaded, the following demo accounts become available
 
 These credentials are intended only for local development, testing, and academic evaluation.
 > Note: Only the administrator account is created automatically through the database migration process.
-Organizer and participant accounts are available only when the dummy data dataset is loaded.
+>
+> Organizer and participant accounts are available only when the dummy data dataset is loaded.
+> 
+> The dummy dataset also includes additional inactive and deleted organizer records used for report generation scenarios and soft-delete demonstrations.
+> These records are not intended as primary demo login accounts.
 
 ## API Documentation
 
@@ -612,7 +616,7 @@ Add frontend unit tests.
 ---
 
 **Author:**  Nikolaos Karmperis  
-**Assignment:**  Coding Factory, AUEB - 2026  
+**Assignment:**  AUEB Coding Factory - 2026  
 **Backend:**  Spring Boot REST API  
 **Frontend:**  Angular  
 **Database:**  MS SQL Server  
