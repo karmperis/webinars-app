@@ -60,6 +60,13 @@ The project was developed for educational purposes as part of the Coding Factory
 * Gradle
 * Docker
 
+### Testing & Quality
+
+* JUnit 5
+* Mockito
+* MockMvc
+* JaCoCo 
+
 ### Frontend
 
 * Angular 21
@@ -157,9 +164,9 @@ The application supports asynchronous report generation.
 
 Available reports include:
 
-* Popularity report
-* Productive users report
-* Inactive users report
+* Popularity report — shows active webinars sorted by participant count
+* Productive users report — shows active organizers with 4 or more active webinars and their total webinar duration
+* Inactive users report — shows deleted webinars and webinars organized by inactive or deleted users
 
 The frontend starts a report job and polls the backend until the result is available.
 
@@ -503,25 +510,26 @@ Username: ADMIN
 Password: SecureAdmin123!
 ```
 
-### Organizers
+### Organizer and participant accounts
 
-Additional organizer accounts are provided through the optional dummy data script located under:
+Additional organizer and participant accounts are provided through the optional dummy data script located under:
 
 ```text
 backend/src/main/resources/data/dummy_data.sql
 ```
 
-If the dummy data script is loaded, the following organizer accounts become available:
+If the dummy data script is loaded, the following demo accounts become available:
 
-| Username | Password |
-|-----------|----------|
-| k.papadopoulos@test.gr | SecureAdmin123! |
-| m.pappa@test.gr | SecureAdmin123! |
-| n.alexiou@test.gr | SecureAdmin123! |
+| Username | Role | Password |
+|-----------|----------|----------|
+| k.papadopoulos@test.gr | Organizer | SecureAdmin123! |
+| m.pappa@test.gr | Organizer | SecureAdmin123! |
+| n.alexiou@test.gr | Participant | SecureAdmin123! |
+| g.panagoulis@test.gr | Participant | SecureAdmin123! |
 
 These credentials are intended only for local development, testing, and academic evaluation.
 > Note: Only the administrator account is created automatically through the database migration process.
-Organizer accounts are available only when the dummy data dataset is loaded.
+Organizer and participant accounts are available only when the dummy data dataset is loaded.
 
 ## API Documentation
 
@@ -603,9 +611,8 @@ Add frontend unit tests.
 
 ---
 
-**Author**: Nikolaos Karmperis
-**Assignment**: Coding Factory, AUEB - 2026
-**Backend**: Spring Boot REST API
-**Frontend**: Angular
-**Database**: MS SQL Server
-
+**Author:**  Nikolaos Karmperis  
+**Assignment:**  Coding Factory, AUEB - 2026  
+**Backend:**  Spring Boot REST API  
+**Frontend:**  Angular  
+**Database:**  MS SQL Server  
