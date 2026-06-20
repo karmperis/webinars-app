@@ -85,6 +85,6 @@ export class Role {
    * @returns observable containing the assigned capabilities
    */
   getRoleCapabilities(roleUuid: string): Observable<CapabilityReadOnly[]> {
-    return this.http.get<CapabilityReadOnly[]>(`${this.rolesUrl}/${roleUuid}/capabilities`);
+    return this.http.get<CapabilityReadOnly[]>(`${this.rolesUrl}/${roleUuid}/capabilities/view`);
   }
 }

@@ -76,7 +76,7 @@ public class UserServiceImplTest {
     @DisplayName("saveUser: Should save and return UserReadOnlyDTO successfully")
     void saveUser_Success() throws Exception {
         UserInsertDTO dto = new UserInsertDTO("testuser", "password123", "John", "Doe", "+306900000000");
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", false, 1L, "USER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", false, UUID.randomUUID(), "USER", "John", "Doe", "+306900000000");
 
         User unmappedUser = new User();
         unmappedUser.setUsername("testuser");
@@ -137,7 +137,7 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("findUserByUuid: Should return User when found")
     void findUserByUuid_Success() throws Exception {
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, 1L, "USER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, UUID.randomUUID(), "USER", "John", "Doe", "+306900000000");
 
         when(userRepository.findByUuidAndDeletedAtIsNull(userUuid)).thenReturn(Optional.of(user));
         when(userMapper.mapToUserReadOnlyDTO(user)).thenReturn(readOnlyDTO);
@@ -161,7 +161,7 @@ public class UserServiceImplTest {
     void findAllUsersSortedByName_Success() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> userPage = new PageImpl<>(List.of(user));
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, 1L, "USER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, UUID.randomUUID(), "USER", "John", "Doe", "+306900000000");
 
         when(userRepository.findByDeletedAtIsNull(pageable)).thenReturn(userPage);
         when(userMapper.mapToUserReadOnlyDTO(user)).thenReturn(readOnlyDTO);
@@ -181,7 +181,7 @@ public class UserServiceImplTest {
     @DisplayName("updateUser: Should update User successfully")
     void updateUser_Success() throws Exception {
         UserEditDTO editDTO = new UserEditDTO("John", "Doe", "+306900000000");
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "John", true, 1L, "USER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "John", true, UUID.randomUUID(), "USER", "John", "Doe", "+306900000000");
 
         when(userRepository.findByUuidAndDeletedAtIsNull(userUuid)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
@@ -211,17 +211,18 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("updateUserAccess: Should update user role and status successfully (Admin)")
     void updateUserAccess_Success() throws Exception {
+        UUID teacherRoleUuid = UUID.randomUUID();
         com.karmperis.webinarsapp.dto.UserAdminEditDTO adminEditDTO =
-                new com.karmperis.webinarsapp.dto.UserAdminEditDTO(2L, false);
+                new com.karmperis.webinarsapp.dto.UserAdminEditDTO(teacherRoleUuid, false);
 
         Role newRole = new Role();
         newRole.setId(2L);
         newRole.setName("TEACHER");
 
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", false, 2L, "TEACHER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", false, teacherRoleUuid, "TEACHER", "John", "Doe", "+306900000000");
 
         when(userRepository.findByUuidAndDeletedAtIsNull(userUuid)).thenReturn(Optional.of(user));
-        when(roleRepository.findById(2L)).thenReturn(Optional.of(newRole));
+        when(roleRepository.findByUuidAndDeletedAtIsNull(teacherRoleUuid)).thenReturn(Optional.of(newRole));
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.mapToUserReadOnlyDTO(user)).thenReturn(readOnlyDTO);
 
