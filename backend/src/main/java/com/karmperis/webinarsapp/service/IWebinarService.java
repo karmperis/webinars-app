@@ -83,9 +83,11 @@ public interface IWebinarService {
      *
      * @param webinarUuid the UUID of the webinar
      * @param userUuid    the UUID of the user to enroll
-     * @throws EntityNotFoundException if either the webinar or the user is not found
+     * @throws EntityNotFoundException        if either the webinar or the user is not found
+     * @throws EntityAlreadyExistsException   if the user is already enrolled in the webinar
+     * @throws EntityInvalidArgumentException if the organizer tries to enroll in their own webinar
      */
-    void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException, EntityAlreadyExistsException;
+    void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
 
     /**
      * Retrieve a page of non-deleted webinars where a specific user is enrolled as participant.

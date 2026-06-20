@@ -207,12 +207,14 @@ public class WebinarServiceImpl implements IWebinarService {
      *
      * @param webinarUuid the UUID of the webinar
      * @param userUuid    the UUID of the user to enroll
-     * @throws EntityNotFoundException if either the webinar or the user is not found
+     * @throws EntityNotFoundException        if either the webinar or the user is not found
+     * @throws EntityAlreadyExistsException   if the user is already enrolled in the webinar
+     * @throws EntityInvalidArgumentException if the organizer tries to enroll in their own webinar
      */
     @Override
-    @Transactional(rollbackFor = EntityNotFoundException.class)
+    @Transactional(rollbackFor = { EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class })
     @PreAuthorize("hasAuthority('ENROLL_IN_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnProfile(#userUuid, authentication))")
-    public void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException, EntityAlreadyExistsException {
+    public void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
         log.info("Enrolling user {} in webinar {}", userUuid, webinarUuid);
 
         Webinar webinar = webinarRepository.findByUuidAndDeletedAtIsNull(webinarUuid)
@@ -227,12 +229,20 @@ public class WebinarServiceImpl implements IWebinarService {
                     return new EntityNotFoundException("User", "User with UUID " + userUuid + " not found");
                 });
 
+        if (webinar.getUser().getUuid().equals(user.getUuid())) {
+            throw new EntityInvalidArgumentException(
+                    "Enrollment",
+                    "Organizer cannot enroll in their own webinar"
+            );
+        }
+
         if (webinar.hasParticipant(user)) {
             throw new EntityAlreadyExistsException(
                     "Enrollment",
                     "User is already enrolled in this webinar"
             );
         }
+
         webinar.addParticipant(user);
         webinarRepository.save(webinar);
 

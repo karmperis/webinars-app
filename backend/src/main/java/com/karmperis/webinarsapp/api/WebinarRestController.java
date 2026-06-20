@@ -205,7 +205,9 @@ public class WebinarRestController {
      * @param webinarUuid the UUID of the webinar
      * @param userUuid    the UUID of the user to enroll
      * @return HTTP 204 indicating successful enrollment
-     * @throws EntityNotFoundException if either the webinar or user is not found
+     * @throws EntityNotFoundException        if either the webinar or user is not found
+     * @throws EntityAlreadyExistsException   if the user is already enrolled in the webinar
+     * @throws EntityInvalidArgumentException if the organizer tries to enroll in their own webinar
      */
     @Operation(
             summary = "Enroll user in webinar",
@@ -214,11 +216,15 @@ public class WebinarRestController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "User successfully enrolled (No Content)"),
             @ApiResponse(responseCode = "404", description = "Webinar or User not found",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid enrollment request",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "409", description = "User is already enrolled",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @PostMapping("/{webinarUuid}/participants/{userUuid}")
     public ResponseEntity<Void> enrollUser(@PathVariable UUID webinarUuid, @PathVariable UUID userUuid)
-            throws EntityNotFoundException, EntityAlreadyExistsException {
+            throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
         webinarService.enrollUserInWebinar(webinarUuid, userUuid);
         return ResponseEntity.noContent().build();
     }
