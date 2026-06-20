@@ -8,21 +8,21 @@ The project is organized as a monorepo with a Spring Boot REST API backend and a
 
 ## Table of Contents
 
-* [Project Overview](#project-overview)
-* [Tech Stack](#tech-stack)
-* [Repository Structure](#repository-structure)
-* [Main Features](#main-features)
-* [Architecture](#architecture)
-* [Backend Overview](#backend-overview)
-* [Frontend Overview](#frontend-overview)
-* [Security Overview](#security-overview)
-* [Database Overview](#database-overview)
-* [Build & Run](#build--run)
-* [Demo Credentials](#demo-credentials)
-* [API Documentation](#api-documentation)
-* [Development Notes](#development-notes)
-* [Assignment Notes](#assignment-notes)
-* [Future Improvements](#future-improvements)
+- [Project Overview](#project-overview)
+- [Tech Stack](#tech-stack)
+- [Repository Structure](#repository-structure)
+- [Main Features](#main-features)
+- [Architecture](#architecture)
+- [Backend Overview](#backend-overview)
+- [Frontend Overview](#frontend-overview)
+- [Security Overview](#security-overview)
+- [Database Overview](#database-overview)
+- [Build & Run](#build--run)
+- [Demo Credentials](#demo-credentials)
+- [API Documentation](#api-documentation)
+- [Development Notes](#development-notes)
+- [Assignment Notes](#assignment-notes)
+- [Future Improvements](#future-improvements)
 
 ## Project Overview
 
@@ -30,16 +30,16 @@ WebinarsApp is a full-stack application for managing webinars and user participa
 
 The system supports:
 
-* User registration and login
-* JWT-based authentication
-* Role-based and capability-based authorization
-* Webinar creation, editing, deletion, and enrollment
-* User profile management
-* Admin user management
-* Role and capability management
-* Assignment of capabilities to roles
-* Asynchronous report generation
-* Docker-based local development setup
+- User registration and login
+- JWT-based authentication
+- Role-based and capability-based authorization
+- Webinar creation, editing, deletion, and enrollment
+- User profile management
+- Admin user management
+- Role and capability management
+- Assignment of capabilities to roles
+- Asynchronous report generation
+- Docker-based local development setup
 
 The project was developed for educational purposes as part of the Coding Factory final project requirements.
 
@@ -47,46 +47,46 @@ The project was developed for educational purposes as part of the Coding Factory
 
 ### Backend
 
-* Java 21
-* Spring Boot 3
-* Spring Security
-* JWT Authentication
-* Spring Data JPA
-* Hibernate Validation / Jakarta Validation
-* Flyway
-* MS SQL Server 2022
-* Lombok
-* Swagger / OpenAPI
-* Gradle
-* Docker
+- Java 21
+- Spring Boot 3
+- Spring Security
+- JWT Authentication
+- Spring Data JPA
+- Hibernate Validation / Jakarta Validation
+- Flyway
+- MS SQL Server 2022
+- Lombok
+- Swagger / OpenAPI
+- Gradle
+- Docker
 
 ### Testing & Quality
 
-* JUnit 5
-* Mockito
-* MockMvc
-* JaCoCo 
+- JUnit 5
+- Mockito
+- MockMvc
+- JaCoCo
 
 ### Frontend
 
-* Angular 21
-* TypeScript
-* Angular Router
-* Angular Reactive Forms
-* Angular Signals
-* RxJS
-* Bootstrap 5
-* Font Awesome
-* JWT Interceptor
-* Route Guards
+- Angular 21
+- TypeScript
+- Angular Router
+- Angular Reactive Forms
+- Angular Signals
+- RxJS
+- Bootstrap 5
+- Font Awesome
+- JWT Interceptor
+- Route Guards
 
 ### DevOps / Tooling
 
-* Docker
-* Docker Compose
-* Gradle Wrapper
-* npm
-* Git / GitHub
+- Docker
+- Docker Compose
+- Gradle Wrapper
+- npm
+- Git / GitHub
 
 ## Repository Structure
 
@@ -102,61 +102,61 @@ webinars-app/
 
 ### Authentication
 
-* User login with username and password
-* User registration
-* JWT token generation
-* JWT token validation
-* Logout functionality
-* Remember Me support on the frontend
+- User login with username and password
+- User registration
+- JWT token generation
+- JWT token validation
+- Logout functionality
+- Remember Me support on the frontend
 
 ### Authorization
 
 The application supports three main roles:
 
-| Role          | Description                        |
-| :------------ | :--------------------------------- |
-| `ADMIN`       | Full administrative access         |
-| `ORGANIZER`   | Can create and manage own webinars |
-| `PARTICIPANT` | Can view webinars and enroll       |
+| Role          | Description                                                                                |
+| :------------ | :----------------------------------------------------------------------------------------- |
+| `ADMIN`       | Full administrative access                                                                 |
+| `ORGANIZER`   | Can create webinars, manage their own webinars, and enroll in webinars organized by others |
+| `PARTICIPANT` | Can view webinars and enroll                                                               |
 
 The backend also includes a capability-based authorization model.
 
 Examples of capabilities:
 
-* `VIEW_WEBINARS`
-* `CREATE_WEBINAR`
-* `EDIT_WEBINAR`
-* `DELETE_WEBINAR`
-* `ENROLL_IN_WEBINAR`
+- `VIEW_WEBINARS`
+- `CREATE_WEBINAR`
+- `EDIT_WEBINAR`
+- `DELETE_WEBINAR`
+- `ENROLL_IN_WEBINAR`
 
 ### Webinars
 
-* List all webinars
-* View webinar details
-* Create webinar
-* Edit webinar
-* Delete webinar
-* Enroll in webinar
-* View enrolled webinars
-* View webinars organized by the current user
+- List all webinars
+- View webinar details
+- Create webinar
+- Edit webinar
+- Delete webinar
+- Enroll in webinar
+- View enrolled webinars
+- View webinars organized by the current user
 
 ### Users
 
-* Register new users
-* View user profile
-* Edit current user profile
-* Admin user listing
-* Admin user access management
-* Role assignment
-* Active/inactive user management
-* Soft-delete users
+- Register new users
+- View user profile
+- Edit current user profile
+- Admin user listing
+- Admin user access management
+- Role assignment
+- Active/inactive user management
+- Soft-delete users
 
 ### Roles & Capabilities
 
-* Create, edit, list, and delete roles
-* Create, edit, list, and delete capabilities
-* Assign capabilities to roles
-* View capabilities assigned to a specific role
+- Create, edit, list, and delete roles
+- Create, edit, list, and delete capabilities
+- Assign capabilities to roles
+- View capabilities assigned to a specific role
 
 ### Reports
 
@@ -164,9 +164,9 @@ The application supports asynchronous report generation.
 
 Available reports include:
 
-* Popularity report — shows active webinars sorted by participant count
-* Productive users report — shows active organizers with 4 or more active webinars and their total webinar duration
-* Webinar and organizer status report — shows active or deleted webinars organized by active, inactive, or deleted users, highlighting both webinar status and organizer status
+- Popularity report — shows active webinars sorted by participant count
+- Productive users report — shows active organizers with 4 or more active webinars and their total webinar duration
+- Webinar and organizer status report — shows active or deleted webinars organized by active, inactive, or deleted users, highlighting both webinar status and organizer status
 
 The frontend starts a report job and polls the backend until the result is available.
 
@@ -188,13 +188,13 @@ Database
 
 The backend follows clear separation of concerns:
 
-* Controllers expose REST endpoints.
-* Services contain business logic.
-* Repositories handle database access.
-* DTOs define API request and response contracts.
-* Mappers convert between entities and DTOs.
-* Security filters handle JWT authentication.
-* Global exception handling provides structured error responses.
+- Controllers expose REST endpoints.
+- Services contain business logic.
+- Repositories handle database access.
+- DTOs define API request and response contracts.
+- Mappers convert between entities and DTOs.
+- Security filters handle JWT authentication.
+- Global exception handling provides structured error responses.
 
 ### Frontend Architecture
 
@@ -210,12 +210,12 @@ Backend REST API
 
 The frontend follows a service-oriented Angular architecture:
 
-* Components handle UI rendering and user interaction.
-* Services handle HTTP communication.
-* Guards protect routes.
-* Interceptors attach JWT tokens to API requests.
-* Interfaces mirror backend DTOs.
-* Signals manage local page state.
+- Components handle UI rendering and user interaction.
+- Services handle HTTP communication.
+- Guards protect routes.
+- Interceptors attach JWT tokens to API requests.
+- Interfaces mirror backend DTOs.
+- Signals manage local page state.
 
 ## Backend Overview
 
@@ -370,23 +370,23 @@ The project implements authentication and authorization on both backend and fron
 
 ### Backend Security
 
-* Stateless JWT authentication
-* Spring Security filter chain
-* JWT validation filter
-* Role-based authorization
-* Capability-based authorization
-* Protected REST endpoints
-* Public registration and login endpoints
-* CORS configuration for Angular development server
+- Stateless JWT authentication
+- Spring Security filter chain
+- JWT validation filter
+- Role-based authorization
+- Capability-based authorization
+- Protected REST endpoints
+- Public registration and login endpoints
+- CORS configuration for Angular development server
 
 ### Frontend Security
 
-* JWT token storage
-* Auth guard for protected routes
-* Role-aware route protection
-* HTTP interceptor for Authorization header
-* Role-based navigation visibility
-* Logout handling
+- JWT token storage
+- Auth guard for protected routes
+- Role-aware route protection
+- HTTP interceptor for Authorization header
+- Role-based navigation visibility
+- Logout handling
 
 For educational simplicity, JWT tokens are stored in `localStorage` or `sessionStorage`.
 
@@ -398,24 +398,24 @@ Database schema is managed with Flyway migrations.
 
 Main tables include:
 
-* `users`
-* `users_details`
-* `roles`
-* `capabilities`
-* `roles_capabilities`
-* `webinars`
-* `users_webinars`
-* `tokens`
+- `users`
+- `users_details`
+- `roles`
+- `capabilities`
+- `roles_capabilities`
+- `webinars`
+- `users_webinars`
+- `tokens`
 
 The database design includes:
 
-* UUID public identifiers
-* Internal numeric primary keys
-* Auditing timestamps
-* Soft-delete support
-* Many-to-many relationships for enrollments and role capabilities
-* One-to-one relationship between user and user details
-* One-to-many relationship between organizer and webinars
+- UUID public identifiers
+- Internal numeric primary keys
+- Auditing timestamps
+- Soft-delete support
+- Many-to-many relationships for enrollments and role capabilities
+- One-to-one relationship between user and user details
+- One-to-many relationship between organizer and webinars
 
 ## Build & Run
 
@@ -423,11 +423,11 @@ The database design includes:
 
 To run the full project locally, you need:
 
-* Docker
-* Docker Compose
-* Java 21, if running backend outside Docker
-* Node.js and npm, if running frontend locally
-* Angular CLI, if using `ng serve`
+- Docker
+- Docker Compose
+- Java 21, if running backend outside Docker
+- Node.js and npm, if running frontend locally
+- Angular CLI, if using `ng serve`
 
 ## Running the Backend with Docker
 
@@ -520,18 +520,19 @@ backend/src/main/resources/data/dummy_data.sql
 
 If the dummy data script is loaded, the following demo accounts become available:
 
-| Username | Role | Password |
-|-----------|----------|----------|
-| k.papadopoulos@test.gr | Organizer | SecureAdmin123! |
-| m.pappa@test.gr | Organizer | SecureAdmin123! |
-| n.alexiou@test.gr | Participant | SecureAdmin123! |
-| g.panagoulis@test.gr | Participant | SecureAdmin123! |
+| Username               | Role        | Password        |
+| ---------------------- | ----------- | --------------- |
+| k.papadopoulos@test.gr | Organizer   | SecureAdmin123! |
+| m.pappa@test.gr        | Organizer   | SecureAdmin123! |
+| n.alexiou@test.gr      | Participant | SecureAdmin123! |
+| g.panagoulis@test.gr   | Participant | SecureAdmin123! |
 
 These credentials are intended only for local development, testing, and academic evaluation.
+
 > Note: Only the administrator account is created automatically through the database migration process.
 >
 > Organizer and participant accounts are available only when the dummy data dataset is loaded.
-> 
+>
 > The dummy dataset also includes additional inactive and deleted organizer records used for report generation scenarios and soft-delete demonstrations.
 > These records are not intended as primary demo login accounts.
 
@@ -592,31 +593,34 @@ The application is intended for educational and portfolio purposes. Security, de
 
 For example:
 
-* Demo credentials are included for academic evaluation.
-* JWT tokens are stored in browser storage for frontend simplicity.
-* Development database credentials are configured for local Docker execution.
-* Production-grade secret management is outside the scope of this assignment.
+- Demo credentials are included for academic evaluation.
+- JWT tokens are stored in browser storage for frontend simplicity.
+- Development database credentials are configured for local Docker execution.
+- Production-grade secret management is outside the scope of this assignment.
 
 ## Future Improvements
 
 Possible future improvements include:
 
 ### Authentication & Account Management
+
 Implement user account activation using email verification tokens.
 Implement forgot-password and password reset workflows using secure reset tokens.
 Add email notifications for account activation and password recovery.
 
 ### Webinar Management
+
 Add the ability for participants to unenroll from webinars.
 
 ### Testing
+
 Increase backend integration test coverage.
 Add frontend unit tests.
 
 ---
 
-**Author:**  Nikolaos Karmperis  
-**Assignment:**  AUEB Coding Factory - 2026  
-**Backend:**  Spring Boot REST API  
-**Frontend:**  Angular  
-**Database:**  MS SQL Server  
+**Author:** Nikolaos Karmperis  
+**Assignment:** AUEB Coding Factory - 2026  
+**Backend:** Spring Boot REST API  
+**Frontend:** Angular  
+**Database:** MS SQL Server
