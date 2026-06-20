@@ -51,7 +51,7 @@ public class UserRestControllerTest {
     void createUser_ReturnsCreated() throws Exception {
         UserInsertDTO insertDTO = new UserInsertDTO("testuser", "StrongPass123!", "John", "Doe", "+306900000000");
         UUID uuid = UUID.randomUUID();
-        UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, 1L, "John", "Doe", "john@example.com", "+306900000000");
+        UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
 
         when(userService.saveUser(any(UserInsertDTO.class))).thenReturn(responseDTO);
 
@@ -67,7 +67,7 @@ public class UserRestControllerTest {
     @DisplayName("GET /api/v1/users/{uuid} - Should return 200 OK")
     void getUserByUserUuid_ReturnsOk() throws Exception {
         UUID uuid = UUID.randomUUID();
-        UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, 1L, "ADMIN", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
 
         when(userService.findUserByUuid(uuid)).thenReturn(responseDTO);
 
@@ -79,7 +79,7 @@ public class UserRestControllerTest {
     @Test
     @DisplayName("GET /api/v1/users - Should return paginated users")
     void getAllUsers_ReturnsPage() throws Exception {
-        UserReadOnlyDTO dto = new UserReadOnlyDTO(UUID.randomUUID(), "testuser", true, 1L, "ADMIN", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO dto = new UserReadOnlyDTO(UUID.randomUUID(), "testuser", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
         Page<UserReadOnlyDTO> page = new PageImpl<>(List.of(dto));
 
         when(userService.findAllUsersSortedByName(any(Pageable.class))).thenReturn(page);
@@ -96,7 +96,7 @@ public class UserRestControllerTest {
     void updateUser_ReturnsOk() throws Exception {
         UUID uuid = UUID.randomUUID();
         UserEditDTO editDTO = new UserEditDTO("John", "Doe", "+306900000000");
-        UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, 1L, "ADMIN", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
 
         when(userService.updateUser(eq(uuid), any(UserEditDTO.class))).thenReturn(responseDTO);
 
@@ -111,8 +111,8 @@ public class UserRestControllerTest {
     @DisplayName("PATCH /api/v1/users/{uuid}/access - Should return 200 OK")
     void updateUserAccess_ReturnsOk() throws Exception {
         UUID uuid = UUID.randomUUID();
-        UserAdminEditDTO adminEditDTO = new UserAdminEditDTO(1L, true);
-        UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, 1L, "ADMIN", "John", "Doe", "+306900000000");
+        UserAdminEditDTO adminEditDTO = new UserAdminEditDTO(UUID.randomUUID(), true);
+        UserReadOnlyDTO responseDTO = new UserReadOnlyDTO(uuid, "testuser", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
 
         when(userService.updateUserAccess(eq(uuid), any(UserAdminEditDTO.class))).thenReturn(responseDTO);
 
