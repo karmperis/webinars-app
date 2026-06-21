@@ -72,7 +72,7 @@ public class CapabilityServiceImpl implements ICapabilityService {
     /**
      * Retrieve all non-deleted capabilities sorted by name.
      *
-     * @return list of active capabilities mapped to read-only DTOs
+     * @return list of non-deleted capabilities mapped to read-only DTOs
      */
     @Override
     @Transactional(readOnly = true)

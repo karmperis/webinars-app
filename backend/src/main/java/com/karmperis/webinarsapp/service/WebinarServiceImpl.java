@@ -87,7 +87,7 @@ public class WebinarServiceImpl implements IWebinarService {
      * Retrieve a page of non-deleted webinars using the provided paging and sorting information.
      *
      * @param pageable paging and sorting information
-     * @return a page of active webinars as read-only DTOs
+     * @return a page of non-deleted webinars as read-only DTOs
      */
     @Override
     @Transactional(readOnly = true)
@@ -103,7 +103,7 @@ public class WebinarServiceImpl implements IWebinarService {
      *
      * @param organizerUuid the UUID of the organizing user
      * @param pageable      paging and sorting information
-     * @return a page of active webinars as read-only DTOs
+     * @return a page of non-deleted webinars as read-only DTOs
      * @throws EntityNotFoundException if the organizer does not exist
      */
     @Override
@@ -272,7 +272,7 @@ public class WebinarServiceImpl implements IWebinarService {
      *
      * @param userUuid the UUID of the participant
      * @param pageable paging and sorting information
-     * @return a page of active webinars as read-only DTOs
+     * @return a page of non-deleted webinars as read-only DTOs
      * @throws EntityNotFoundException if the participant does not exist
      */
     @Override

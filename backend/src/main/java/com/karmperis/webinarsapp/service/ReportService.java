@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Service responsible for generating webinar reports asynchronously and tracking job status.
  * The service starts an asynchronous report generation job for the given report type and
- * stores the job progress and result in an in-memory concurrent map. Supported report types:
- * <code>popularity</code>, <code>productive</code>, <code>inactive</code>.</p>
+ * stores the job progress and result in an in-memory concurrent map.
+ * Supported report types: {@code popularity}, {@code productive}, {@code inactive}.
  */
 @Service
 @Slf4j
@@ -29,13 +29,13 @@ public class ReportService implements IReportService {
 
     /**
      * Starts asynchronous generation of a report for the specified report type.
-     * This method runs asynchronously and updates an internal job status map. On success the job
-     * status is set to COMPLETED and the generated report is stored inside the JobStatusDTO.
-     * On failure the job status is set to FAILED and a RuntimeException is thrown.
+     * This method runs asynchronously and updates an internal job status map.
+     * On success the job status is set to COMPLETED and the generated report is stored.
+     * On failure the job status is set to FAILED and the exception is propagated as a RuntimeException.
      *
      * @param jobId      unique identifier for the background job
-     * @param reportType type of report to generate (case-insensitive). Supported values:
-     *                   "popularity", "productive", "inactive"
+     * @param reportType type of report to generate.
+     *                   Supported values: {@code popularity}, {@code productive}, {@code inactive.}
      */
     @PreAuthorize("hasRole('ADMIN')")
     @Async
@@ -65,7 +65,7 @@ public class ReportService implements IReportService {
      * Returns the current job status for the given job id.
      *
      * @param jobId identifier of the job
-     * @return JobStatusDTO containing status and optional report data, or null if no such job exists
+     * @return JobStatusDTO containing status and optional report data, or {@code null} if no such job exists
      */
     @PreAuthorize("hasRole('ADMIN')")
     @Override

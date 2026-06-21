@@ -18,7 +18,7 @@ public interface IReportService {
      * Retrieve the current status of a report job.
      *
      * @param jobId the job identifier
-     * @return the current job status DTO
+     * @return the current job status DTO, or {@code null} if no such job exists
      */
     JobStatusDTO getJobStatus(String jobId);
 }

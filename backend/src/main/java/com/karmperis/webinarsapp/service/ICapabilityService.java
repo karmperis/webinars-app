@@ -29,7 +29,7 @@ public interface ICapabilityService {
     /**
      * Retrieve all non-deleted capabilities sorted by name. (Read)
      *
-     * @return a list of active capabilities
+     * @return a list of non-deleted capabilities
      */
     List<CapabilityReadOnlyDTO> findAllCapabilitiesSortedByName();
 

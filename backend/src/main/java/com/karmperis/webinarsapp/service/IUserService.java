@@ -31,7 +31,7 @@ public interface IUserService {
      * Retrieve a page of non-deleted users using the provided paging and sorting information. (ReadAll)
      *
      * @param pageable paging and sorting information
-     * @return a page of active users as read-only DTOs
+     * @return a page of non-deleted users as read-only DTOs
      */
     Page<UserReadOnlyDTO> findAllUsersSortedByName(Pageable pageable);
 
@@ -60,7 +60,7 @@ public interface IUserService {
      * @param dto  the data to apply
      * @return the updated user as a read-only DTO
      * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
-     * @throws EntityInvalidArgumentException if the provided role or data is invalid
+     * @throws EntityInvalidArgumentException if the provided user data is invalid
      */
     UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto)
             throws EntityNotFoundException, EntityInvalidArgumentException;
@@ -70,7 +70,7 @@ public interface IUserService {
      * Intended for Administrator use only.
      *
      * @param uuid user UUID
-     * @param dto  updated user access data (roleId, active)
+     * @param dto  updated user access data (roleUuid, active)
      * @return the updated user mapped to a read-only DTO
      * @throws EntityNotFoundException        if no non-deleted user with the given UUID exists
      * @throws EntityInvalidArgumentException if the provided role or data is invalid

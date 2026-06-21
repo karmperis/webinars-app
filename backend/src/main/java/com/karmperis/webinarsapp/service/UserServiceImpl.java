@@ -84,10 +84,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     /**
-     * Retrieve a page of active (non-deleted) users sorted based on paging and sorting information.
+     * Retrieve a page of non-deleted users sorted based on paging and sorting information.
      *
      * @param pageable pagination and sorting information
-     * @return a page of active users mapped to read-only DTOs
+     * @return a page of non-deleted users mapped to read-only DTOs
      */
     @Override
     @Transactional(readOnly = true)

@@ -21,7 +21,7 @@ public interface IRoleService {
      *
      * @param dto data used to create the role
      * @return a read-only representation of the persisted role
-     * @throws EntityAlreadyExistsException   if a non-deleted role with the same unique data already exists
+     * @throws EntityAlreadyExistsException   if a non-deleted role with the same name already exists
      * @throws EntityInvalidArgumentException if the provided role data is invalid
      */
     RoleReadOnlyDTO saveRole(RoleInsertDTO dto) throws EntityAlreadyExistsException, EntityInvalidArgumentException;

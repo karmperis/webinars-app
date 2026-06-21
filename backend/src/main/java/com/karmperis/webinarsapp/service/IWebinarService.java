@@ -24,7 +24,7 @@ public interface IWebinarService {
      * @return the persisted webinar as a read-only DTO
      * @throws EntityAlreadyExistsException   if a non-deleted webinar with the same title already exists
      * @throws EntityInvalidArgumentException if the provided webinar data is invalid
-     * @throws EntityNotFoundException        if the organizer specified in the DTO does not exist
+     * @throws EntityNotFoundException        if the authenticated organizer UUID does not exist
      */
     WebinarReadOnlyDTO saveWebinar(WebinarInsertDTO dto, UUID organizerUuid)
             throws EntityAlreadyExistsException, EntityInvalidArgumentException, EntityNotFoundException;
@@ -33,7 +33,7 @@ public interface IWebinarService {
      * Retrieve a page of non-deleted webinars using the provided paging and sorting information. (ReadAll)
      *
      * @param pageable paging and sorting information
-     * @return a page of active webinars as read-only DTOs
+     * @return a page of non-deleted webinars as read-only DTOs
      */
     Page<WebinarReadOnlyDTO> findAllWebinars(Pageable pageable);
 
@@ -42,7 +42,7 @@ public interface IWebinarService {
      *
      * @param organizerUuid the UUID of the organizing user
      * @param pageable      paging and sorting information
-     * @return a page of active webinars as read-only DTOs
+     * @return a page of non-deleted webinars as read-only DTOs
      * @throws EntityNotFoundException if the organizer does not exist
      */
     Page<WebinarReadOnlyDTO> findAllWebinarsByOrganizer(UUID organizerUuid, Pageable pageable)
@@ -94,7 +94,7 @@ public interface IWebinarService {
      *
      * @param userUuid the UUID of the participant
      * @param pageable paging and sorting information
-     * @return a page of active webinars as read-only DTOs
+     * @return a page of non-deleted webinars as read-only DTOs
      * @throws EntityNotFoundException if the participant does not exist
      */
     Page<WebinarReadOnlyDTO> findAllWebinarsByParticipant(UUID userUuid, Pageable pageable)
