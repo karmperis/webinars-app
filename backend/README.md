@@ -160,6 +160,7 @@ Base Path: `/api/v1`
 | Method | Endpoint               | Auth            | Description                                           |
 |:-------|:-----------------------|:----------------|:------------------------------------------------------|
 | POST   | `/users`               | Public          | Register a new user with the default PARTICIPANT role |
+| GET    | `/users`               | Admin           | List users                                            |
 | GET    | `/users/{uuid}`        | Admin/Same User | Get user profile details                              |
 | PUT    | `/users/{uuid}`        | Admin/Same User | Update user profile                                   |
 | PATCH  | `/users/{uuid}/access` | Admin           | Update user access rights (Admin Only)                |
