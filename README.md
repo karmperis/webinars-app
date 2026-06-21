@@ -279,10 +279,11 @@ Role assignment is not provided by the registration request.
 | PUT    | `/webinars/{uuid}`                                | Admin / Organizer      | Update webinar                            |
 | DELETE | `/webinars/{uuid}`                                | Admin / Organizer      | Delete webinar                            |
 | GET    | `/webinars/organizer/{organizerUuid}`             | Admin / Same Organizer | List webinars by organizer                |
-| GET    | `/webinars/participants/{userUuid}`               | Admin / Same Organizer | List webinars where user is enrolled      |
-| POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin / Same Organizer | Enroll user in webinar                    |
+| GET    | `/webinars/participants/{userUuid}`               | Admin / Same User      | List webinars where user is enrolled      |
+| POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin / Same User      | Enroll user in webinar                    |
 
-**Enrollment rule:** Organizers may enroll only in webinars created by other organizers, they cannot enroll in their own webinars.
+**Enrollment rule:** Organizers may enroll only in webinars created by other organizers.
+They cannot enroll in their own webinars.
 
 ### Roles
 
