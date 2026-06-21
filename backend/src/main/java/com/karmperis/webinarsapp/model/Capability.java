@@ -39,7 +39,7 @@ public class Capability extends AbstractUuidEntity {
     }
 
     /**
-     * Add a role to this capability.
+     * Add a role to this capability and keeps the bidirectional relationship in sync.
      *
      * @param role role to add
      */
@@ -49,7 +49,7 @@ public class Capability extends AbstractUuidEntity {
     }
 
     /**
-     * Remove a role from this capability.
+     * Remove a role from this capability and keeps the bidirectional relationship in sync.
      *
      * @param role role to remove
      */

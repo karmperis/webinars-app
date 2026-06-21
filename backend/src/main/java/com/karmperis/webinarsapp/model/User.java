@@ -44,8 +44,8 @@ public class User extends AbstractUuidEntity implements UserDetails {
     private Set<Webinar> enrolledWebinars = new HashSet<>();
 
     /**
-     * Associate a {@link UserDetail} with this user and ensure the bidirectional
-     * relationship is kept in sync by setting the {@code user} reference on the details.
+     * Associate a {@link UserDetail} with this user and sets the revers {@code user} reference on the
+     * provided details instance when present.
      *
      * @param details profile details to attach to this user; if {@code null} the current
      *                details reference will be cleared
