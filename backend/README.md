@@ -39,10 +39,9 @@ report generation.
 
 ## Requirements
 
-- Java 21
-- Docker & Docker Compose
-- No additional software is required for running the application through Docker
-- Gradle (wrapper included)
+- Java 21 (required for local development / local execution)
+- Docker & Docker Compose (required for containerized execution)
+- Gradle wrapper is included
 
 ## Database Setup
 
@@ -69,8 +68,10 @@ If you wish to connect to the database manually:
 ### 1. Start Services with Docker (Recommended)
 
 The project includes a complete Docker setup.
+The Docker setup is located inside the `backend/` directory.
 
 ```bash
+cd backend
 docker compose up --build
 ```
 
@@ -85,13 +86,13 @@ The application will be available at: `http://localhost:8080`.
 
 ### Stop Services
 
-To stop all running containers:
+To stop all running containers, run the following command from the `backend/` directory:
 
 ```bash
 docker compose down
 ```
 
-To stop all containers and remove persistent database volumes:
+To stop all containers and remove persistent database volumes, run the following command from the `backend/` directory:
 
 ```bash
 docker compose down -v
@@ -156,26 +157,32 @@ Base Path: `/api/v1`
 
 ### Users
 
-| Method | Endpoint               | Auth          | Description                            |
-|:-------|:-----------------------|:--------------|:---------------------------------------|
-| POST   | `/users`               | Public        | Register a new user                    |
-| GET    | `/users/{uuid}`        | Authenticated | Get user profile details               |
-| PUT    | `/users/{uuid}`        | Authenticated | Update user profile                    |
-| PATCH  | `/users/{uuid}/access` | Admin         | Update user access rights (Admin Only) |
-| DELETE | `/users/{uuid}`        | Admin         | Delete user account (soft-delete)      |
+| Method | Endpoint               | Auth            | Description                                           |
+|:-------|:-----------------------|:----------------|:------------------------------------------------------|
+| POST   | `/users`               | Public          | Register a new user with the default PARTICIPANT role |
+| GET    | `/users/{uuid}`        | Admin/Same User | Get user profile details                              |
+| PUT    | `/users/{uuid}`        | Admin/Same User | Update user profile                                   |
+| PATCH  | `/users/{uuid}/access` | Admin           | Update user access rights (Admin Only)                |
+| DELETE | `/users/{uuid}`        | Admin           | Delete user account (soft-delete)                     |
+
+**Registration behavior:** Newly registered users are created with the default `PARTICIPANT` role.
+Role assignment is not provided by the registration request.
 
 ### Webinars & Enrollments
 
-| Method | Endpoint                                          | Auth          | Description                                |
-|:-------|:--------------------------------------------------|:--------------|:-------------------------------------------|
-| GET    | `/webinars`                                       | Authenticated | List all active webinars (paginated)       |
-| POST   | `/webinars`                                       | Organizer     | Create a new webinar                       |
-| GET    | `/webinars/{uuid}`                                | Authenticated | Get detailed webinar information           |
-| GET    | `/webinars/organizer/{uuid}`                      | Authenticated | List webinars organized by a specific user |
-| GET    | `/webinars/participants/{uuid}`                   | Authenticated | List webinars where a user is enrolled     |
-| PUT    | `/webinars/{uuid}`                                | Organizer     | Update webinar details                     |
-| DELETE | `/webinars/{uuid}`                                | Organizer     | Soft-delete a webinar                      |
-| POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Authenticated | Enroll a user in a webinar                 |
+| Method | Endpoint                                          | Auth                 | Description                                |
+|:-------|:--------------------------------------------------|:---------------------|:-------------------------------------------|
+| GET    | `/webinars`                                       | Authenticated        | List all non-deleted webinars (paginated)  |
+| POST   | `/webinars`                                       | Admin/Organizer      | Create a new webinar                       |
+| GET    | `/webinars/{uuid}`                                | Authenticated        | Get detailed webinar information           |
+| GET    | `/webinars/organizer/{uuid}`                      | Admin/Same Organizer | List webinars organized by a specific user |
+| GET    | `/webinars/participants/{uuid}`                   | Admin/Same User      | List webinars where a user is enrolled     |
+| PUT    | `/webinars/{uuid}`                                | Admin/Organizer      | Update webinar details                     |
+| DELETE | `/webinars/{uuid}`                                | Admin/Organizer      | Soft-delete a webinar                      |
+| POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin/Same User      | Enroll a user in a webinar                 |
+
+**Enrollment rule:** Organizers may enroll only in webinars created by other organizers, they cannot enroll in their own
+webinars.
 
 ### Roles & Capabilities
 
@@ -235,9 +242,8 @@ The API returns structured error messages:
 
 ```json
 {
-  "status": 404,
-  "message": "User not found",
-  "timestamp": "2026-06-05T17:00:00"
+  "code": "USER_NOT_FOUND",
+  "message": "User with UUID... not found"
 }
 ```
 
@@ -277,9 +283,10 @@ users ────── 1:1 ────── users_details
 - **Role & Capability**: RBAC system (Many-to-Many).
 - **Webinar**: Managed by Organizers (Users) and attended by Participants (Users).
   Participants can enroll in webinars and retrieve a personalized list of webinars in which they are enrolled.
-- **Token**: Used for account-related workflows.
-  (The backend already includes token infrastructure for account activation and password reset.
-  Full email-based activation and password reset flows are planned as future enhancements.)
+
+- **Token**: Infrastructure entity reserved for account-related workflows.
+  The current assignment implementation does not expose account activation or password reset endpoints.
+  Token-based activation and password recovery are planned as future enhancements.
 
 All persistent domain entities inherit from two common base classes:
 
@@ -323,8 +330,8 @@ To facilitate development and testing, a set of dummy data is provided. This dat
 The SQL script is located at:
 `src/main/resources/data/dummy_data.sql`
 
-*Note: These records are intended for the `dev` environment and are automatically managed if the corresponding database
-initialization profile is active.*
+*Note: These records are intended for the dev environment. Their loading depends on the active database
+initialization configuration/profile.*
 
 ## Project Structure
 
