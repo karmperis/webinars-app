@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -51,5 +52,30 @@ public class AuthRestControllerTest {
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").value("mocked-jwt-token"));
+    }
+
+    @Test
+    @DisplayName("POST /authenticate - Should return 400 Bad Request when request is invalid")
+    void authenticate_WithInvalidRequest_ReturnsBadRequest() throws Exception {
+        AuthenticationRequestDTO requestDTO = new AuthenticationRequestDTO("", "");
+
+        mockMvc.perform(post("/api/v1/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("POST /authenticate - Should return 401 Unauthorized when credentials are invalid")
+    void authenticate_WithInvalidCredentials_ReturnsUnauthorized() throws Exception {
+        AuthenticationRequestDTO requestDTO = new AuthenticationRequestDTO("testuser", "wrong-password");
+
+        when(authenticationService.authenticate(any(AuthenticationRequestDTO.class)))
+                .thenThrow(new BadCredentialsException("Invalid username or password"));
+
+        mockMvc.perform(post("/api/v1/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isUnauthorized());
     }
 }
