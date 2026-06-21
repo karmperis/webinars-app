@@ -92,9 +92,10 @@ The project was developed for educational purposes as part of the Coding Factory
 
 ```text
 webinars-app/
-├── backend/       # Spring Boot REST API
-├── frontend/      # Angular frontend application
-├── docker-compose.yml
+├── backend/
+│   ├── docker-compose.yml
+│   └── ...
+├── frontend/
 └── README.md
 ```
 
@@ -256,27 +257,32 @@ Base path:
 
 ### Users
 
-| Method | Endpoint               | Access        | Description                        |
-| :----- | :--------------------- | :------------ | :--------------------------------- |
-| POST   | `/users`               | Public        | Register a new user                |
-| GET    | `/users`               | Admin         | List users                         |
-| GET    | `/users/{uuid}`        | Authenticated | Get user details                   |
-| PUT    | `/users/{uuid}`        | Authenticated | Update user profile                |
-| PATCH  | `/users/{uuid}/access` | Admin         | Update user role and active status |
-| DELETE | `/users/{uuid}`        | Admin         | Soft-delete user                   |
+| Method | Endpoint               | Access            | Description                                           |
+| :----- | :--------------------- | :---------------- | :---------------------------------------------------- |
+| POST   | `/users`               | Public            | Register a new user with the default PARTICIPANT role |
+| GET    | `/users`               | Admin             | List users                                            |
+| GET    | `/users/{uuid}`        | Admin / Same User | Get user details                                      |
+| PUT    | `/users/{uuid}`        | Admin / Same User | Update user profile                                   |
+| PATCH  | `/users/{uuid}/access` | Admin             | Update user role and active status                    |
+| DELETE | `/users/{uuid}`        | Admin             | Soft-delete user                                      |
+
+**Registration behavior:** Newly registered users are created with the default `PARTICIPANT` role.
+Role assignment is not provided by the registration request.
 
 ### Webinars
 
-| Method | Endpoint                                          | Access            | Description                          |
-| :----- | :------------------------------------------------ | :---------------- | :----------------------------------- |
-| GET    | `/webinars`                                       | Authenticated     | List webinars                        |
-| GET    | `/webinars/{uuid}`                                | Authenticated     | Get webinar details                  |
-| POST   | `/webinars`                                       | Admin / Organizer | Create webinar                       |
-| PUT    | `/webinars/{uuid}`                                | Admin / Organizer | Update webinar                       |
-| DELETE | `/webinars/{uuid}`                                | Admin / Organizer | Delete webinar                       |
-| GET    | `/webinars/organizer/{organizerUuid}`             | Authenticated     | List webinars by organizer           |
-| GET    | `/webinars/participants/{userUuid}`               | Authenticated     | List webinars where user is enrolled |
-| POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Authenticated     | Enroll user in webinar               |
+| Method | Endpoint                                          | Access                 | Description                               |
+| :----- | :------------------------------------------------ | :--------------------- | :---------------------------------------- |
+| GET    | `/webinars`                                       | Authenticated          | List all non-deleted webinars (paginated) |
+| GET    | `/webinars/{uuid}`                                | Authenticated          | Get webinar details                       |
+| POST   | `/webinars`                                       | Admin / Organizer      | Create webinar                            |
+| PUT    | `/webinars/{uuid}`                                | Admin / Organizer      | Update webinar                            |
+| DELETE | `/webinars/{uuid}`                                | Admin / Organizer      | Delete webinar                            |
+| GET    | `/webinars/organizer/{organizerUuid}`             | Admin / Same Organizer | List webinars by organizer                |
+| GET    | `/webinars/participants/{userUuid}`               | Admin / Same Organizer | List webinars where user is enrolled      |
+| POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin / Same Organizer | Enroll user in webinar                    |
+
+**Enrollment rule:** Organizers may enroll only in webinars created by other organizers, they cannot enroll in their own webinars.
 
 ### Roles
 
@@ -302,10 +308,12 @@ Base path:
 
 ### Reports
 
-| Method | Endpoint                        | Access | Description                  |
-| :----- | :------------------------------ | :----- | :--------------------------- |
-| POST   | `/reports/generate?type={type}` | Admin  | Start report generation      |
-| GET    | `/reports/report/{jobId}`       | Admin  | Get report job status/result |
+| Method | Endpoint                  | Access | Description                  |
+| :----- | :------------------------ | :----- | :--------------------------- |
+| POST   | `/reports/generate`       | Admin  | Trigger report generation    |
+| GET    | `/reports/report/{jobId}` | Admin  | Get report job status/result |
+
+The report type is provided via the `type` query parameter (`popularity`, `productive`, `inactive`).
 
 ## Frontend Overview
 
@@ -431,9 +439,10 @@ To run the full project locally, you need:
 
 ## Running the Backend with Docker
 
-From the repository root:
+From the `backend/` directory:
 
 ```bash
+cd backend
 docker compose up --build
 ```
 
@@ -499,6 +508,7 @@ The application automatically creates a default administrator account through th
 The administrator account is available immediately after running:
 
 ```bash
+cd backend
 docker compose up --build
 ```
 
