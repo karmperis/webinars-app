@@ -48,11 +48,11 @@ public class WebinarRestController {
      * @throws ValidationException            if request payload validation fails (HTTP 400)
      * @throws EntityAlreadyExistsException   if a webinar with the same title already exists (HTTP 409)
      * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
-     * @throws EntityNotFoundException        if the organizer specified does not exist (HTTP 404)
+     * @throws EntityNotFoundException        if the authenticated organizer does not exist (HTTP 404)
      */
     @Operation(
             summary = "Create a new webinar",
-            description = "Creates a new scheduled webinar in the system."
+            description = "Creates a new scheduled webinar in the system for the authenticated organizer or administrator. Accessible by users with the CREATE_WEBINAR authority."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Webinar created successfully",
@@ -99,7 +99,7 @@ public class WebinarRestController {
      * @return HTTP 200 with the webinar
      * @throws EntityNotFoundException if no non-deleted webinar exists for the given UUID (HTTP 404)
      */
-    @Operation(summary = "Get webinar by UUID", description = "Retrieves a non-deleted webinar by its UUID.")
+    @Operation(summary = "Get webinar by UUID", description = "Retrieves a non-deleted webinar by its UUID. Accessible by users with the VIEW_WEBINARS authority.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Webinar found",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = WebinarReadOnlyDTO.class))),
@@ -112,26 +112,26 @@ public class WebinarRestController {
     }
 
     /**
-     * Returns a paginated list of active webinars.
+     * Returns a paginated list of non-deleted webinars.
      *
      * @param pageable pagination and sorting configuration
      * @return HTTP 200 with a page of webinars
      */
-    @Operation(summary = "Get a page of webinars", description = "Returns a paginated and sorted page of active webinars.")
+    @Operation(summary = "Get a page of webinars", description = "Returns a paginated and sorted page of non-deleted webinars. Accessible by users with the VIEW_WEBINARS authority.")
     @GetMapping
     public ResponseEntity<Page<WebinarReadOnlyDTO>> getAllWebinars(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(webinarService.findAllWebinars(pageable));
     }
 
     /**
-     * Returns a paginated list of active webinars organized by a specific user.
+     * Returns a paginated list of non-deleted webinars organized by a specific user.
      *
      * @param organizerUuid the UUID of the organizer
      * @param pageable      pagination and sorting configuration
      * @return HTTP 200 with a page of webinars
      * @throws EntityNotFoundException if the organizer is not found
      */
-    @Operation(summary = "Get webinars by organizer", description = "Returns a paginated list of webinars organized by a specific user.")
+    @Operation(summary = "Get webinars by organizer", description = "Returns a paginated list of non-deleted webinars organized by a specific user. Accessible by administrators or by the organizer for their own webinars.")
     @GetMapping("/organizer/{organizerUuid}")
     public ResponseEntity<Page<WebinarReadOnlyDTO>> getWebinarsByOrganizer(@PathVariable UUID organizerUuid, @ParameterObject Pageable pageable)
             throws EntityNotFoundException {
@@ -139,7 +139,7 @@ public class WebinarRestController {
     }
 
     /**
-     * Returns a paginated list of active webinars where a specific user is enrolled as participant.
+     * Returns a paginated list of non-deleted webinars where a specific user is enrolled as participant.
      *
      * @param userUuid the UUID of the participant
      * @param pageable pagination and sorting configuration
@@ -148,7 +148,7 @@ public class WebinarRestController {
      */
     @Operation(
             summary = "Get webinars by participant",
-            description = "Returns a paginated list of webinars where a specific user is enrolled as participant."
+            description = "Returns a paginated list of non-deleted webinars where a specific user is enrolled as participant. Accessible by administrators or by the participant for their own enrollments."
     )
     @GetMapping("/participants/{userUuid}")
     public ResponseEntity<Page<WebinarReadOnlyDTO>> getWebinarsByParticipant(
@@ -165,12 +165,12 @@ public class WebinarRestController {
      * @param dto           the request payload containing updated data
      * @param bindingResult bean validation results
      * @return HTTP 200 with the updated webinar DTO
-     * @throws ValidationException            if request payload validation fails
-     * @throws EntityNotFoundException        if the webinar does not exist
-     * @throws EntityAlreadyExistsException   if the new title conflicts
-     * @throws EntityInvalidArgumentException if business validation fails
+     * @throws ValidationException            if request payload validation fails (HTTP 400)
+     * @throws EntityNotFoundException        if the webinar does not exist (HTTP 404)
+     * @throws EntityAlreadyExistsException   if the new title conflicts with an existing webinar (HTTP 409)
+     * @throws EntityInvalidArgumentException if business validation fails (HTTP 400)
      */
-    @Operation(summary = "Update an existing webinar", description = "Updates the details of an existing scheduled webinar.")
+    @Operation(summary = "Update an existing webinar", description = "Updates the details of an existing scheduled webinar. Accessible by administrators or by the organizer of the webinar.")
     @PutMapping("/{uuid}")
     public ResponseEntity<WebinarReadOnlyDTO> updateWebinar(@PathVariable UUID uuid,
                                                             @Valid @RequestBody WebinarEditDTO dto,
@@ -190,9 +190,9 @@ public class WebinarRestController {
      *
      * @param uuid the webinar UUID
      * @return HTTP 204 if deleted successfully
-     * @throws EntityNotFoundException if the webinar does not exist
+     * @throws EntityNotFoundException if the webinar does not exist (HTTP 404)
      */
-    @Operation(summary = "Soft delete a webinar", description = "Marks a webinar as deleted in the system.")
+    @Operation(summary = "Soft delete a webinar", description = "Marks a webinar as deleted in the system. Accessible by administrators or by the organizer of the webinar.")
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteWebinar(@PathVariable UUID uuid) throws EntityNotFoundException {
         webinarService.softDeleteWebinarByUuid(uuid);
@@ -211,7 +211,7 @@ public class WebinarRestController {
      */
     @Operation(
             summary = "Enroll user in webinar",
-            description = "Registers a user as a participant in a specific webinar using their UUIDs."
+            description = "Registers a user as a participant in a specific webinar. Accessible by administrators or by the user for their own profile. Organizers cannot enroll in their own webinars."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "User successfully enrolled (No Content)"),

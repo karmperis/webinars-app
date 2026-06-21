@@ -46,12 +46,12 @@ public class CapabilityRestController {
      */
     @Operation(
             summary = "Create a new capability",
-            description = "Creates a new capability in the system"
+            description = "Creates a new capability in the system. Accessible only by administrators."
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
-                    description = "Capability created successfully",
+                    description = "Capability created successfully.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CapabilityReadOnlyDTO.class)
@@ -59,7 +59,7 @@ public class CapabilityRestController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Validation error",
+                    description = "Validation error.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ValidationErrorResponseDTO.class)
@@ -67,7 +67,7 @@ public class CapabilityRestController {
             ),
             @ApiResponse(
                     responseCode = "409",
-                    description = "Capability already exists",
+                    description = "Capability already exists.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -75,7 +75,7 @@ public class CapabilityRestController {
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "Internal Server Error",
+                    description = "Internal Server Error.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -113,12 +113,12 @@ public class CapabilityRestController {
      */
     @Operation(
             summary = "Get capability by UUID",
-            description = "Retrieves a non-deleted capability by their UUID."
+            description = "Retrieves a non-deleted capability by its UUID. Accessible only by administrators."
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Capability found",
+                    description = "Capability found.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CapabilityReadOnlyDTO.class)
@@ -126,7 +126,7 @@ public class CapabilityRestController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Capability not found",
+                    description = "Capability not found.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -141,14 +141,14 @@ public class CapabilityRestController {
     }
 
     /**
-     * Returns all active (non-deleted) capabilities sorted by name.
+     * Returns all non-deleted capabilities sorted by name.
      *
      * @return HTTP 200 with a list of capabilities
      */
 
     @Operation(
             summary = "Get all capabilities",
-            description = "Returns a list of all active capabilities sorted by name."
+            description = "Returns a list of all non-deleted capabilities sorted by name. Accessible only by administrators."
     )
     @GetMapping
     public ResponseEntity<List<CapabilityReadOnlyDTO>> getAllCapabilities() {
@@ -169,7 +169,7 @@ public class CapabilityRestController {
      */
     @Operation(
             summary = "Update an existing capability",
-            description = "Updates the name/description of an existing capability."
+            description = "Updates the name and description of an existing capability. Accessible only by administrators."
     )
     @PutMapping("/{uuid}")
     public ResponseEntity<CapabilityReadOnlyDTO> updateCapability(@PathVariable UUID uuid,
@@ -194,7 +194,7 @@ public class CapabilityRestController {
      */
     @Operation(
             summary = "Soft delete a capability",
-            description = "Marks a capability as deleted in the system."
+            description = "Marks a capability as deleted in the system. Accessible only by administrators."
     )
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteCapability(@PathVariable UUID uuid)

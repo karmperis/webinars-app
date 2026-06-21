@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+/**
+ * REST controller exposing endpoints for generating and retrieving reports.
+ * Base path: {@code /api/v1/reports}.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reports")
@@ -22,9 +26,15 @@ import java.util.UUID;
 public class ReportRestController {
     private final IReportService reportService;
 
+    /**
+     * Starts asynchronous report generation for the requested report type.
+     *
+     * @param type the report type to generate: popularity, productive, or inactive
+     * @return HTTP 202 with the created job status
+     */
     @Operation(
             summary = "Start report generation",
-            description = "Starts the asynchronous generation of a report based on the requested type: popularity, productive, inactive)."
+            description = "Starts the asynchronous generation of a report based on the requested type: popularity, productive, inactive."
     )
     @ApiResponses({
             @ApiResponse(
@@ -39,15 +49,16 @@ public class ReportRestController {
                     responseCode = "400",
                     description = "Invalid report type or missing parameter",
                     content = @Content(
-                            mediaType = "application/json"
-                            , schema = @Schema(implementation = ErrorResponseDTO.class)
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
                     )
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Internal Server Error",
                     content = @Content(
-                            mediaType = "application/json"
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
                     )
             )
     })
@@ -58,6 +69,12 @@ public class ReportRestController {
         return ResponseEntity.accepted().body(JobStatusDTO.withoutData(jobId, "IN_PROGRESS"));
     }
 
+    /**
+     * Retrieves the status and result data of a report generation job.
+     *
+     * @param jobId the report job ID
+     * @return HTTP 200 with the job status, or HTTP 404 if the job ID does not exist
+     */
     @Operation(
             summary = "Check report status",
             description = "Checks the status of an asynchronous report job using its unique job ID. Returns the data if completed."
@@ -73,18 +90,14 @@ public class ReportRestController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Job ID not found",
-                    content = @Content(
-                            mediaType = "application/json"
-                            , schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
+                    description = "Job ID not found"
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Internal Server Error",
                     content = @Content(
-                            mediaType = "application/json"
-                            , schema = @Schema(implementation = ErrorResponseDTO.class)
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
                     )
             )
     })

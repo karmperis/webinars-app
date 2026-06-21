@@ -32,7 +32,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "Bearer Authentication")
 public class UserRestController {
     private final IUserService userService;
 
@@ -48,7 +47,7 @@ public class UserRestController {
      */
     @Operation(
             summary = "Create a new user",
-            description = "Creates a new user account in the system in an inactive state."
+            description = "Creates a new active user account with the default PARTICIPANT role."
     )
     @ApiResponses({
             @ApiResponse(
@@ -115,7 +114,7 @@ public class UserRestController {
      */
     @Operation(
             summary = "Get user by UUID",
-            description = "Retrieves a non-deleted user by their UUID."
+            description = "Retrieves a non-deleted user by their UUID. Accessible by administrators or by the user for their own profile."
     )
     @ApiResponses({
             @ApiResponse(
@@ -136,6 +135,7 @@ public class UserRestController {
             )
     })
     @GetMapping("/{uuid}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<UserReadOnlyDTO> getUserByUUID(@PathVariable UUID uuid)
             throws EntityNotFoundException {
 
@@ -143,16 +143,17 @@ public class UserRestController {
     }
 
     /**
-     * Returns a paginated and sorted list of active (non-deleted) users.
+     * Returns a paginated and sorted list of non-deleted users.
      *
      * @param pageable pagination and sorting configuration from request query parameters
      * @return HTTP 200 with a page of users
      */
     @Operation(
             summary = "Get a page of users",
-            description = "Returns a paginated and sorted page of active users based on query parameters (page, size, sort)."
+            description = "Returns a paginated and sorted page of non-deleted users based on query parameters (page, size, sort)."
     )
     @GetMapping
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<UserReadOnlyDTO>> getAllUsers(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(userService.findAllUsersSortedByName(pageable));
     }
@@ -170,9 +171,10 @@ public class UserRestController {
      */
     @Operation(
             summary = "Update user profile",
-            description = "Updates the profile details of an existing user."
+            description = "Updates the profile details of an existing user. Accessible by administrators or by the user for their own profile."
     )
     @PutMapping("/{uuid}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<UserReadOnlyDTO> updateUser(@PathVariable UUID uuid,
                                                       @Valid @RequestBody UserEditDTO userEditDTO,
                                                       BindingResult bindingResult)
@@ -200,9 +202,10 @@ public class UserRestController {
      */
     @Operation(
             summary = "Update user access rights (Admin Only)",
-            description = "Updates the assigned role and active status of a user."
+            description = "Updates the assigned role and active status of a user. Accessible only by administrators."
     )
     @PatchMapping("/{uuid}/access")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<UserReadOnlyDTO> updateUserAccess(@PathVariable UUID uuid,
                                                             @Valid @RequestBody UserAdminEditDTO userAdminEditDTO,
                                                             BindingResult bindingResult)
@@ -217,7 +220,8 @@ public class UserRestController {
     }
 
     /**
-     * Soft-deletes a user.
+     * Soft-deletes a user and deactivates their account.
+     * Strictly restricted to Administrators.
      *
      * @param uuid the user UUID
      * @return HTTP 204 if deleted successfully
@@ -225,9 +229,10 @@ public class UserRestController {
      */
     @Operation(
             summary = "Soft delete a user",
-            description = "Marks a user as deleted and deactivates their account in the system."
+            description = "Marks a user as deleted and deactivates their account in the system. Accessible only by administrators."
     )
     @DeleteMapping("/{uuid}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID uuid)
             throws EntityNotFoundException {
 

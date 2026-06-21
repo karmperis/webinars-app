@@ -46,7 +46,7 @@ public class RoleRestController {
      */
     @Operation(
             summary = "Create a new role",
-            description = "Creates a new role in the system."
+            description = "Creates a new role in the system. Accessible only by administrators."
     )
     @ApiResponses({
             @ApiResponse(
@@ -113,7 +113,7 @@ public class RoleRestController {
      */
     @Operation(
             summary = "Get role by UUID",
-            description = "Retrieves a non-deleted role by their UUID."
+            description = "Retrieves a non-deleted role by its UUID. Accessible only by administrators."
     )
     @ApiResponses({
             @ApiResponse(
@@ -141,13 +141,13 @@ public class RoleRestController {
     }
 
     /**
-     * Returns all active (non-deleted) roles sorted by name.
+     * Returns all non-deleted roles sorted by name.
      *
      * @return HTTP 200 with a list of roles
      */
     @Operation(
             summary = "Get all roles",
-            description = "Returns a list of all active roles sorted by name."
+            description = "Returns a list of all non-deleted roles sorted by name. Accessible only by administrators."
     )
     @GetMapping
     public ResponseEntity<List<RoleReadOnlyDTO>> getAllRoles() {
@@ -168,7 +168,7 @@ public class RoleRestController {
      */
     @Operation(
             summary = "Update an existing role",
-            description = "Updates the name of an existing role."
+            description = "Updates the name of an existing role. Accessible only by administrators."
     )
     @PutMapping("/{uuid}")
     public ResponseEntity<RoleReadOnlyDTO> updateRole(@PathVariable UUID uuid,
@@ -193,7 +193,7 @@ public class RoleRestController {
      */
     @Operation(
             summary = "Soft delete a role",
-            description = "Marks a role as deleted in the system."
+            description = "Marks a role as deleted in the system. Accessible only by administrators."
     )
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteRole(@PathVariable UUID uuid)
@@ -209,7 +209,8 @@ public class RoleRestController {
      * @param roleUuid       the role UUID
      * @param capabilityUuid the capability UUID
      * @return HTTP 200 OK if successful
-     * @throws EntityNotFoundException if role or capability does not exist (HTTP 404)
+     * @throws EntityNotFoundException      if role or capability does not exist (HTTP 404)
+     * @throws EntityAlreadyExistsException if the capability is already assigned to the role (HTTP 409)
      */
     @Operation(
             summary = "Assign capability to role",
@@ -224,6 +225,14 @@ public class RoleRestController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Role or Capability not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Capability already assigned to role",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponseDTO.class)
@@ -261,11 +270,19 @@ public class RoleRestController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Capabilities retrieved successfully"
+                    description = "Capabilities retrieved successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CapabilityReadOnlyDTO.class)
+                    )
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Role not found"
+                    description = "Role not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
             )
     })
     @GetMapping("/{roleUuid}/capabilities/view")
