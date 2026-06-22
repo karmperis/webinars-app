@@ -27,6 +27,7 @@ export class MyWebinars implements OnInit {
   readonly webinars = signal<WebinarReadOnly[]>([]);
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadMyWebinars();
@@ -59,5 +60,46 @@ export class MyWebinars implements OnInit {
           this.loadError.set('Απέτυχε η φόρτωση των συμμετεχόντων στα σεμινάρια.');
         },
       });
+  }
+
+  /**
+   * Unenrolls the current authenticated user from a webinar
+   * and removes it from the visible list.
+   *
+   * @param webinarUuid webinar UUID
+   */
+  unenrollFromWebinar(webinarUuid: string): void {
+    this.loadError.set(null);
+    this.successMessage.set(null);
+
+    const userUuid = this.authService.getCurrentUserUuid();
+
+    if (!userUuid) {
+      this.loadError.set('Δεν ήταν δυνατή η αναγνώριση του συνδεδεμένου χρήστη.');
+      return;
+    }
+
+    this.webinarService.unenrollFromWebinar(webinarUuid, userUuid).subscribe({
+      next: () => {
+        this.successMessage.set('Η απεγγραφή από το σεμινάριο ολοκληρώθηκε με επιτυχία.');
+        this.webinars.update((webinars) =>
+          webinars.filter((webinar) => webinar.uuid !== webinarUuid),
+        );
+
+        setTimeout(() => {
+          this.successMessage.set(null);
+        }, 2000);
+      },
+      error: (error) => {
+        console.error('Failed to unenroll from webinar', error);
+
+        if (error.status === 400) {
+          this.loadError.set('Δεν είστε εγγεγραμμένος σε αυτό το σεμινάριο.');
+          return;
+        }
+
+        this.loadError.set('Η απεγγραφή από το σεμινάριο απέτυχε.');
+      },
+    });
   }
 }

@@ -80,6 +80,17 @@ export class Webinar {
   }
 
   /**
+   * Unenrolls a user from a webinar.
+   *
+   * @param webinarUuid the webinar UUID
+   * @param userUuid the user UUID
+   * @returns completion observable
+   */
+  unenrollFromWebinar(webinarUuid: string, userUuid: string): Observable<void> {
+    return this.http.delete<void>(`${this.webinarsUrl}/${webinarUuid}/participants/${userUuid}`);
+  }
+
+  /**
    * Retrieves webinars where a user is enrolled as participant.
    *
    * @param userUuid the participant user UUID

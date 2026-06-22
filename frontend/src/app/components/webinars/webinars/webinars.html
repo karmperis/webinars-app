@@ -67,17 +67,25 @@
                           Διαγραφή
                         </button>
                       }
+
                       @if (canEnrollInWebinar(webinar)) {
-                        <button
-                          type="button"
-                          class="btn btn-sm"
-                          [class.btn-outline-success]="!isAlreadyEnrolled(webinar.uuid)"
-                          [class.btn-outline-secondary]="isAlreadyEnrolled(webinar.uuid)"
-                          [disabled]="isAlreadyEnrolled(webinar.uuid)"
-                          (click)="enrollInWebinar(webinar.uuid)"
-                        >
-                          {{ isAlreadyEnrolled(webinar.uuid) ? 'Εγγεγραμμένος' : 'Εγγραφή' }}
-                        </button>
+                        @if (isAlreadyEnrolled(webinar.uuid)) {
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            (click)="unenrollFromWebinar(webinar.uuid)"
+                          >
+                            Απεγγραφή
+                          </button>
+                        } @else {
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-success"
+                            (click)="enrollInWebinar(webinar.uuid)"
+                          >
+                            Εγγραφή
+                          </button>
+                        }
                       }
                     </div>
                   </td>

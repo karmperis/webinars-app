@@ -10,6 +10,12 @@
       <a routerLink="/webinars" class="btn btn-outline-dark"> Επιστροφή </a>
     </header>
 
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        {{ successMessage() }}
+      </div>
+    }
+
     @if (isLoading()) {
       <div class="empty-state">Φόρτωση σεμιναρίων...</div>
     } @else if (loadError()) {
@@ -29,6 +35,7 @@
                 <th>Ημερομηνία</th>
                 <th>Διάρκεια</th>
                 <th>Διοργανωτής</th>
+                <th>Ενέργειες</th>
               </tr>
             </thead>
 
@@ -42,6 +49,15 @@
                   <td>
                     {{ webinar.organizer.firstname }}
                     {{ webinar.organizer.lastname }}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="unenrollFromWebinar(webinar.uuid)"
+                    >
+                      Απεγγραφή
+                    </button>
                   </td>
                 </tr>
               }
