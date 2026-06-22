@@ -1,6 +1,8 @@
 package com.karmperis.webinarsapp.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
+import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
 import com.karmperis.webinarsapp.dto.RoleEditDTO;
 import com.karmperis.webinarsapp.dto.RoleInsertDTO;
 import com.karmperis.webinarsapp.dto.RoleReadOnlyDTO;
@@ -19,7 +21,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -97,6 +99,8 @@ public class RoleRestControllerTest {
                         .content(objectMapper.writeValueAsString(editDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("SUPER_ADMIN"));
+
+        verify(roleService).updateRole(eq(uuid), any(RoleEditDTO.class));
     }
 
     @Test
@@ -106,6 +110,8 @@ public class RoleRestControllerTest {
 
         mockMvc.perform(delete("/api/v1/roles/{uuid}", uuid))
                 .andExpect(status().isNoContent());
+
+        verify(roleService).softDeleteRoleByUuid(uuid);
     }
 
     @Test
@@ -128,5 +134,119 @@ public class RoleRestControllerTest {
         mockMvc.perform(get("/api/v1/roles/{roleUuid}/capabilities/view", roleUuid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("CAN_VIEW_REPORTS"));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/roles - Should return 400 Bad Request when request is invalid")
+    void createRole_WithInvalidRequest_ReturnsBadRequest() throws Exception {
+        RoleInsertDTO insertDTO = new RoleInsertDTO(null);
+
+        mockMvc.perform(post("/api/v1/roles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/roles/{uuid} - Should return 400 Bad Request when request is invalid")
+    void updateRole_WithInvalidRequest_ReturnsBadRequest() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        RoleEditDTO editDTO = new RoleEditDTO(null);
+
+        mockMvc.perform(put("/api/v1/roles/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/roles/{uuid} - Should return 404 when role is not found")
+    void getRoleByUuid_WhenRoleDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        when(roleService.findRoleByUuid(uuid))
+                .thenThrow(new EntityNotFoundException("Role", "Role with uuid " + uuid + " not found"));
+
+        mockMvc.perform(get("/api/v1/roles/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/roles - Should return 409 Conflict when role already exists")
+    void createRole_WhenRoleAlreadyExists_ReturnsConflict() throws Exception {
+        RoleInsertDTO insertDTO = new RoleInsertDTO("ADMIN");
+
+        when(roleService.saveRole(any(RoleInsertDTO.class)))
+                .thenThrow(new EntityAlreadyExistsException("Role", "Role already exists"));
+
+        mockMvc.perform(post("/api/v1/roles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDTO)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/roles/{uuid} - Should return 404 when role does not exist")
+    void updateRole_WhenRoleDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        RoleEditDTO editDTO = new RoleEditDTO("SUPER_ADMIN");
+
+        when(roleService.updateRole(eq(uuid), any(RoleEditDTO.class)))
+                .thenThrow(new EntityNotFoundException("Role", "Role with uuid " + uuid + " not found"));
+
+        mockMvc.perform(put("/api/v1/roles/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/roles/{uuid} - Should return 404 when role does not exist")
+    void deleteRole_WhenRoleDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("Role", "Role with uuid " + uuid + " not found"))
+                .when(roleService).softDeleteRoleByUuid(uuid);
+
+        mockMvc.perform(delete("/api/v1/roles/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/roles/{roleUuid}/capabilities/{capabilityUuid} - Should return 404 when role or capability does not exist")
+    void assignCapability_WhenRoleOrCapabilityDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID roleUuid = UUID.randomUUID();
+        UUID capabilityUuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("Role/Capability", "Role or capability not found"))
+                .when(roleService).assignCapabilityToRole(roleUuid, capabilityUuid);
+
+        mockMvc.perform(post("/api/v1/roles/{roleUuid}/capabilities/{capabilityUuid}", roleUuid, capabilityUuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/roles/{roleUuid}/capabilities/{capabilityUuid} - Should return 409 when capability is already assigned")
+    void assignCapability_WhenCapabilityAlreadyAssigned_ReturnsConflict() throws Exception {
+        UUID roleUuid = UUID.randomUUID();
+        UUID capabilityUuid = UUID.randomUUID();
+
+        doThrow(new EntityAlreadyExistsException("RoleCapability", "Capability already assigned to role"))
+                .when(roleService).assignCapabilityToRole(roleUuid, capabilityUuid);
+
+        mockMvc.perform(post("/api/v1/roles/{roleUuid}/capabilities/{capabilityUuid}", roleUuid, capabilityUuid))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/roles/{roleUuid}/capabilities/view - Should return 404 when role does not exist")
+    void getRoleCapabilities_WhenRoleDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID roleUuid = UUID.randomUUID();
+
+        when(roleService.findCapabilitiesByRoleUuid(roleUuid))
+                .thenThrow(new EntityNotFoundException("Role", "Role with uuid " + roleUuid + " not found"));
+
+        mockMvc.perform(get("/api/v1/roles/{roleUuid}/capabilities/view", roleUuid))
+                .andExpect(status().isNotFound());
     }
 }

@@ -1,6 +1,8 @@
 package com.karmperis.webinarsapp.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
+import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
 import com.karmperis.webinarsapp.dto.UserAdminEditDTO;
 import com.karmperis.webinarsapp.dto.UserEditDTO;
 import com.karmperis.webinarsapp.dto.UserInsertDTO;
@@ -23,7 +25,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -129,5 +131,110 @@ public class UserRestControllerTest {
 
         mockMvc.perform(delete("/api/v1/users/{uuid}", uuid))
                 .andExpect(status().isNoContent());
+
+        verify(userService).softDeleteUserByUuid(uuid);
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/users - Should return 400 Bad Request when request is invalid")
+    void createUser_WithInvalidRequest_ReturnsBadRequest() throws Exception {
+        UserInsertDTO insertDTO = new UserInsertDTO(null, "StrongPass123!", "John", "Doe", "+306900000000");
+
+        mockMvc.perform(post("/api/v1/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/users - Should return 409 Conflict when user already exists")
+    void createUser_WhenUserAlreadyExists_ReturnsConflict() throws Exception {
+        UserInsertDTO insertDTO = new UserInsertDTO("testuser", "StrongPass123!", "John", "Doe", "+306900000000");
+
+        when(userService.saveUser(any(UserInsertDTO.class)))
+                .thenThrow(new EntityAlreadyExistsException("User", "User already exists"));
+
+        mockMvc.perform(post("/api/v1/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDTO)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/users/{uuid} - Should return 404 when user is not found")
+    void getUserByUserUuid_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        when(userService.findUserByUuid(uuid))
+                .thenThrow(new EntityNotFoundException("User", "User with uuid " + uuid + " not found"));
+
+        mockMvc.perform(get("/api/v1/users/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/users/{uuid} - Should return 400 Bad Request when request is invalid")
+    void updateUser_WithInvalidRequest_ReturnsBadRequest() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        UserEditDTO editDTO = new UserEditDTO(null, "Doe", "+306900000000");
+
+        mockMvc.perform(put("/api/v1/users/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/users/{uuid} - Should return 404 when user does not exist")
+    void updateUser_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        UserEditDTO editDTO = new UserEditDTO("John", "Doe", "+306900000000");
+
+        when(userService.updateUser(eq(uuid), any(UserEditDTO.class)))
+                .thenThrow(new EntityNotFoundException("User", "User with uuid " + uuid + " not found"));
+
+        mockMvc.perform(put("/api/v1/users/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("PATCH /api/v1/users/{uuid}/access - Should return 400 Bad Request when request is invalid")
+    void updateUserAccess_WithInvalidRequest_ReturnsBadRequest() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        UserAdminEditDTO adminEditDTO = new UserAdminEditDTO(null, true);
+
+        mockMvc.perform(patch("/api/v1/users/{uuid}/access", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(adminEditDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("PATCH /api/v1/users/{uuid}/access - Should return 404 when user does not exist")
+    void updateUserAccess_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        UserAdminEditDTO adminEditDTO = new UserAdminEditDTO(UUID.randomUUID(), true);
+
+        when(userService.updateUserAccess(eq(uuid), any(UserAdminEditDTO.class)))
+                .thenThrow(new EntityNotFoundException("User", "User with uuid " + uuid + " not found"));
+
+        mockMvc.perform(patch("/api/v1/users/{uuid}/access", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(adminEditDTO)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/users/{uuid} - Should return 404 when user does not exist")
+    void deleteUser_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("User", "User with uuid " + uuid + " not found"))
+                .when(userService).softDeleteUserByUuid(uuid);
+
+        mockMvc.perform(delete("/api/v1/users/{uuid}", uuid))
+                .andExpect(status().isNotFound());
     }
 }

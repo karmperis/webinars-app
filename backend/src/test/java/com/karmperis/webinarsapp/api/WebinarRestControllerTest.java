@@ -1,6 +1,9 @@
 package com.karmperis.webinarsapp.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.karmperis.webinarsapp.core.exceptions.EntityAlreadyExistsException;
+import com.karmperis.webinarsapp.core.exceptions.EntityInvalidArgumentException;
+import com.karmperis.webinarsapp.core.exceptions.EntityNotFoundException;
 import com.karmperis.webinarsapp.dto.UserReadOnlyDTO;
 import com.karmperis.webinarsapp.dto.WebinarInsertDTO;
 import com.karmperis.webinarsapp.dto.WebinarReadOnlyDTO;
@@ -22,7 +25,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -90,6 +93,8 @@ public class WebinarRestControllerTest {
                         .content(objectMapper.writeValueAsString(insertDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.uuid").value(webinarUuid.toString()));
+
+        verify(webinarService).saveWebinar(any(WebinarInsertDTO.class), eq(organizerUuid));
     }
 
     @Test
@@ -192,6 +197,8 @@ public class WebinarRestControllerTest {
                         .content(objectMapper.writeValueAsString(editDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Title"));
+
+        verify(webinarService).updateWebinar(eq(uuid), any(com.karmperis.webinarsapp.dto.WebinarEditDTO.class));
     }
 
     @Test
@@ -202,6 +209,8 @@ public class WebinarRestControllerTest {
 
         mockMvc.perform(post("/api/v1/webinars/{wUuid}/participants/{uUuid}", wUuid, uUuid))
                 .andExpect(status().isNoContent());
+
+        verify(webinarService).enrollUserInWebinar(wUuid, uUuid);
     }
 
     @Test
@@ -211,5 +220,244 @@ public class WebinarRestControllerTest {
 
         mockMvc.perform(delete("/api/v1/webinars/{uuid}", uuid))
                 .andExpect(status().isNoContent());
+
+        verify(webinarService).softDeleteWebinarByUuid(uuid);
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars - Should return 400 Bad Request when request is invalid")
+    void createWebinar_WithInvalidRequest_ReturnsBadRequest() throws Exception {
+        WebinarInsertDTO insertDTO = new WebinarInsertDTO(
+                null,
+                "Desc",
+                Instant.parse("2026-12-01T10:00:00Z"),
+                60
+        );
+
+        Role role = new Role();
+        role.setName("ADMIN");
+
+        User mockUser = new User();
+        mockUser.setUuid(UUID.randomUUID());
+        mockUser.setRole(role);
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(mockUser, null, mockUser.getAuthorities());
+
+        mockMvc.perform(post("/api/v1/webinars")
+                        .with(request -> {
+                            request.setUserPrincipal(authenticationToken);
+                            return request;
+                        })
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars - Should return 404 when authentication principal is invalid")
+    void createWebinar_WithInvalidAuthenticationPrincipal_ReturnsNotFound() throws Exception {
+        WebinarInsertDTO insertDTO = new WebinarInsertDTO(
+                "Title",
+                "Desc",
+                Instant.parse("2026-12-01T10:00:00Z"),
+                60
+        );
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken("not-a-user-principal", null, java.util.List.of());
+
+        mockMvc.perform(post("/api/v1/webinars")
+                        .with(request -> {
+                            request.setUserPrincipal(authenticationToken);
+                            return request;
+                        })
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDTO)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars/{uuid} - Should return 404 when webinar is not found")
+    void getWebinarByUuid_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        when(webinarService.findWebinarByUuid(uuid))
+                .thenThrow(new EntityNotFoundException("Webinar", "Webinar with uuid " + uuid + " not found"));
+
+        mockMvc.perform(get("/api/v1/webinars/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars/organizer/{organizerUuid} - Should return 404 when organizer is not found")
+    void getWebinarsByOrganizer_WhenOrganizerDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID organizerUuid = UUID.randomUUID();
+
+        when(webinarService.findAllWebinarsByOrganizer(eq(organizerUuid), any(org.springframework.data.domain.Pageable.class)))
+                .thenThrow(new EntityNotFoundException("User", "Organizer with uuid " + organizerUuid + " not found"));
+
+        mockMvc.perform(get("/api/v1/webinars/organizer/{organizerUuid}", organizerUuid)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars/participants/{userUuid} - Should return 404 when participant is not found")
+    void getWebinarsByParticipant_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID userUuid = UUID.randomUUID();
+
+        when(webinarService.findAllWebinarsByParticipant(eq(userUuid), any(org.springframework.data.domain.Pageable.class)))
+                .thenThrow(new EntityNotFoundException("User", "User with uuid " + userUuid + " not found"));
+
+        mockMvc.perform(get("/api/v1/webinars/participants/{userUuid}", userUuid)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/webinars/{uuid} - Should return 400 Bad Request when request is invalid")
+    void updateWebinar_WithInvalidRequest_ReturnsBadRequest() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        com.karmperis.webinarsapp.dto.WebinarEditDTO editDTO =
+                new com.karmperis.webinarsapp.dto.WebinarEditDTO(
+                        null,
+                        "Updated Desc",
+                        Instant.parse("2026-12-02T10:00:00Z"),
+                        90
+                );
+
+        mockMvc.perform(put("/api/v1/webinars/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/webinars/{uuid} - Should return 404 when webinar does not exist")
+    void updateWebinar_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        com.karmperis.webinarsapp.dto.WebinarEditDTO editDTO =
+                new com.karmperis.webinarsapp.dto.WebinarEditDTO(
+                        "Updated Title",
+                        "Updated Desc",
+                        Instant.parse("2026-12-02T10:00:00Z"),
+                        90
+                );
+
+        when(webinarService.updateWebinar(eq(uuid), any(com.karmperis.webinarsapp.dto.WebinarEditDTO.class)))
+                .thenThrow(new EntityNotFoundException("Webinar", "Webinar with uuid " + uuid + " not found"));
+
+        mockMvc.perform(put("/api/v1/webinars/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{uuid} - Should return 404 when webinar does not exist")
+    void deleteWebinar_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("Webinar", "Webinar with uuid " + uuid + " not found"))
+                .when(webinarService).softDeleteWebinarByUuid(uuid);
+
+        mockMvc.perform(delete("/api/v1/webinars/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 409 when user is already enrolled")
+    void enrollUser_WhenUserAlreadyEnrolled_ReturnsConflict() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityAlreadyExistsException("Enrollment", "User already enrolled in webinar"))
+                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(post("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 400 when enrollment is invalid")
+    void enrollUser_WhenEnrollmentIsInvalid_ReturnsBadRequest() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityInvalidArgumentException("INVALID_ENROLLMENT", "Invalid enrollment request"))
+                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(post("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 404 when webinar or user does not exist")
+    void enrollUser_WhenWebinarOrUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("Enrollment", "Webinar or user not found"))
+                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(post("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars - Should return 409 when webinar already exists")
+    void createWebinar_WhenWebinarAlreadyExists_ReturnsConflict() throws Exception {
+        WebinarInsertDTO insertDTO = new WebinarInsertDTO(
+                "Title",
+                "Desc",
+                Instant.parse("2026-12-01T10:00:00Z"),
+                60
+        );
+
+        Role role = new Role();
+        role.setName("ADMIN");
+
+        User mockUser = new User();
+        mockUser.setUuid(UUID.randomUUID());
+        mockUser.setRole(role);
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(mockUser, null, mockUser.getAuthorities());
+
+        when(webinarService.saveWebinar(any(WebinarInsertDTO.class), eq(mockUser.getUuid())))
+                .thenThrow(new EntityAlreadyExistsException("Webinar", "Webinar already exists"));
+
+        mockMvc.perform(post("/api/v1/webinars")
+                        .with(request -> {
+                            request.setUserPrincipal(authenticationToken);
+                            return request;
+                        })
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDTO)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/webinars/{uuid} - Should return 409 when webinar title already exists")
+    void updateWebinar_WhenWebinarAlreadyExists_ReturnsConflict() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        com.karmperis.webinarsapp.dto.WebinarEditDTO editDTO =
+                new com.karmperis.webinarsapp.dto.WebinarEditDTO(
+                        "Updated Title",
+                        "Updated Desc",
+                        Instant.parse("2026-12-02T10:00:00Z"),
+                        90
+                );
+
+        when(webinarService.updateWebinar(eq(uuid), any(com.karmperis.webinarsapp.dto.WebinarEditDTO.class)))
+                .thenThrow(new EntityAlreadyExistsException("Webinar", "Webinar already exists"));
+
+        mockMvc.perform(put("/api/v1/webinars/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isConflict());
     }
 }

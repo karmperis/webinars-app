@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -43,6 +46,7 @@ public class ReportRestControllerTest {
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.status").value("IN_PROGRESS"))
                 .andExpect(jsonPath("$.jobId").exists());
+        verify(reportService).generateReport(anyString(), eq(type));
     }
 
     @Test
@@ -57,6 +61,14 @@ public class ReportRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.jobId").value(jobId))
                 .andExpect(jsonPath("$.status").value("COMPLETED"));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/reports/generate - Should return 400 Bad Request when type parameter is missing")
+    void startReport_WithMissingTypeParam_ReturnsBadRequest() throws Exception {
+        mockMvc.perform(post("/api/v1/reports/generate")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
