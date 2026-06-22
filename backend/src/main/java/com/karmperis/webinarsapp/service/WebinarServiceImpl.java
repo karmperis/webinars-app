@@ -212,7 +212,7 @@ public class WebinarServiceImpl implements IWebinarService {
      * @throws EntityInvalidArgumentException if the organizer tries to enroll in their own webinar
      */
     @Override
-    @Transactional(rollbackFor = { EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class })
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class, EntityInvalidArgumentException.class})
     @PreAuthorize("hasAuthority('ENROLL_IN_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnProfile(#userUuid, authentication))")
     public void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
         log.info("Enrolling user {} in webinar {}", userUuid, webinarUuid);
@@ -247,6 +247,47 @@ public class WebinarServiceImpl implements IWebinarService {
         webinarRepository.save(webinar);
 
         log.info("Successfully enrolled user {} in webinar {}", userUuid, webinarUuid);
+    }
+
+    /**
+     * Unenroll a user from a webinar.
+     *
+     * @param webinarUuid the UUID of the webinar
+     * @param userUuid    the UUID of the user to unenroll
+     * @throws EntityNotFoundException        if either the webinar or the user is not found
+     * @throws EntityInvalidArgumentException if the user is not enrolled in the webinar
+     */
+    @Override
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
+    @PreAuthorize("hasAuthority('ENROLL_IN_WEBINAR') and (hasRole('ADMIN') or @securityService.isOwnProfile(#userUuid, authentication))")
+    public void unenrollUserFromWebinar(UUID webinarUuid, UUID userUuid)
+            throws EntityNotFoundException, EntityInvalidArgumentException {
+
+        log.info("Unenrolling user {} from webinar {}", userUuid, webinarUuid);
+
+        Webinar webinar = webinarRepository.findByUuidAndDeletedAtIsNull(webinarUuid)
+                .orElseThrow(() -> {
+                    log.warn("Unenrollment failed: Webinar with UUID {} not found", webinarUuid);
+                    return new EntityNotFoundException("Webinar", "Webinar with UUID " + webinarUuid + " not found");
+                });
+
+        User user = userRepository.findByUuidAndDeletedAtIsNull(userUuid)
+                .orElseThrow(() -> {
+                    log.warn("Unenrollment failed: User with UUID {} not found", userUuid);
+                    return new EntityNotFoundException("User", "User with UUID " + userUuid + " not found");
+                });
+
+        if (!webinar.hasParticipant(user)) {
+            throw new EntityInvalidArgumentException(
+                    "Enrollment",
+                    "User is not enrolled in this webinar"
+            );
+        }
+
+        webinar.removeParticipant(user);
+        webinarRepository.save(webinar);
+
+        log.info("Successfully unenrolled user {} from webinar {}", userUuid, webinarUuid);
     }
 
     /**

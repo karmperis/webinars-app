@@ -408,6 +408,57 @@ public class WebinarRestControllerTest {
     }
 
     @Test
+    @DisplayName("DELETE /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 204")
+    void unenrollUser_ReturnsNoContent() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        mockMvc.perform(delete("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNoContent());
+
+        verify(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 400 when user is not enrolled")
+    void unenrollUser_WhenUserIsNotEnrolled_ReturnsBadRequest() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityInvalidArgumentException("Enrollment", "User is not enrolled in this webinar"))
+                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(delete("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 404 when webinar does not exist")
+    void unenrollUser_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("Webinar", "Webinar not found"))
+                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(delete("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 404 when user does not exist")
+    void unenrollUser_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("User", "User not found"))
+                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(delete("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("POST /api/v1/webinars - Should return 409 when webinar already exists")
     void createWebinar_WhenWebinarAlreadyExists_ReturnsConflict() throws Exception {
         WebinarInsertDTO insertDTO = new WebinarInsertDTO(

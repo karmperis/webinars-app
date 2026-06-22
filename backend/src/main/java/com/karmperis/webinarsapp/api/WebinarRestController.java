@@ -228,4 +228,33 @@ public class WebinarRestController {
         webinarService.enrollUserInWebinar(webinarUuid, userUuid);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Unenroll a user from a webinar.
+     *
+     * @param webinarUuid the UUID of the webinar
+     * @param userUuid    the UUID of the user to unenroll
+     * @return HTTP 204 No Content when the unenrollment is successful
+     * @throws EntityNotFoundException        if the webinar or user does not exist
+     * @throws EntityInvalidArgumentException if the user is not enrolled in the webinar
+     */
+    @Operation(
+            summary = "Unenroll user from webinar",
+            description = "Removes a user from the participants list of a webinar. Requires ENROLL_IN_WEBINAR authority. Admins may unenroll any user, while regular users may unenroll only themselves."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User unenrolled successfully"),
+            @ApiResponse(responseCode = "400", description = "User is not enrolled in this webinar"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Webinar or user not found")
+    })
+    @DeleteMapping("/{webinarUuid}/participants/{userUuid}")
+    public ResponseEntity<Void> unenrollUserFromWebinar(
+            @PathVariable UUID webinarUuid,
+            @PathVariable UUID userUuid
+    ) throws EntityNotFoundException, EntityInvalidArgumentException {
+        webinarService.unenrollUserFromWebinar(webinarUuid, userUuid);
+        return ResponseEntity.noContent().build();
+    }
 }

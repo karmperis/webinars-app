@@ -90,6 +90,17 @@ public interface IWebinarService {
     void enrollUserInWebinar(UUID webinarUuid, UUID userUuid) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
 
     /**
+     * Unenroll a user from a webinar.
+     *
+     * @param webinarUuid the UUID of the webinar
+     * @param userUuid    the UUID of the user to unenroll
+     * @throws EntityNotFoundException        if the webinar or user does not exist or is soft-deleted
+     * @throws EntityInvalidArgumentException if the user is not enrolled in the webinar
+     */
+    void unenrollUserFromWebinar(UUID webinarUuid, UUID userUuid)
+            throws EntityNotFoundException, EntityInvalidArgumentException;
+
+    /**
      * Retrieve a page of non-deleted webinars where a specific user is enrolled as participant.
      *
      * @param userUuid the UUID of the participant
