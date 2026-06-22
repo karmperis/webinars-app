@@ -1,7 +1,6 @@
 package com.karmperis.webinarsapp.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * Request payload used to authenticate a user.
