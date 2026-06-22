@@ -147,16 +147,17 @@ Supported webinar actions:
 - Edit webinars
 - Delete webinars
 - Enroll in webinars
+- Unenroll from webinars
 - View participant enrollments
 - View organizer webinars
 
 Role-based webinar behavior:
 
-| Role          | Permissions                                                                               |
-| :------------ | :---------------------------------------------------------------------------------------- |
-| `ADMIN`       | Can manage all webinars                                                                   |
-| `ORGANIZER`   | Can create webinars, manage their own webinars and enroll in webinars organized by others |
-| `PARTICIPANT` | Can view and enroll in webinars                                                           |
+| Role          | Permissions                                                                                          |
+| :------------ | :--------------------------------------------------------------------------------------------------- |
+| `ADMIN`       | Can manage all webinars and manage enrollments where backend rules allow                             |
+| `ORGANIZER`   | Can create webinars, manage their own webinars and enroll/unenroll from webinars organized by others |
+| `PARTICIPANT` | Can view webinars and enroll/unenroll in webinars                                                    |
 
 ### Users
 

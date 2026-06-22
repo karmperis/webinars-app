@@ -114,11 +114,11 @@ webinars-app/
 
 The application supports three main roles:
 
-| Role          | Description                                                                                |
-| :------------ | :----------------------------------------------------------------------------------------- |
-| `ADMIN`       | Full administrative access                                                                 |
-| `ORGANIZER`   | Can create webinars, manage their own webinars, and enroll in webinars organized by others |
-| `PARTICIPANT` | Can view webinars and enroll                                                               |
+| Role          | Description                                                                                            |
+| :------------ | :----------------------------------------------------------------------------------------------------- |
+| `ADMIN`       | Full administrative access                                                                             |
+| `ORGANIZER`   | Can create webinars, manage their own webinars, enroll in / unenroll from webinars organized by others |
+| `PARTICIPANT` | Can view webinars, enroll in webinars, and unenroll from webinars                                      |
 
 The backend also includes a capability-based authorization model.
 
@@ -138,6 +138,7 @@ Examples of capabilities:
 - Edit webinar
 - Delete webinar
 - Enroll in webinar
+- Unenroll from webinar
 - View enrolled webinars
 - View webinars organized by the current user
 
@@ -281,9 +282,9 @@ Role assignment is not provided by the registration request.
 | GET    | `/webinars/organizer/{organizerUuid}`             | Admin / Same Organizer | List webinars by organizer                |
 | GET    | `/webinars/participants/{userUuid}`               | Admin / Same User      | List webinars where user is enrolled      |
 | POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin / Same User      | Enroll user in webinar                    |
+| DELETE | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin/Same User        | Unenroll a user from a webinar            |
 
-**Enrollment rule:** Organizers may enroll only in webinars created by other organizers.
-They cannot enroll in their own webinars.
+**Enrollment rules:** Organizers may enroll in and unenroll from webinars created by other organizers. They cannot enroll in their own webinars. Users may unenroll only from webinars in which they are currently enrolled.
 
 ### Roles
 
@@ -619,13 +620,8 @@ Implement user account activation using email verification tokens.
 Implement forgot-password and password reset workflows using secure reset tokens.
 Add email notifications for account activation and password recovery.
 
-### Webinar Management
-
-Add the ability for participants to unenroll from webinars.
-
 ### Testing
 
-Increase backend integration test coverage.
 Add frontend unit tests.
 
 ---
