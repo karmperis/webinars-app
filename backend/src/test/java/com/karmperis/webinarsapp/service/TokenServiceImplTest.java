@@ -97,6 +97,7 @@ public class TokenServiceImplTest {
         assertEquals(user.getUuid(), result.userUuid());
         assertFalse(result.used());
         assertNotNull(result.expiryDate());
+
         verify(tokenRepository, times(1)).save(any(Token.class));
     }
 
@@ -104,6 +105,7 @@ public class TokenServiceImplTest {
     @DisplayName("createToken: Should throw Exception when User is null")
     void createToken_ThrowsEntityInvalidArgumentException_WhenUserIsNull() {
         assertThrows(EntityInvalidArgumentException.class, () -> tokenService.createToken(null, "VERIFICATION"));
+
         verify(tokenRepository, never()).save(any());
     }
 
@@ -111,6 +113,7 @@ public class TokenServiceImplTest {
     @DisplayName("createToken: Should throw Exception when Type is blank")
     void createToken_ThrowsEntityInvalidArgumentException_WhenTypeIsBlank() {
         assertThrows(EntityInvalidArgumentException.class, () -> tokenService.createToken(user, "   "));
+
         verify(tokenRepository, never()).save(any());
     }
 
@@ -127,6 +130,8 @@ public class TokenServiceImplTest {
 
         assertNotNull(result);
         assertEquals(tokenStr, result.token());
+
+        verify(tokenRepository).findByTokenAndType(tokenStr, "VERIFICATION");
     }
 
     @Test
@@ -135,6 +140,8 @@ public class TokenServiceImplTest {
         when(tokenRepository.findByTokenAndType("invalid-token", "VERIFICATION")).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> tokenService.verifyAndGetToken("invalid-token", "VERIFICATION"));
+
+        verify(tokenRepository).findByTokenAndType("invalid-token", "VERIFICATION");
     }
 
     @Test
@@ -143,6 +150,8 @@ public class TokenServiceImplTest {
         when(tokenRepository.findByTokenAndType(usedToken.getToken(), "VERIFICATION")).thenReturn(Optional.of(usedToken));
 
         assertThrows(EntityInvalidArgumentException.class, () -> tokenService.verifyAndGetToken(usedToken.getToken(), "VERIFICATION"));
+
+        verify(tokenRepository).findByTokenAndType(usedToken.getToken(), "VERIFICATION");
     }
 
     @Test
@@ -151,6 +160,8 @@ public class TokenServiceImplTest {
         when(tokenRepository.findByTokenAndType(expiredToken.getToken(), "VERIFICATION")).thenReturn(Optional.of(expiredToken));
 
         assertThrows(EntityInvalidArgumentException.class, () -> tokenService.verifyAndGetToken(expiredToken.getToken(), "VERIFICATION"));
+
+        verify(tokenRepository).findByTokenAndType(expiredToken.getToken(), "VERIFICATION");
     }
 
     @Test
@@ -172,13 +183,16 @@ public class TokenServiceImplTest {
         tokenService.markTokenAsUsed(tokenStr);
 
         assertTrue(validToken.getUsed());
-        verify(tokenRepository, times(1)).save(validToken);
+
+        verify(tokenRepository).findByToken(tokenStr);
+        verify(tokenRepository).save(validToken);
     }
 
     @Test
     @DisplayName("markTokenAsUsed: Should throw Exception when token string is blank")
     void markTokenAsUsed_ThrowsEntityInvalidArgumentException_WhenTokenIsBlank() {
         assertThrows(EntityInvalidArgumentException.class, () -> tokenService.markTokenAsUsed("  "));
+
         verify(tokenRepository, never()).save(any());
     }
 
@@ -188,6 +202,8 @@ public class TokenServiceImplTest {
         when(tokenRepository.findByToken("not-found-token")).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> tokenService.markTokenAsUsed("not-found-token"));
+
+        verify(tokenRepository).findByToken("not-found-token");
         verify(tokenRepository, never()).save(any());
     }
 

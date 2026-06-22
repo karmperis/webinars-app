@@ -58,7 +58,7 @@ public class UserServiceImplTest {
 
         role = new Role();
         role.setId(1L);
-        role.setName("USER");
+        role.setName("PARTICIPANT");
 
         user = new User();
         user.setUuid(userUuid);
@@ -76,7 +76,7 @@ public class UserServiceImplTest {
     @DisplayName("saveUser: Should save and return UserReadOnlyDTO successfully")
     void saveUser_Success() throws Exception {
         UserInsertDTO dto = new UserInsertDTO("testuser", "password123", "John", "Doe", "+306900000000");
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", false, UUID.randomUUID(), "USER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, UUID.randomUUID(), "PARTICIPANT", "John", "Doe", "+306900000000");
 
         User unmappedUser = new User();
         unmappedUser.setUsername("testuser");
@@ -92,7 +92,9 @@ public class UserServiceImplTest {
         UserReadOnlyDTO result = userService.saveUser(dto);
 
         assertNotNull(result);
+        assertTrue(user.getActive());
         assertEquals("testuser", result.username());
+        assertEquals("PARTICIPANT", user.getRole().getName());
         verify(userRepository, times(1)).save(any(User.class));
         verify(passwordEncoder, times(1)).encode("password123");
     }
@@ -102,6 +104,46 @@ public class UserServiceImplTest {
     void saveUser_ThrowsEntityInvalidArgumentException_WhenDtoIsNull() {
         assertThrows(EntityInvalidArgumentException.class, () -> userService.saveUser(null));
         verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("saveUser: Should throw Exception when username is blank")
+    void saveUser_ThrowsEntityInvalidArgumentException_WhenUsernameIsBlank() {
+        UserInsertDTO dto = new UserInsertDTO("   ", "password123", "John", "Doe", "+306900000000");
+
+        assertThrows(EntityInvalidArgumentException.class, () -> userService.saveUser(dto));
+
+        verifyNoInteractions(userRepository);
+        verifyNoInteractions(roleRepository);
+        verifyNoInteractions(userMapper);
+        verifyNoInteractions(passwordEncoder);
+    }
+
+    @Test
+    @DisplayName("saveUser: Should throw Exception when username is too short")
+    void saveUser_ThrowsEntityInvalidArgumentException_WhenUsernameIsTooShort() {
+        UserInsertDTO dto = new UserInsertDTO("abc", "password123", "John", "Doe", "+306900000000");
+
+        assertThrows(EntityInvalidArgumentException.class, () -> userService.saveUser(dto));
+
+        verifyNoInteractions(userRepository);
+        verifyNoInteractions(roleRepository);
+        verifyNoInteractions(userMapper);
+        verifyNoInteractions(passwordEncoder);
+    }
+
+    @Test
+    @DisplayName("saveUser: Should throw Exception when username is too long")
+    void saveUser_ThrowsEntityInvalidArgumentException_WhenUsernameIsTooLong() {
+        String longUsername = "a".repeat(51);
+        UserInsertDTO dto = new UserInsertDTO(longUsername, "password123", "John", "Doe", "+306900000000");
+
+        assertThrows(EntityInvalidArgumentException.class, () -> userService.saveUser(dto));
+
+        verifyNoInteractions(userRepository);
+        verifyNoInteractions(roleRepository);
+        verifyNoInteractions(userMapper);
+        verifyNoInteractions(passwordEncoder);
     }
 
     @Test
@@ -137,7 +179,7 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("findUserByUuid: Should return User when found")
     void findUserByUuid_Success() throws Exception {
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, UUID.randomUUID(), "USER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, UUID.randomUUID(), "PARTICIPANT", "John", "Doe", "+306900000000");
 
         when(userRepository.findByUuidAndDeletedAtIsNull(userUuid)).thenReturn(Optional.of(user));
         when(userMapper.mapToUserReadOnlyDTO(user)).thenReturn(readOnlyDTO);
@@ -157,11 +199,53 @@ public class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("findUserByUsername: Should return User when found")
+    void findUserByUsername_Success() throws Exception {
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(
+                userUuid,
+                "testuser",
+                true,
+                UUID.randomUUID(),
+                "PARTICIPANT",
+                "John",
+                "Doe",
+                "+306900000000"
+        );
+
+        when(userRepository.findByUsernameAndDeletedAtIsNull("testuser"))
+                .thenReturn(Optional.of(user));
+
+        when(userMapper.mapToUserReadOnlyDTO(user))
+                .thenReturn(readOnlyDTO);
+
+        UserReadOnlyDTO result = userService.findUserByUsername("testuser");
+
+        assertNotNull(result);
+        assertEquals("testuser", result.username());
+
+        verify(userRepository).findByUsernameAndDeletedAtIsNull("testuser");
+        verify(userMapper).mapToUserReadOnlyDTO(user);
+    }
+
+    @Test
+    @DisplayName("findUserByUsername: Should throw Exception when not found")
+    void findUserByUsername_ThrowsEntityNotFoundException() {
+        when(userRepository.findByUsernameAndDeletedAtIsNull("missinguser"))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> userService.findUserByUsername("missinguser"));
+
+        verify(userRepository).findByUsernameAndDeletedAtIsNull("missinguser");
+        verifyNoInteractions(userMapper);
+    }
+
+    @Test
     @DisplayName("findAllUsersSortedByName: Should return a Page of Users")
     void findAllUsersSortedByName_Success() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> userPage = new PageImpl<>(List.of(user));
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, UUID.randomUUID(), "USER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, UUID.randomUUID(), "PARTICIPANT", "John", "Doe", "+306900000000");
 
         when(userRepository.findByDeletedAtIsNull(pageable)).thenReturn(userPage);
         when(userMapper.mapToUserReadOnlyDTO(user)).thenReturn(readOnlyDTO);
@@ -178,10 +262,36 @@ public class UserServiceImplTest {
     // ==========================================
 
     @Test
+    @DisplayName("updateUser: Should throw Exception when DTO is null")
+    void updateUser_ThrowsEntityInvalidArgumentException_WhenDtoIsNull() {
+        assertThrows(EntityInvalidArgumentException.class,
+                () -> userService.updateUser(userUuid, null));
+
+        verifyNoInteractions(userRepository);
+        verifyNoInteractions(userMapper);
+    }
+
+    @Test
+    @DisplayName("updateUser: Should throw Exception when user is not found")
+    void updateUser_ThrowsEntityNotFoundException_WhenUserIsNotFound() {
+        UserEditDTO editDTO = new UserEditDTO("John", "Doe", "+306900000000");
+
+        when(userRepository.findByUuidAndDeletedAtIsNull(userUuid))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> userService.updateUser(userUuid, editDTO));
+
+        verify(userRepository).findByUuidAndDeletedAtIsNull(userUuid);
+        verify(userRepository, never()).save(any());
+        verifyNoInteractions(userMapper);
+    }
+
+    @Test
     @DisplayName("updateUser: Should update User successfully")
     void updateUser_Success() throws Exception {
         UserEditDTO editDTO = new UserEditDTO("John", "Doe", "+306900000000");
-        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "John", true, UUID.randomUUID(), "USER", "John", "Doe", "+306900000000");
+        UserReadOnlyDTO readOnlyDTO = new UserReadOnlyDTO(userUuid, "testuser", true, UUID.randomUUID(), "PARTICIPANT", "John", "Doe", "+306900000000");
 
         when(userRepository.findByUuidAndDeletedAtIsNull(userUuid)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
@@ -190,7 +300,14 @@ public class UserServiceImplTest {
         UserReadOnlyDTO result = userService.updateUser(userUuid, editDTO);
 
         assertNotNull(result);
-        assertEquals("John", result.username());
+        assertEquals("John", result.firstname());
+        assertEquals("Doe", result.lastname());
+        assertEquals("+306900000000", result.phoneNumber());
+
+        verify(userRepository).findByUuidAndDeletedAtIsNull(userUuid);
+        verify(userMapper).mapToUserEditDTO(user, editDTO);
+        verify(userRepository).save(user);
+        verify(userMapper).mapToUserReadOnlyDTO(user);
     }
 
     @Test
@@ -203,11 +320,79 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).save(user);
         assertNotNull(user.getDeletedAt());
         assertFalse(user.getActive());
+
+        verify(userRepository).findByUuidAndDeletedAtIsNull(userUuid);
+    }
+
+    @Test
+    @DisplayName("softDeleteUserByUuid: Should throw Exception when user is not found")
+    void softDeleteUserByUuid_ThrowsEntityNotFoundException_WhenUserIsNotFound() {
+        when(userRepository.findByUuidAndDeletedAtIsNull(userUuid))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> userService.softDeleteUserByUuid(userUuid));
+
+        verify(userRepository).findByUuidAndDeletedAtIsNull(userUuid);
+        verify(userRepository, never()).save(any());
     }
 
     // ==========================================
     // TESTS-UPDATE (ADMIN)
     // ==========================================
+
+    @Test
+    @DisplayName("updateUserAccess: Should throw Exception when DTO is null")
+    void updateUserAccess_ThrowsEntityInvalidArgumentException_WhenDtoIsNull() {
+        assertThrows(EntityInvalidArgumentException.class,
+                () -> userService.updateUserAccess(userUuid, null));
+
+        verifyNoInteractions(userRepository);
+        verifyNoInteractions(roleRepository);
+        verifyNoInteractions(userMapper);
+    }
+
+    @Test
+    @DisplayName("updateUserAccess: Should throw Exception when user is not found")
+    void updateUserAccess_ThrowsEntityNotFoundException_WhenUserIsNotFound() {
+        UUID roleUuid = UUID.randomUUID();
+        com.karmperis.webinarsapp.dto.UserAdminEditDTO adminEditDTO =
+                new com.karmperis.webinarsapp.dto.UserAdminEditDTO(roleUuid, true);
+
+        when(userRepository.findByUuidAndDeletedAtIsNull(userUuid))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> userService.updateUserAccess(userUuid, adminEditDTO));
+
+        verify(userRepository).findByUuidAndDeletedAtIsNull(userUuid);
+        verifyNoInteractions(roleRepository);
+        verify(userRepository, never()).save(any());
+        verifyNoInteractions(userMapper);
+    }
+
+    @Test
+    @DisplayName("updateUserAccess: Should throw Exception when role is not found")
+    void updateUserAccess_ThrowsEntityInvalidArgumentException_WhenRoleIsNotFound() {
+        UUID roleUuid = UUID.randomUUID();
+        com.karmperis.webinarsapp.dto.UserAdminEditDTO adminEditDTO =
+                new com.karmperis.webinarsapp.dto.UserAdminEditDTO(roleUuid, true);
+
+        when(userRepository.findByUuidAndDeletedAtIsNull(userUuid))
+                .thenReturn(Optional.of(user));
+
+        when(roleRepository.findByUuidAndDeletedAtIsNull(roleUuid))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityInvalidArgumentException.class,
+                () -> userService.updateUserAccess(userUuid, adminEditDTO));
+
+        verify(userRepository).findByUuidAndDeletedAtIsNull(userUuid);
+        verify(roleRepository).findByUuidAndDeletedAtIsNull(roleUuid);
+        verify(userRepository, never()).save(any());
+        verifyNoInteractions(userMapper);
+    }
+
     @Test
     @DisplayName("updateUserAccess: Should update user role and status successfully (Admin)")
     void updateUserAccess_Success() throws Exception {
@@ -231,5 +416,10 @@ public class UserServiceImplTest {
         assertNotNull(result);
         assertEquals("TEACHER", result.roleName());
         assertFalse(result.active());
+
+        verify(userRepository).findByUuidAndDeletedAtIsNull(userUuid);
+        verify(roleRepository).findByUuidAndDeletedAtIsNull(teacherRoleUuid);
+        verify(userRepository).save(user);
+        verify(userMapper).mapToUserReadOnlyDTO(user);
     }
 }
