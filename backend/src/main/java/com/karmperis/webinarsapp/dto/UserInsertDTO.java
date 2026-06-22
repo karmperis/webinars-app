@@ -2,7 +2,6 @@ package com.karmperis.webinarsapp.dto;
 
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -19,12 +18,12 @@ import jakarta.validation.constraints.Size;
  */
 @GroupSequence({UserInsertDTO.First.class, UserInsertDTO.Second.class, UserInsertDTO.class})
 public record UserInsertDTO(
-        @NotNull(message = "The username cannot be null.", groups = First.class)
+        @NotBlank(message = "The username cannot be null.", groups = First.class)
         @Size(min = 4, max = 50, message = "The username must contain between 4 and 50 characters.",
                 groups = Second.class)
         String username,
 
-        @NotNull(message = "The password cannot be null.", groups = First.class)
+        @NotBlank(message = "The password cannot be null.", groups = First.class)
         @Pattern(
                 regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=]).{12,}$",
                 message = "The password must be at least 12 characters long and contain at least one digit, " +
