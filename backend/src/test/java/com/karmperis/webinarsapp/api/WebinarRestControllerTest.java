@@ -98,133 +98,6 @@ public class WebinarRestControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/webinars/{uuid} - Should return 200 OK")
-    void getWebinarByUuid_ReturnsOk() throws Exception {
-        UUID uuid = UUID.randomUUID();
-        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
-                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
-        WebinarReadOnlyDTO responseDTO = new WebinarReadOnlyDTO(
-                uuid, "Title",
-                "Desc",
-                Instant.parse("2026-12-01T10:00:00Z"),
-                60,
-                organizer
-        );
-
-        when(webinarService.findWebinarByUuid(uuid)).thenReturn(responseDTO);
-
-        mockMvc.perform(get("/api/v1/webinars/{uuid}", uuid))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.uuid").value(uuid.toString()));
-    }
-
-    @Test
-    @DisplayName("GET /api/v1/webinars - Should return paginated webinars")
-    void getAllWebinars_ReturnsPage() throws Exception {
-        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
-                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
-        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
-                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
-        );
-        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
-
-        when(webinarService.findAllWebinars(any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
-
-        mockMvc.perform(get("/api/v1/webinars")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].title").value("Title"));
-    }
-
-    @Test
-    @DisplayName("GET /api/v1/webinars/organizer/{organizerUuid} - Should return paginated webinars by organizer")
-    void getWebinarsByOrganizer_ReturnsPage() throws Exception {
-        UUID organizerUuid = UUID.randomUUID();
-        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
-                organizerUuid, "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
-        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
-                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
-        );
-        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
-
-        when(webinarService.findAllWebinarsByOrganizer(eq(organizerUuid), any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
-
-        mockMvc.perform(get("/api/v1/webinars/organizer/{organizerUuid}", organizerUuid)
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].organizer.uuid").value(organizerUuid.toString()));
-    }
-
-    @Test
-    @DisplayName("GET /api/v1/webinars/participants/{userUuid} - Should return paginated webinars by participant")
-    void getWebinarsByParticipant_ReturnsPage() throws Exception {
-        UUID userUuid = UUID.randomUUID();
-        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
-                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
-        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
-                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
-        );
-        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
-
-        when(webinarService.findAllWebinarsByParticipant(eq(userUuid), any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
-
-        mockMvc.perform(get("/api/v1/webinars/participants/{userUuid}", userUuid)
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].title").value("Title"));
-    }
-
-    @Test
-    @DisplayName("PUT /api/v1/webinars/{uuid} - Should return 200 OK")
-    void updateWebinar_ReturnsOk() throws Exception {
-        UUID uuid = UUID.randomUUID();
-        com.karmperis.webinarsapp.dto.WebinarEditDTO editDTO = new com.karmperis.webinarsapp.dto.WebinarEditDTO(
-                "Updated Title", "Updated Desc", Instant.parse("2026-12-02T10:00:00Z"), 90
-        );
-        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
-                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
-        WebinarReadOnlyDTO responseDTO = new WebinarReadOnlyDTO(
-                uuid, "Updated Title", "Updated Desc", Instant.parse("2026-12-02T10:00:00Z"), 90, organizer
-        );
-
-        when(webinarService.updateWebinar(eq(uuid), any(com.karmperis.webinarsapp.dto.WebinarEditDTO.class))).thenReturn(responseDTO);
-
-        mockMvc.perform(put("/api/v1/webinars/{uuid}", uuid)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(editDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Updated Title"));
-
-        verify(webinarService).updateWebinar(eq(uuid), any(com.karmperis.webinarsapp.dto.WebinarEditDTO.class));
-    }
-
-    @Test
-    @DisplayName("POST /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 204")
-    void enrollUser_ReturnsNoContent() throws Exception {
-        UUID wUuid = UUID.randomUUID();
-        UUID uUuid = UUID.randomUUID();
-
-        mockMvc.perform(post("/api/v1/webinars/{wUuid}/participants/{uUuid}", wUuid, uUuid))
-                .andExpect(status().isNoContent());
-
-        verify(webinarService).enrollUserInWebinar(wUuid, uUuid);
-    }
-
-    @Test
-    @DisplayName("DELETE /api/v1/webinars/{uuid} - Should return 204 No Content")
-    void deleteWebinar_ReturnsNoContent() throws Exception {
-        UUID uuid = UUID.randomUUID();
-
-        mockMvc.perform(delete("/api/v1/webinars/{uuid}", uuid))
-                .andExpect(status().isNoContent());
-
-        verify(webinarService).softDeleteWebinarByUuid(uuid);
-    }
-
-    @Test
     @DisplayName("POST /api/v1/webinars - Should return 400 Bad Request when request is invalid")
     void createWebinar_WithInvalidRequest_ReturnsBadRequest() throws Exception {
         WebinarInsertDTO insertDTO = new WebinarInsertDTO(
@@ -278,6 +151,60 @@ public class WebinarRestControllerTest {
     }
 
     @Test
+    @DisplayName("POST /api/v1/webinars - Should return 409 when webinar already exists")
+    void createWebinar_WhenWebinarAlreadyExists_ReturnsConflict() throws Exception {
+        WebinarInsertDTO insertDTO = new WebinarInsertDTO(
+                "Title",
+                "Desc",
+                Instant.parse("2026-12-01T10:00:00Z"),
+                60
+        );
+
+        Role role = new Role();
+        role.setName("ADMIN");
+
+        User mockUser = new User();
+        mockUser.setUuid(UUID.randomUUID());
+        mockUser.setRole(role);
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(mockUser, null, mockUser.getAuthorities());
+
+        when(webinarService.saveWebinar(any(WebinarInsertDTO.class), eq(mockUser.getUuid())))
+                .thenThrow(new EntityAlreadyExistsException("Webinar", "Webinar already exists"));
+
+        mockMvc.perform(post("/api/v1/webinars")
+                        .with(request -> {
+                            request.setUserPrincipal(authenticationToken);
+                            return request;
+                        })
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDTO)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars/{uuid} - Should return 200 OK")
+    void getWebinarByUuid_ReturnsOk() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO responseDTO = new WebinarReadOnlyDTO(
+                uuid, "Title",
+                "Desc",
+                Instant.parse("2026-12-01T10:00:00Z"),
+                60,
+                organizer
+        );
+
+        when(webinarService.findWebinarByUuid(uuid)).thenReturn(responseDTO);
+
+        mockMvc.perform(get("/api/v1/webinars/{uuid}", uuid))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.uuid").value(uuid.toString()));
+    }
+
+    @Test
     @DisplayName("GET /api/v1/webinars/{uuid} - Should return 404 when webinar is not found")
     void getWebinarByUuid_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
         UUID uuid = UUID.randomUUID();
@@ -287,6 +214,45 @@ public class WebinarRestControllerTest {
 
         mockMvc.perform(get("/api/v1/webinars/{uuid}", uuid))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars - Should return paginated webinars")
+    void getAllWebinars_ReturnsPage() throws Exception {
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
+                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
+        );
+        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
+
+        when(webinarService.findAllWebinars(any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/webinars")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Title"));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/webinars/organizer/{organizerUuid} - Should return paginated webinars by organizer")
+    void getWebinarsByOrganizer_ReturnsPage() throws Exception {
+        UUID organizerUuid = UUID.randomUUID();
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                organizerUuid, "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
+                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
+        );
+        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
+
+        when(webinarService.findAllWebinarsByOrganizer(eq(organizerUuid), any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/webinars/organizer/{organizerUuid}", organizerUuid)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].organizer.uuid").value(organizerUuid.toString()));
     }
 
     @Test
@@ -304,6 +270,26 @@ public class WebinarRestControllerTest {
     }
 
     @Test
+    @DisplayName("GET /api/v1/webinars/participants/{userUuid} - Should return paginated webinars by participant")
+    void getWebinarsByParticipant_ReturnsPage() throws Exception {
+        UUID userUuid = UUID.randomUUID();
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO dto = new WebinarReadOnlyDTO(
+                UUID.randomUUID(), "Title", "Desc", Instant.parse("2026-12-01T10:00:00Z"), 60, organizer
+        );
+        org.springframework.data.domain.Page<WebinarReadOnlyDTO> page = new org.springframework.data.domain.PageImpl<>(java.util.List.of(dto));
+
+        when(webinarService.findAllWebinarsByParticipant(eq(userUuid), any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/webinars/participants/{userUuid}", userUuid)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Title"));
+    }
+
+    @Test
     @DisplayName("GET /api/v1/webinars/participants/{userUuid} - Should return 404 when participant is not found")
     void getWebinarsByParticipant_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
         UUID userUuid = UUID.randomUUID();
@@ -315,6 +301,30 @@ public class WebinarRestControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/webinars/{uuid} - Should return 200 OK")
+    void updateWebinar_ReturnsOk() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        com.karmperis.webinarsapp.dto.WebinarEditDTO editDTO = new com.karmperis.webinarsapp.dto.WebinarEditDTO(
+                "Updated Title", "Updated Desc", Instant.parse("2026-12-02T10:00:00Z"), 90
+        );
+        UserReadOnlyDTO organizer = new UserReadOnlyDTO(
+                UUID.randomUUID(), "organizer", true, UUID.randomUUID(), "ADMIN", "John", "Doe", "+306900000000");
+        WebinarReadOnlyDTO responseDTO = new WebinarReadOnlyDTO(
+                uuid, "Updated Title", "Updated Desc", Instant.parse("2026-12-02T10:00:00Z"), 90, organizer
+        );
+
+        when(webinarService.updateWebinar(eq(uuid), any(com.karmperis.webinarsapp.dto.WebinarEditDTO.class))).thenReturn(responseDTO);
+
+        mockMvc.perform(put("/api/v1/webinars/{uuid}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated Title"));
+
+        verify(webinarService).updateWebinar(eq(uuid), any(com.karmperis.webinarsapp.dto.WebinarEditDTO.class));
     }
 
     @Test
@@ -357,141 +367,6 @@ public class WebinarRestControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/webinars/{uuid} - Should return 404 when webinar does not exist")
-    void deleteWebinar_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
-        UUID uuid = UUID.randomUUID();
-
-        doThrow(new EntityNotFoundException("Webinar", "Webinar with uuid " + uuid + " not found"))
-                .when(webinarService).softDeleteWebinarByUuid(uuid);
-
-        mockMvc.perform(delete("/api/v1/webinars/{uuid}", uuid))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @DisplayName("POST /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 409 when user is already enrolled")
-    void enrollUser_WhenUserAlreadyEnrolled_ReturnsConflict() throws Exception {
-        UUID webinarUuid = UUID.randomUUID();
-        UUID userUuid = UUID.randomUUID();
-
-        doThrow(new EntityAlreadyExistsException("Enrollment", "User already enrolled in webinar"))
-                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
-
-        mockMvc.perform(post("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    @DisplayName("POST /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 400 when enrollment is invalid")
-    void enrollUser_WhenEnrollmentIsInvalid_ReturnsBadRequest() throws Exception {
-        UUID webinarUuid = UUID.randomUUID();
-        UUID userUuid = UUID.randomUUID();
-
-        doThrow(new EntityInvalidArgumentException("INVALID_ENROLLMENT", "Invalid enrollment request"))
-                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
-
-        mockMvc.perform(post("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("POST /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 404 when webinar or user does not exist")
-    void enrollUser_WhenWebinarOrUserDoesNotExist_ReturnsNotFound() throws Exception {
-        UUID webinarUuid = UUID.randomUUID();
-        UUID userUuid = UUID.randomUUID();
-
-        doThrow(new EntityNotFoundException("Enrollment", "Webinar or user not found"))
-                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
-
-        mockMvc.perform(post("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @DisplayName("DELETE /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 204")
-    void unenrollUser_ReturnsNoContent() throws Exception {
-        UUID webinarUuid = UUID.randomUUID();
-        UUID userUuid = UUID.randomUUID();
-
-        mockMvc.perform(delete("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
-                .andExpect(status().isNoContent());
-
-        verify(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
-    }
-
-    @Test
-    @DisplayName("DELETE /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 400 when user is not enrolled")
-    void unenrollUser_WhenUserIsNotEnrolled_ReturnsBadRequest() throws Exception {
-        UUID webinarUuid = UUID.randomUUID();
-        UUID userUuid = UUID.randomUUID();
-
-        doThrow(new EntityInvalidArgumentException("Enrollment", "User is not enrolled in this webinar"))
-                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
-
-        mockMvc.perform(delete("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("DELETE /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 404 when webinar does not exist")
-    void unenrollUser_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
-        UUID webinarUuid = UUID.randomUUID();
-        UUID userUuid = UUID.randomUUID();
-
-        doThrow(new EntityNotFoundException("Webinar", "Webinar not found"))
-                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
-
-        mockMvc.perform(delete("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @DisplayName("DELETE /api/v1/webinars/{wUuid}/participants/{uUuid} - Should return 404 when user does not exist")
-    void unenrollUser_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
-        UUID webinarUuid = UUID.randomUUID();
-        UUID userUuid = UUID.randomUUID();
-
-        doThrow(new EntityNotFoundException("User", "User not found"))
-                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
-
-        mockMvc.perform(delete("/api/v1/webinars/{wUuid}/participants/{uUuid}", webinarUuid, userUuid))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @DisplayName("POST /api/v1/webinars - Should return 409 when webinar already exists")
-    void createWebinar_WhenWebinarAlreadyExists_ReturnsConflict() throws Exception {
-        WebinarInsertDTO insertDTO = new WebinarInsertDTO(
-                "Title",
-                "Desc",
-                Instant.parse("2026-12-01T10:00:00Z"),
-                60
-        );
-
-        Role role = new Role();
-        role.setName("ADMIN");
-
-        User mockUser = new User();
-        mockUser.setUuid(UUID.randomUUID());
-        mockUser.setRole(role);
-
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(mockUser, null, mockUser.getAuthorities());
-
-        when(webinarService.saveWebinar(any(WebinarInsertDTO.class), eq(mockUser.getUuid())))
-                .thenThrow(new EntityAlreadyExistsException("Webinar", "Webinar already exists"));
-
-        mockMvc.perform(post("/api/v1/webinars")
-                        .with(request -> {
-                            request.setUserPrincipal(authenticationToken);
-                            return request;
-                        })
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(insertDTO)))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
     @DisplayName("PUT /api/v1/webinars/{uuid} - Should return 409 when webinar title already exists")
     void updateWebinar_WhenWebinarAlreadyExists_ReturnsConflict() throws Exception {
         UUID uuid = UUID.randomUUID();
@@ -510,5 +385,130 @@ public class WebinarRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(editDTO)))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{uuid} - Should return 204 No Content")
+    void deleteWebinar_ReturnsNoContent() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        mockMvc.perform(delete("/api/v1/webinars/{uuid}", uuid))
+                .andExpect(status().isNoContent());
+
+        verify(webinarService).softDeleteWebinarByUuid(uuid);
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{uuid} - Should return 404 when webinar does not exist")
+    void deleteWebinar_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("Webinar", "Webinar with uuid " + uuid + " not found"))
+                .when(webinarService).softDeleteWebinarByUuid(uuid);
+
+        mockMvc.perform(delete("/api/v1/webinars/{uuid}", uuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars/{webinarUuid}/participants/{userUuid} - Should return 204")
+    void enrollUser_ReturnsNoContent() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        mockMvc.perform(post("/api/v1/webinars/{webinarUuid}/participants/{userUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNoContent());
+
+        verify(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars/{webinarUuid}/participants/{userUuid} - Should return 409 when user is already enrolled")
+    void enrollUser_WhenUserAlreadyEnrolled_ReturnsConflict() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityAlreadyExistsException("Enrollment", "User already enrolled in webinar"))
+                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(post("/api/v1/webinars/{webinarUuid}/participants/{userUuid}", webinarUuid, userUuid))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars/{webinarUuid}/participants/{userUuid} - Should return 400 when enrollment is invalid")
+    void enrollUser_WhenEnrollmentIsInvalid_ReturnsBadRequest() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityInvalidArgumentException("INVALID_ENROLLMENT", "Invalid enrollment request"))
+                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(post("/api/v1/webinars/{webinarUuid}/participants/{userUuid}", webinarUuid, userUuid))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/webinars/{webinarUuid}/participants/{userUuid} - Should return 404 when webinar or user does not exist")
+    void enrollUser_WhenWebinarOrUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("Enrollment", "Webinar or user not found"))
+                .when(webinarService).enrollUserInWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(post("/api/v1/webinars/{webinarUuid}/participants/{userUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{webinarUuid}/participants/{userUuid} - Should return 204")
+    void unenrollUser_ReturnsNoContent() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        mockMvc.perform(delete("/api/v1/webinars/{webinarUuid}/participants/{userUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNoContent());
+
+        verify(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{webinarUuid}/participants/{userUuid} - Should return 400 when user is not enrolled")
+    void unenrollUser_WhenUserIsNotEnrolled_ReturnsBadRequest() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityInvalidArgumentException("Enrollment", "User is not enrolled in this webinar"))
+                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(delete("/api/v1/webinars/{webinarUuid}/participants/{userUuid}", webinarUuid, userUuid))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{webinarUuid}/participants/{userUuid} - Should return 404 when webinar does not exist")
+    void unenrollUser_WhenWebinarDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("Webinar", "Webinar not found"))
+                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(delete("/api/v1/webinars/{webinarUuid}/participants/{userUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/v1/webinars/{webinarUuid}/participants/{userUuid} - Should return 404 when user does not exist")
+    void unenrollUser_WhenUserDoesNotExist_ReturnsNotFound() throws Exception {
+        UUID webinarUuid = UUID.randomUUID();
+        UUID userUuid = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("User", "User not found"))
+                .when(webinarService).unenrollUserFromWebinar(webinarUuid, userUuid);
+
+        mockMvc.perform(delete("/api/v1/webinars/{webinarUuid}/participants/{userUuid}", webinarUuid, userUuid))
+                .andExpect(status().isNotFound());
     }
 }

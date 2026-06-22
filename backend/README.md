@@ -181,9 +181,10 @@ Role assignment is not provided by the registration request.
 | PUT    | `/webinars/{uuid}`                                | Admin/Organizer      | Update webinar details                     |
 | DELETE | `/webinars/{uuid}`                                | Admin/Organizer      | Soft-delete a webinar                      |
 | POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin/Same User      | Enroll a user in a webinar                 |
+| DELETE | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin/Same User      | Unenroll a user from a webinar             |
 
-**Enrollment rule:** Organizers may enroll only in webinars created by other organizers, they cannot enroll in their own
-webinars.
+**Enrollment rules:** Organizers may enroll only in webinars created by other organizers, they cannot enroll in their own
+webinars. A user may unenroll only from webinars they are currently enrolled in.
 
 ### Roles & Capabilities
 
