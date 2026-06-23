@@ -24,6 +24,7 @@ export class Webinars implements OnInit {
   readonly enrolledWebinarUuids = signal<Set<string>>(new Set());
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
+  readonly actionErrorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
   readonly currentPage = signal(0);
   readonly pageSize = signal(5);
@@ -33,6 +34,32 @@ export class Webinars implements OnInit {
   ngOnInit(): void {
     this.loadWebinars();
     this.loadEnrolledWebinars();
+  }
+
+  /**
+   * Displays a success message for a short period.
+   *
+   * @param message success message to display
+   */
+  private showSuccess(message: string): void {
+    this.successMessage.set(message);
+
+    setTimeout(() => {
+      this.successMessage.set(null);
+    }, 2000);
+  }
+
+  /**
+   * Displays an error message for a short period.
+   *
+   * @param message error message to display
+   */
+  private showError(message: string): void {
+    this.actionErrorMessage.set(message);
+
+    setTimeout(() => {
+      this.actionErrorMessage.set(null);
+    }, 2000);
   }
 
   /**
@@ -163,7 +190,7 @@ export class Webinars implements OnInit {
 
     this.webinarService.deleteWebinar(uuid).subscribe({
       next: () => {
-        this.successMessage.set('Το σεμινάριο διαγράφηκε επιτυχώς.');
+        this.showSuccess('Το σεμινάριο διαγράφηκε επιτυχώς.');
         if (this.webinars().length === 1 && this.currentPage() > 0) {
           this.currentPage.update((page) => page - 1);
         }
@@ -172,7 +199,7 @@ export class Webinars implements OnInit {
       },
       error: (error) => {
         console.error('Failed to delete webinar', error);
-        this.loadError.set('Η διαγραφή του σεμιναρίου απέτυχε.');
+        this.showError('Η διαγραφή του σεμιναρίου απέτυχε.');
       },
     });
   }
@@ -183,33 +210,36 @@ export class Webinars implements OnInit {
    * @param webinarUuid webinar UUID
    */
   enrollInWebinar(webinarUuid: string): void {
-    this.loadError.set(null);
+    this.actionErrorMessage.set(null);
     this.successMessage.set(null);
 
     const userUuid = this.authService.getCurrentUserUuid();
 
     if (!userUuid) {
-      this.loadError.set('Δεν ήταν δυνατή η αναγνώριση του συνδεδεμένου χρήστη.');
+      this.showError('Δεν ήταν δυνατή η αναγνώριση του συνδεδεμένου χρήστη.');
       return;
     }
 
     this.webinarService.enrollInWebinar(webinarUuid, userUuid).subscribe({
       next: () => {
-        this.successMessage.set('Η εγγραφή στο σεμινάριο ολοκληρώθηκε με επιτυχία.');
+        this.showSuccess('Η εγγραφή στο σεμινάριο ολοκληρώθηκε με επιτυχία.');
         this.loadWebinars();
         this.loadEnrolledWebinars();
-
-        setTimeout(() => {
-          this.successMessage.set(null);
-        }, 2000);
       },
       error: (error) => {
         console.error('Failed to enroll in webinar', error);
+
         if (error.status === 409) {
-          this.loadError.set('Έχετε ήδη εγγραφεί σε αυτό το σεμινάριο.');
+          this.showError('Έχετε ήδη εγγραφεί σε αυτό το σεμινάριο.');
           return;
         }
-        this.loadError.set('Η εγγραφή στο σεμινάριο απέτυχε.');
+
+        if (error.status === 400) {
+          this.showError('Δεν μπορείτε να εγγραφείτε σε σεμινάριο που διοργανώνετε εσείς.');
+          return;
+        }
+
+        this.showError('Η εγγραφή στο σεμινάριο απέτυχε.');
       },
     });
   }
@@ -226,31 +256,27 @@ export class Webinars implements OnInit {
     const userUuid = this.authService.getCurrentUserUuid();
 
     if (!userUuid) {
-      this.loadError.set('Δεν ήταν δυνατή η αναγνώριση του συνδεδεμένου χρήστη.');
+      this.showError('Δεν ήταν δυνατή η αναγνώριση του συνδεδεμένου χρήστη.');
       return;
     }
 
     this.webinarService.unenrollFromWebinar(webinarUuid, userUuid).subscribe({
       next: () => {
-        this.successMessage.set('Η απεγγραφή από το σεμινάριο ολοκληρώθηκε με επιτυχία.');
+        this.showSuccess('Η απεγγραφή από το σεμινάριο ολοκληρώθηκε με επιτυχία.');
 
         const updatedEnrolledUuids = new Set(this.enrolledWebinarUuids());
         updatedEnrolledUuids.delete(webinarUuid);
         this.enrolledWebinarUuids.set(updatedEnrolledUuids);
-
-        setTimeout(() => {
-          this.successMessage.set(null);
-        }, 2000);
       },
       error: (error) => {
         console.error('Failed to unenroll from webinar', error);
 
         if (error.status === 400) {
-          this.loadError.set('Δεν είστε εγγεγραμμένος σε αυτό το σεμινάριο.');
+          this.showError('Δεν είστε εγγεγραμμένος σε αυτό το σεμινάριο.');
           return;
         }
 
-        this.loadError.set('Η απεγγραφή από το σεμινάριο απέτυχε.');
+        this.showError('Η απεγγραφή από το σεμινάριο απέτυχε.');
       },
     });
   }

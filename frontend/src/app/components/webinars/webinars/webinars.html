@@ -15,6 +15,12 @@
       </div>
     }
 
+    @if (actionErrorMessage()) {
+      <div class="alert alert-danger">
+        {{ actionErrorMessage() }}
+      </div>
+    }
+
     @if (isLoading()) {
       <div class="empty-state">Φόρτωση σεμιναρίων...</div>
     } @else if (loadError()) {
