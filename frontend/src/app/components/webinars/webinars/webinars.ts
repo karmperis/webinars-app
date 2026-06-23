@@ -25,6 +25,10 @@ export class Webinars implements OnInit {
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly currentPage = signal(0);
+  readonly pageSize = signal(5);
+  readonly totalPages = signal(0);
+  readonly totalElements = signal(0);
 
   ngOnInit(): void {
     this.loadWebinars();
@@ -85,17 +89,43 @@ export class Webinars implements OnInit {
     this.loadError.set(null);
 
     this.webinarService
-      .getWebinars()
+      .getWebinars(this.currentPage(), this.pageSize())
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (page) => {
           this.webinars.set(page.content ?? []);
+          this.totalPages.set(page.totalPages ?? 0);
+          this.totalElements.set(page.totalElements ?? 0);
         },
         error: (error) => {
           console.error('Failed to load webinars', error);
           this.loadError.set('Απέτυχε η φόρτωση των σεμιναρίων.');
         },
       });
+  }
+
+  /**
+   * Loads the previous page of webinars.
+   */
+  previousPage(): void {
+    if (this.currentPage() === 0) {
+      return;
+    }
+
+    this.currentPage.update((page) => page - 1);
+    this.loadWebinars();
+  }
+
+  /**
+   * Loads the next page of webinars.
+   */
+  nextPage(): void {
+    if (this.currentPage() >= this.totalPages() - 1) {
+      return;
+    }
+
+    this.currentPage.update((page) => page + 1);
+    this.loadWebinars();
   }
 
   /**
@@ -134,6 +164,10 @@ export class Webinars implements OnInit {
     this.webinarService.deleteWebinar(uuid).subscribe({
       next: () => {
         this.successMessage.set('Το σεμινάριο διαγράφηκε επιτυχώς.');
+        if (this.webinars().length === 1 && this.currentPage() > 0) {
+          this.currentPage.update((page) => page - 1);
+        }
+
         this.loadWebinars();
       },
       error: (error) => {

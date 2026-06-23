@@ -26,6 +26,7 @@
   --input-bg-focus: #fff3bf;
 
   --table-hover-bg: #fff9db;
+  --pagination-footer-bg: #f8f9fa;
 
   --danger-bg: #f8d7da;
   --danger-border: #f5c2c7;
@@ -123,6 +124,10 @@
 
 .table-hover > tbody > tr:hover > * {
   background-color: var(--table-hover-bg) !important;
+}
+
+.pagination-footer {
+  background-color: var(--pagination-footer-bg) !important;
 }
 
 /* Forms */

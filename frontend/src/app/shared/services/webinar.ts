@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -19,12 +19,15 @@ export class Webinar {
   private readonly webinarsUrl = `${environment.apiUrl}/webinars`;
 
   /**
-   * Retrieves all webinars from the backend API.
+   * Retrieves a page of webinars from the backend API.
    *
+   * @param page page index, starting from 0
+   * @param size number of records per page
    * @returns observable containing the list of webinars
    */
-  getWebinars(): Observable<PageResponse<WebinarReadOnly>> {
-    return this.http.get<PageResponse<WebinarReadOnly>>(this.webinarsUrl);
+  getWebinars(page = 0, size = 5): Observable<PageResponse<WebinarReadOnly>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<PageResponse<WebinarReadOnly>>(this.webinarsUrl, { params });
   }
 
   /**
@@ -94,22 +97,40 @@ export class Webinar {
    * Retrieves webinars where a user is enrolled as participant.
    *
    * @param userUuid the participant user UUID
+   * @param page page index, starting from 0
+   * @param size number of records per page
    * @returns observable containing the user's enrolled webinars
    */
-  getWebinarsByParticipant(userUuid: string): Observable<PageResponse<WebinarReadOnly>> {
+  getWebinarsByParticipant(
+    userUuid: string,
+    page = 0,
+    size = 5,
+  ): Observable<PageResponse<WebinarReadOnly>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+
     return this.http.get<PageResponse<WebinarReadOnly>>(
       `${this.webinarsUrl}/participants/${userUuid}`,
+      { params },
     );
   }
   /**
    * Retrieves webinars organized by a specific user.
    *
    * @param organizerUuid organizer UUID
+   * @param page page index, starting from 0
+   * @param size number of records per page
    * @returns observable containing the organizer webinars
    */
-  getWebinarsByOrganizer(organizerUuid: string): Observable<PageResponse<WebinarReadOnly>> {
+  getWebinarsByOrganizer(
+    organizerUuid: string,
+    page = 0,
+    size = 5,
+  ): Observable<PageResponse<WebinarReadOnly>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+
     return this.http.get<PageResponse<WebinarReadOnly>>(
       `${this.webinarsUrl}/organizer/${organizerUuid}`,
+      { params },
     );
   }
 }

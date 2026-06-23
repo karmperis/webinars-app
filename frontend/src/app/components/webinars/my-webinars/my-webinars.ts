@@ -28,6 +28,10 @@ export class MyWebinars implements OnInit {
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly currentPage = signal(0);
+  readonly pageSize = signal(5);
+  readonly totalPages = signal(0);
+  readonly totalElements = signal(0);
 
   ngOnInit(): void {
     this.loadMyWebinars();
@@ -49,17 +53,43 @@ export class MyWebinars implements OnInit {
     this.loadError.set(null);
 
     this.webinarService
-      .getWebinarsByParticipant(userUuid)
+      .getWebinarsByParticipant(userUuid, this.currentPage(), this.pageSize())
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (page) => {
           this.webinars.set(page.content ?? []);
+          this.totalPages.set(page.totalPages ?? 0);
+          this.totalElements.set(page.totalElements ?? 0);
         },
         error: (error) => {
           console.error('Failed to load participant webinars', error);
           this.loadError.set('Απέτυχε η φόρτωση των συμμετεχόντων στα σεμινάρια.');
         },
       });
+  }
+
+  /**
+   * Loads the previous page of enrolled webinars.
+   */
+  previousPage(): void {
+    if (this.currentPage() === 0) {
+      return;
+    }
+
+    this.currentPage.update((page) => page - 1);
+    this.loadMyWebinars();
+  }
+
+  /**
+   * Loads the  page of enrolled webinars.
+   */
+  nextPage(): void {
+    if (this.currentPage() >= this.totalPages() - 1) {
+      return;
+    }
+
+    this.currentPage.update((page) => page + 1);
+    this.loadMyWebinars();
   }
 
   /**
@@ -82,9 +112,11 @@ export class MyWebinars implements OnInit {
     this.webinarService.unenrollFromWebinar(webinarUuid, userUuid).subscribe({
       next: () => {
         this.successMessage.set('Η απεγγραφή από το σεμινάριο ολοκληρώθηκε με επιτυχία.');
-        this.webinars.update((webinars) =>
-          webinars.filter((webinar) => webinar.uuid !== webinarUuid),
-        );
+
+        if (this.webinars().length === 1 && this.currentPage() > 0) {
+          this.currentPage.update((page) => page - 1);
+        }
+        this.loadMyWebinars();
 
         setTimeout(() => {
           this.successMessage.set(null);

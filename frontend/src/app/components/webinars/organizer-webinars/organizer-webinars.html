@@ -48,6 +48,35 @@
             </tbody>
           </table>
         </div>
+        <div
+          class="d-flex justify-content-between align-items-center px-3 pt-4 pb-3 border-top pagination-footer"
+        >
+          <span class="text-muted"> Σύνολο: {{ totalElements() }} </span>
+
+          <div class="d-flex align-items-center gap-2">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-dark"
+              [disabled]="currentPage() === 0"
+              (click)="previousPage()"
+            >
+              Προηγούμενη
+            </button>
+
+            <span class="text-muted">
+              Σελίδα {{ currentPage() + 1 }} από {{ totalPages() || 1 }}
+            </span>
+
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-dark"
+              [disabled]="currentPage() >= totalPages() - 1 || totalPages() <= 1"
+              (click)="nextPage()"
+            >
+              Επόμενη
+            </button>
+          </div>
+        </div>
       </div>
     }
   </main>

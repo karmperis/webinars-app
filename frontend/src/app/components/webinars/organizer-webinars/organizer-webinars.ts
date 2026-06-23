@@ -27,6 +27,10 @@ export class OrganizerWebinars implements OnInit {
   readonly webinars = signal<WebinarReadOnly[]>([]);
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
+  readonly currentPage = signal(0);
+  readonly pageSize = signal(5);
+  readonly totalPages = signal(0);
+  readonly totalElements = signal(0);
 
   ngOnInit(): void {
     this.loadOrganizerWebinars();
@@ -48,16 +52,42 @@ export class OrganizerWebinars implements OnInit {
     this.loadError.set(null);
 
     this.webinarService
-      .getWebinarsByOrganizer(userUuid)
+      .getWebinarsByOrganizer(userUuid, this.currentPage(), this.pageSize())
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (page) => {
           this.webinars.set(page.content ?? []);
+          this.totalPages.set(page.totalPages ?? 0);
+          this.totalElements.set(page.totalElements ?? 0);
         },
         error: (error) => {
           console.error('Failed to load organizer webinars', error);
           this.loadError.set('Απέτυχε η φόρτωση των σεμιναρίων διοργάνωσης.');
         },
       });
+  }
+
+  /**
+   * Loads the previous page of organizer webinars.
+   */
+  previousPage(): void {
+    if (this.currentPage() === 0) {
+      return;
+    }
+
+    this.currentPage.update((page) => page - 1);
+    this.loadOrganizerWebinars();
+  }
+
+  /**
+   * Loads the next page of organizer webinars.
+   */
+  nextPage(): void {
+    if (this.currentPage() >= this.totalPages() - 1) {
+      return;
+    }
+
+    this.currentPage.update((page) => page + 1);
+    this.loadOrganizerWebinars();
   }
 }
