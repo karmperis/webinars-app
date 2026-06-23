@@ -33,7 +33,7 @@ The system supports:
 - User registration and login
 - JWT-based authentication
 - Role-based and capability-based authorization
-- Webinar creation, editing, deletion, and enrollment
+- Webinar creation, editing, deletion, enrollment and unenrollment
 - User profile management
 - Admin user management
 - Role and capability management
@@ -139,8 +139,9 @@ Examples of capabilities:
 - Delete webinar
 - Enroll in webinar
 - Unenroll from webinar
-- View enrolled webinars
+- View enrolled webinars for the current user
 - View webinars organized by the current user
+- Paginated webinar listings for all webinars, enrolled webinars, and organizer webinars
 
 ### Users
 
@@ -620,9 +621,9 @@ Implement user account activation using email verification tokens.
 Implement forgot-password and password reset workflows using secure reset tokens.
 Add email notifications for account activation and password recovery.
 
-### Testing
+### Frontend
 
-Add frontend unit tests.
+Further simplify and refactor the Angular frontend by extracting repeated list, pagination, and form interaction patterns into reusable components, reducing duplication across webinar and administration pages, and standardizing shared UI behavior.
 
 ---
 

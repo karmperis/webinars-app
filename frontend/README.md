@@ -31,7 +31,6 @@ The application provides a complete user interface for authentication, webinar m
 - **RxJS**
 - **Bootstrap 5.3**
 - **Font Awesome 7**
-- **Vitest**
 - **JWT-based authentication**
 
 ## Requirements
@@ -148,8 +147,9 @@ Supported webinar actions:
 - Delete webinars
 - Enroll in webinars
 - Unenroll from webinars
-- View participant enrollments
+- View the current user's enrolled webinars
 - View organizer webinars
+- Paginated webinar listings for all webinars, enrolled webinars, and organizer webinars
 
 Role-based webinar behavior:
 
@@ -257,6 +257,7 @@ Common UI patterns:
 - Form validation feedback
 - Disabled submit buttons during requests
 - Role-based navigation visibility
+- List pages use paginated backend responses and display pagination controls in the table footer
 
 State management is handled with Angular Signals for page state such as:
 
