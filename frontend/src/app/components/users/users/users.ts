@@ -23,9 +23,37 @@ export class Users implements OnInit {
   readonly users = signal<UserReadOnly[]>([]);
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
+  readonly actionErrorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadUsers();
+  }
+
+  /**
+   * Displays a success message for a short period.
+   *
+   * @param message success message to display
+   */
+  private showSuccess(message: string): void {
+    this.successMessage.set(message);
+
+    setTimeout(() => {
+      this.successMessage.set(null);
+    }, 2000);
+  }
+
+  /**
+   * Displays an action error message for a short period.
+   *
+   * @param message error message to display
+   */
+  private showActionError(message: string): void {
+    this.actionErrorMessage.set(message);
+
+    setTimeout(() => {
+      this.actionErrorMessage.set(null);
+    }, 2000);
   }
 
   /**
@@ -59,8 +87,12 @@ export class Users implements OnInit {
       return;
     }
 
+    this.actionErrorMessage.set(null);
+    this.successMessage.set(null);
+
     this.userService.deleteUser(uuid).subscribe({
       next: () => {
+        this.showSuccess('Ο χρήστης διαγράφηκε επιτυχώς.');
         this.loadUsers();
       },
       error: (error) => {

@@ -21,9 +21,37 @@ export class Capabilities implements OnInit {
   readonly capabilities = signal<CapabilityReadOnly[]>([]);
   readonly isLoading = signal(true);
   readonly errorMessage = signal<string | null>(null);
+  readonly actionErrorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadCapabilities();
+  }
+
+  /**
+   * Displays a success message for a short period.
+   *
+   * @param message success message to display
+   */
+  private showSuccess(message: string): void {
+    this.successMessage.set(message);
+
+    setTimeout(() => {
+      this.successMessage.set(null);
+    }, 2000);
+  }
+
+  /**
+   * Displays an action error message for a short period.
+   *
+   * @param message error message to display
+   */
+  private showActionError(message: string): void {
+    this.actionErrorMessage.set(message);
+
+    setTimeout(() => {
+      this.actionErrorMessage.set(null);
+    }, 2000);
   }
 
   /**
@@ -57,8 +85,12 @@ export class Capabilities implements OnInit {
       return;
     }
 
+    this.actionErrorMessage.set(null);
+    this.successMessage.set(null);
+
     this.capabilityService.deleteCapability(uuid).subscribe({
       next: () => {
+        this.showSuccess('Το δικαίωμα διαγράφηκε επιτυχώς.');
         this.loadCapabilities();
       },
       error: (error) => {

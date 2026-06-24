@@ -10,6 +10,18 @@
       <a routerLink="/webinars" class="btn btn-outline-dark"> Επιστροφή </a>
     </header>
 
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        {{ successMessage() }}
+      </div>
+    }
+
+    @if (actionErrorMessage()) {
+      <div class="alert alert-danger">
+        {{ actionErrorMessage() }}
+      </div>
+    }
+
     @if (isLoading()) {
       <div class="empty-state">Φόρτωση χρηστών...</div>
     } @else if (loadError()) {
