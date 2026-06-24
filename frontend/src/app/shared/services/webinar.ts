@@ -19,15 +19,24 @@ export class Webinar {
   private readonly webinarsUrl = `${environment.apiUrl}/webinars`;
 
   /**
-   * Retrieves a page of webinars from the backend API.
+   * Returns a paginated list of webinars.
    *
-   * @param page page index, starting from 0
-   * @param size number of records per page
-   * @returns observable containing the list of webinars
+   * @param page zero-based page index
+   * @param size size page size
+   * @param sortField field used for sorting
+   * @param sortDirection sorting direction
+   * @returns returns paginated webinar response
    */
-  getWebinars(page = 0, size = 5): Observable<PageResponse<WebinarReadOnly>> {
+  getWebinars(
+    page = 0,
+    size = 5,
+    sortField: string = 'scheduledDate',
+    sortDirection: 'asc' | 'desc' = 'asc',
+  ): Observable<PageResponse<WebinarReadOnly>> {
     const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<PageResponse<WebinarReadOnly>>(this.webinarsUrl, { params });
+    return this.http.get<PageResponse<WebinarReadOnly>>(
+      `${this.webinarsUrl}?page=${page}&size=${size}&sort=${sortField},${sortDirection}`,
+    );
   }
 
   /**

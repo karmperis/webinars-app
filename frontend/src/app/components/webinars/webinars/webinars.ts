@@ -30,6 +30,8 @@ export class Webinars implements OnInit {
   readonly pageSize = signal(5);
   readonly totalPages = signal(0);
   readonly totalElements = signal(0);
+  readonly sortField = signal('scheduledDate');
+  readonly sortDirection = signal<'asc' | 'desc'>('asc');
 
   ngOnInit(): void {
     this.loadWebinars();
@@ -116,7 +118,7 @@ export class Webinars implements OnInit {
     this.loadError.set(null);
 
     this.webinarService
-      .getWebinars(this.currentPage(), this.pageSize())
+      .getWebinars(this.currentPage(), this.pageSize(), this.sortField(), this.sortDirection())
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (page) => {
@@ -156,6 +158,20 @@ export class Webinars implements OnInit {
   }
 
   /**
+   * Updates the current sorting option and reloads webinars from the first page.
+   *
+   * @param value selected sorting option in field,direction format
+   */
+  onSortChange(value: string): void {
+    const [field, direction] = value.split(',');
+
+    this.sortField.set(field);
+    this.sortDirection.set(direction as 'asc' | 'desc');
+    this.currentPage.set(0);
+    this.loadWebinars();
+  }
+
+  /**
    * Loads the webinars where the current user is already enrolled.
    */
   private loadEnrolledWebinars(): void {
@@ -166,7 +182,7 @@ export class Webinars implements OnInit {
       return;
     }
 
-    this.webinarService.getWebinarsByParticipant(userUuid).subscribe({
+    this.webinarService.getWebinarsByParticipant(userUuid, 0, 100).subscribe({
       next: (page) => {
         const enrolledUuids = new Set((page.content ?? []).map((webinar) => webinar.uuid));
         this.enrolledWebinarUuids.set(enrolledUuids);
@@ -250,7 +266,7 @@ export class Webinars implements OnInit {
    * @param webinarUuid webinar UUID
    */
   unenrollFromWebinar(webinarUuid: string): void {
-    this.loadError.set(null);
+    this.actionErrorMessage.set(null);
     this.successMessage.set(null);
 
     const userUuid = this.authService.getCurrentUserUuid();
