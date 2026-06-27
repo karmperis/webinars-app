@@ -22,10 +22,10 @@ export class Webinar {
    * Returns a paginated list of webinars.
    *
    * @param page zero-based page index
-   * @param size size page size
+   * @param size page size
    * @param sortField field used for sorting
    * @param sortDirection sorting direction
-   * @returns returns paginated webinar response
+   * @returns returns observable containing the paginated webinar response
    */
   getWebinars(
     page = 0,
@@ -33,10 +33,12 @@ export class Webinar {
     sortField: string = 'scheduledDate',
     sortDirection: 'asc' | 'desc' = 'asc',
   ): Observable<PageResponse<WebinarReadOnly>> {
-    const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<PageResponse<WebinarReadOnly>>(
-      `${this.webinarsUrl}?page=${page}&size=${size}&sort=${sortField},${sortDirection}`,
-    );
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sort', `${sortField},${sortDirection}`);
+
+    return this.http.get<PageResponse<WebinarReadOnly>>(this.webinarsUrl, { params });
   }
 
   /**
@@ -108,14 +110,21 @@ export class Webinar {
    * @param userUuid the participant user UUID
    * @param page page index, starting from 0
    * @param size number of records per page
+   * @param sortField field used for sorting
+   * @param sortDirection sorting direction
    * @returns observable containing the user's enrolled webinars
    */
   getWebinarsByParticipant(
     userUuid: string,
     page = 0,
     size = 5,
+    sortField: string = 'scheduledDate',
+    sortDirection: 'asc' | 'desc' = 'asc',
   ): Observable<PageResponse<WebinarReadOnly>> {
-    const params = new HttpParams().set('page', page).set('size', size);
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sort', `${sortField},${sortDirection}`);
 
     return this.http.get<PageResponse<WebinarReadOnly>>(
       `${this.webinarsUrl}/participants/${userUuid}`,
@@ -128,14 +137,21 @@ export class Webinar {
    * @param organizerUuid organizer UUID
    * @param page page index, starting from 0
    * @param size number of records per page
+   * @param sortField field used for sorting
+   * @param sortDirection sorting direction
    * @returns observable containing the organizer webinars
    */
   getWebinarsByOrganizer(
     organizerUuid: string,
     page = 0,
     size = 5,
+    sortField: string = 'scheduledDate',
+    sortDirection: 'asc' | 'desc' = 'asc',
   ): Observable<PageResponse<WebinarReadOnly>> {
-    const params = new HttpParams().set('page', page).set('size', size);
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sort', `${sortField},${sortDirection}`);
 
     return this.http.get<PageResponse<WebinarReadOnly>>(
       `${this.webinarsUrl}/organizer/${organizerUuid}`,
