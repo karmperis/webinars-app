@@ -32,6 +32,8 @@ export class MyWebinars implements OnInit {
   readonly pageSize = signal(5);
   readonly totalPages = signal(0);
   readonly totalElements = signal(0);
+  readonly sortField = signal('scheduledDate');
+  readonly sortDirection = signal<'asc' | 'desc'>('asc');
 
   ngOnInit(): void {
     this.loadMyWebinars();
@@ -53,7 +55,13 @@ export class MyWebinars implements OnInit {
     this.loadError.set(null);
 
     this.webinarService
-      .getWebinarsByParticipant(userUuid, this.currentPage(), this.pageSize())
+      .getWebinarsByParticipant(
+        userUuid,
+        this.currentPage(),
+        this.pageSize(),
+        this.sortField(),
+        this.sortDirection(),
+      )
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (page) => {
@@ -81,7 +89,7 @@ export class MyWebinars implements OnInit {
   }
 
   /**
-   * Loads the  page of enrolled webinars.
+   * Loads the next page of enrolled webinars.
    */
   nextPage(): void {
     if (this.currentPage() >= this.totalPages() - 1) {
@@ -89,6 +97,20 @@ export class MyWebinars implements OnInit {
     }
 
     this.currentPage.update((page) => page + 1);
+    this.loadMyWebinars();
+  }
+
+  /**
+   * Updates the current sorting option and reloads enrolled webinars from the first page.
+   *
+   * @param value selected sorting option in field,direction format
+   */
+  onSortChange(value: string): void {
+    const [field, direction] = value.split(',');
+
+    this.sortField.set(field);
+    this.sortDirection.set(direction as 'asc' | 'desc');
+    this.currentPage.set(0);
     this.loadMyWebinars();
   }
 
