@@ -91,7 +91,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public Page<UserReadOnlyDTO> findAllUsersSortedByName(Pageable pageable) {
         log.info("Fetching a page of active users based on pageable configuration");
 
@@ -108,7 +108,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwnProfile(#uuid, authentication)")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') or @securityService.isOwnProfile(#uuid, authentication)")
     public UserReadOnlyDTO findUserByUuid(UUID uuid) throws EntityNotFoundException {
         log.info("Searching for user with UUID: {}", uuid);
 
@@ -129,7 +129,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public UserReadOnlyDTO findUserByUsername(String username) throws EntityNotFoundException {
         log.info("Searching for user with username: {}", username);
 
@@ -152,7 +152,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
-    @PreAuthorize("hasRole('ADMIN') or @securityService.isOwnProfile(#uuid, authentication)")
+    @PreAuthorize("hasAuthority('MANAGE_USERS') or @securityService.isOwnProfile(#uuid, authentication)")
     public UserReadOnlyDTO updateUser(UUID uuid, UserEditDTO dto) throws EntityNotFoundException, EntityInvalidArgumentException {
         // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
@@ -185,7 +185,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public UserReadOnlyDTO updateUserAccess(UUID uuid, UserAdminEditDTO dto) throws EntityNotFoundException, EntityInvalidArgumentException {
         // Defensive programming: Guard clause for unit tests and internal calls that bypass Web-layer validation
         if (dto == null) {
@@ -217,7 +217,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     public void softDeleteUserByUuid(UUID uuid) throws EntityNotFoundException {
         log.info("Performing soft delete for user with UUID: {}", uuid);
 

@@ -37,7 +37,7 @@ public class ReportService implements IReportService {
      * @param reportType type of report to generate.
      *                   Supported values: {@code popularity}, {@code productive}, {@code inactive.}
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_REPORTS')")
     @Async
     @Transactional(readOnly = true)
     @Override
@@ -67,7 +67,7 @@ public class ReportService implements IReportService {
      * @param jobId identifier of the job
      * @return JobStatusDTO containing status and optional report data, or {@code null} if no such job exists
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_REPORTS')")
     @Override
     public JobStatusDTO getJobStatus(String jobId) {
         return jobStatusMap.get(jobId);

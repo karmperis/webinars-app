@@ -12,6 +12,7 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -26,17 +27,19 @@ public class JwtService {
     private long jwtExpiration;
 
     /**
-     * Generate a JWT for the given username and role.
+     * Generate a JWT for the given username role and capabilities.
      *
-     * @param username the subject of the token
-     * @param role     the role claim to include
-     * @param uuid     the user UUID claim to include
+     * @param username     the subject of the token
+     * @param role         the role claim to include
+     * @param uuid         the user UUID claim to include
+     * @param capabilities the capability names to include
      * @return the signed JWT
      */
-    public String generateToken(String username, String role, String uuid) {
+    public String generateToken(String username, String role, String uuid, List<String> capabilities) {
         var claims = new HashMap<String, Object>();
         claims.put("role", role);
         claims.put("uuid", uuid);
+        claims.put("capabilities", capabilities);
         return Jwts
                 .builder()
                 .issuer("https://api.webinarsapp.com")
@@ -59,7 +62,7 @@ public class JwtService {
         final String subject = extractSubject(token);
         return (subject.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
-    
+
     /**
      * Extract the subject (username) from the token.
      *

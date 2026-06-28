@@ -2,12 +2,15 @@ package com.karmperis.webinarsapp.authentication;
 
 import com.karmperis.webinarsapp.dto.AuthenticationRequestDTO;
 import com.karmperis.webinarsapp.dto.AuthenticationResponseDTO;
+import com.karmperis.webinarsapp.model.Capability;
 import com.karmperis.webinarsapp.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Service responsible for authenticating users and issuing JWTs.
@@ -28,7 +31,13 @@ public class AuthenticationService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.username(), dto.password()));
         User user = (User) authentication.getPrincipal();
-        String token = jwtService.generateToken(authentication.getName(), user.getRole().getName(), user.getUuid().toString());
+
+        List<String> capabilities = user.getRole().getAllCapabilities()
+                .stream()
+                .map(Capability::getName)
+                .toList();
+
+        String token = jwtService.generateToken(authentication.getName(), user.getRole().getName(), user.getUuid().toString(), capabilities);
         return new AuthenticationResponseDTO(token);
     }
 }

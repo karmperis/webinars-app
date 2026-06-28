@@ -61,10 +61,17 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/authenticate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+
+                        .requestMatchers("/api/v1/users/**").hasAuthority("MANAGE_USERS")
+                        .requestMatchers("/api/v1/roles/**").hasAuthority("MANAGE_ROLES")
+                        .requestMatchers("/api/v1/capabilities/**").hasAuthority("MANAGE_CAPABILITIES")
+                        .requestMatchers("/api/v1/reports/**").hasAuthority("VIEW_REPORTS")
+
                         .requestMatchers(HttpMethod.POST, "/api/v1/webinars/{webinarUuid}/participants/*").hasAuthority("ENROLL_IN_WEBINAR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/webinars/{webinarUuid}/participants/*").hasAuthority("ENROLL_IN_WEBINAR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/webinars/organizer/*").hasAuthority("VIEW_WEBINARS")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/webinars/participants/*").hasAuthority("VIEW_WEBINARS")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/webinars/*").hasAuthority("EDIT_WEBINAR")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/webinars/*").hasAuthority("DELETE_WEBINAR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/webinars/*").hasAuthority("VIEW_WEBINARS")

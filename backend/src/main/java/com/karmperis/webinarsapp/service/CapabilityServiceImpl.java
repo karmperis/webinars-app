@@ -26,7 +26,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('MANAGE_CAPABILITIES')")
 public class CapabilityServiceImpl implements ICapabilityService {
     private final CapabilityRepository capabilityRepository;
     private final CapabilityMapper capabilityMapper;
