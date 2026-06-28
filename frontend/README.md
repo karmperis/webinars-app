@@ -149,7 +149,7 @@ Supported webinar actions:
 - Unenroll from webinars
 - View the current user's enrolled webinars
 - View organizer webinars
-- Paginated webinar listings for all webinars, enrolled webinars, and organizer webinars
+- Server-side pagination and sorting for webinar listings, enrolled webinars, and organizer webinars
 
 Role-based webinar behavior:
 
@@ -257,7 +257,7 @@ Common UI patterns:
 - Form validation feedback
 - Disabled submit buttons during requests
 - Role-based navigation visibility
-- List pages use paginated backend responses and display pagination controls in the table footer
+- List pages use server-side pagination and sorting with pagination controls displayed in the table footer
 
 State management is handled with Angular Signals for page state such as:
 
