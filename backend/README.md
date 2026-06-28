@@ -1,7 +1,8 @@
 # WebinarsApp REST API
 
 A Spring Boot REST API for managing webinars, enrollments, and users, developed as an assignment for the AUEB Coding
-Factory. The system features JWT-based authentication, role-based access control (RBAC), soft-delete, and asynchronous
+Factory. The system features JWT-based authentication, capability-based authorization with role-driven business rules,
+soft-delete, and asynchronous
 report generation.
 
 ## Table of Contents
@@ -30,7 +31,7 @@ report generation.
 ## Tech Stack
 
 - **Java 21** / **Spring Boot 3.4.5**
-- **Spring Security** — stateless JWT authentication & RBAC
+- **Spring Security** — stateless JWT authentication and capability-based authorization
 - **Spring Data JPA** + **Flyway** — schema migrations, no DDL auto-update
 - **MS SQL Server 2022** — hosted via Docker
 - **Lombok**, **Jakarta Validation**
@@ -146,6 +147,10 @@ Base Path: `/api/v1`
 |:-------|:---------------------|:-------|:----------------------|
 | POST   | `/auth/authenticate` | Public | Login and receive JWT |
 
+JWT tokens include the authenticated user's UUID, role, and assigned capabilities. The frontend uses these capabilities
+for route protection and navigation visibility, while the backend enforces access through Spring Security and
+service-level authorization checks.
+
 **Sample Request:**
 
 ```json
@@ -183,12 +188,14 @@ Role assignment is not provided by the registration request.
 | POST   | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin/Same User      | Enroll a user in a webinar                 |
 | DELETE | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin/Same User      | Unenroll a user from a webinar             |
 
-**Enrollment rules:** Organizers may enroll only in webinars created by other organizers, they cannot enroll in their own
+**Enrollment rules:** Organizers may enroll only in webinars created by other organizers, they cannot enroll in their
+own
 webinars. A user may unenroll only from webinars they are currently enrolled in.
 
 ### Roles & Capabilities
 
-Administrative endpoints are provided for managing roles and capabilities within the RBAC system.
+Administrative endpoints are provided for managing roles and capabilities.
+Roles group capabilities, while authorization decisions are based on assigned capabilities.
 
 #### Roles
 
