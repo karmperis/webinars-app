@@ -131,13 +131,13 @@ Authentication features include:
 
 ### Webinars & Enrollments
 
-| Route                  | Access            | Description                                 |
-| :--------------------- | :---------------- | :------------------------------------------ |
-| `/webinars`            | Authenticated     | List all webinars                           |
-| `/webinars/create`     | Admin / Organizer | Create a webinar                            |
-| `/webinars/:uuid/edit` | Authenticated     | Edit a webinar                              |
-| `/my-webinars`         | Authenticated     | View enrolled webinars                      |
-| `/organizer-webinars`  | Admin / Organizer | View webinars organized by the current user |
+| Route                  | Required capability | Description                                 |
+| :--------------------- | :------------------ | :------------------------------------------ |
+| `/webinars`            | `VIEW_WEBINARS`     | List all webinars                           |
+| `/webinars/create`     | `CREATE_WEBINAR`    | Create a webinar                            |
+| `/webinars/:uuid/edit` | `EDIT_WEBINAR`      | Edit a webinar                              |
+| `/my-webinars`         | `ENROLL_IN_WEBINAR` | View enrolled webinars                      |
+| `/organizer-webinars`  | `CREATE_WEBINAR`    | View webinars organized by the current user |
 
 Supported webinar actions:
 
@@ -151,7 +151,7 @@ Supported webinar actions:
 - View organizer webinars
 - Server-side pagination and sorting for webinar listings, enrolled webinars, and organizer webinars
 
-Role-based webinar behavior:
+Default webinar behavior by role:
 
 | Role          | Permissions                                                                                          |
 | :------------ | :--------------------------------------------------------------------------------------------------- |
@@ -159,13 +159,15 @@ Role-based webinar behavior:
 | `ORGANIZER`   | Can create webinars, manage their own webinars and enroll/unenroll from webinars organized by others |
 | `PARTICIPANT` | Can view webinars and enroll/unenroll in webinars                                                    |
 
+> **Note:** The frontend authorizes routes and navigation entries based on capabilities extracted from the JWT. The role descriptions above reflect the default capabilities assigned to each role by the backend.
+
 ### Users
 
-| Route                 | Access        | Description                      |
-| :-------------------- | :------------ | :------------------------------- |
-| `/users`              | Admin         | List users                       |
-| `/users/:uuid/access` | Admin         | Edit user role and active status |
-| `/profile`            | Authenticated | Edit current user profile        |
+| Route                 | Required capability | Description                      |
+| :-------------------- | :------------------ | :------------------------------- |
+| `/users`              | `MANAGE_USERS`      | List users                       |
+| `/users/:uuid/access` | `MANAGE_USERS`      | Edit user role and active status |
+| `/profile`            | Authenticated       | Edit current user profile        |
 
 User features include:
 
@@ -178,16 +180,16 @@ User features include:
 
 ### Roles & Capabilities
 
-| Route                            | Access | Description               |
-| :------------------------------- | :----- | :------------------------ |
-| `/roles`                         | Admin  | List roles                |
-| `/roles/create`                  | Admin  | Create role               |
-| `/roles/:uuid/edit`              | Admin  | Edit role                 |
-| `/roles/:uuid/capabilities`      | Admin  | Assign capability to role |
-| `/roles/:uuid/capabilities/view` | Admin  | View role capabilities    |
-| `/capabilities`                  | Admin  | List capabilities         |
-| `/capabilities/create`           | Admin  | Create capability         |
-| `/capabilities/:uuid/edit`       | Admin  | Edit capability           |
+| Route                            | Required capability   | Description               |
+| :------------------------------- | :-------------------- | :------------------------ |
+| `/roles`                         | `MANAGE_ROLES`        | List roles                |
+| `/roles/create`                  | `MANAGE_ROLES`        | Create role               |
+| `/roles/:uuid/edit`              | `MANAGE_ROLES`        | Edit role                 |
+| `/roles/:uuid/capabilities`      | `MANAGE_ROLES`        | Assign capability to role |
+| `/roles/:uuid/capabilities/view` | `MANAGE_ROLES`        | View role capabilities    |
+| `/capabilities`                  | `MANAGE_CAPABILITIES` | List capabilities         |
+| `/capabilities/create`           | `MANAGE_CAPABILITIES` | Create capability         |
+| `/capabilities/:uuid/edit`       | `MANAGE_CAPABILITIES` | Edit capability           |
 
 Role and capability features include:
 
@@ -198,9 +200,9 @@ Role and capability features include:
 
 ### Reports
 
-| Route      | Access | Description                      |
-| :--------- | :----- | :------------------------------- |
-| `/reports` | Admin  | Generate and view system reports |
+| Route      | Required capability | Description                      |
+| :--------- | :------------------ | :------------------------------- |
+| `/reports` | `VIEW_REPORTS`      | Generate and view system reports |
 
 Supported report types:
 
@@ -221,7 +223,7 @@ After successful login, the JWT token is stored either in:
 - `localStorage`, when Remember Me is selected
 - `sessionStorage`, when Remember Me is not selected
 
-The token is used to identify the authenticated user, extract role information, and authorize API calls.
+The token is used to identify the authenticated user and extract the user UUID, role, and assigned capabilities for client-side authorization.
 
 ### Auth Guard
 
@@ -231,7 +233,7 @@ The guard checks:
 
 - whether a valid JWT token exists
 - whether the token is not expired
-- whether the user has the required role for role-protected routes
+- whether the user has the required capabilities for protected routes
 
 Unauthorized users are redirected to the login page.
 
@@ -256,8 +258,8 @@ Common UI patterns:
 - Success and warning alerts
 - Form validation feedback
 - Disabled submit buttons during requests
-- Role-based navigation visibility
-- List pages use server-side pagination and sorting with pagination controls displayed in the table footer
+- Capability-based navigation visibility
+- Webinar list pages use server-side pagination and sorting with pagination controls displayed in the table footer
 
 State management is handled with Angular Signals for page state such as:
 
@@ -387,9 +389,9 @@ Services are responsible for:
 
 Guards and interceptors are responsible for:
 
-- route protection
+- route protection based on capabilities
 - token validation
-- authorization headers
+- attaching authorization headers to outgoing requests
 
 This separation keeps the application maintainable, testable, and aligned with the backend REST API design.
 
