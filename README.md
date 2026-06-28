@@ -32,7 +32,7 @@ The system supports:
 
 - User registration and login
 - JWT-based authentication
-- Role-based and capability-based authorization
+- Capability-based authorization with role-driven business rules
 - Webinar creation, editing, deletion, enrollment and unenrollment
 - User profile management
 - Admin user management
@@ -112,23 +112,28 @@ webinars-app/
 
 ### Authorization
 
-The application supports three main roles:
+The application uses a capability-based authorization model. Roles group capabilities, while authorization decisions are performed based on capabilities in both the backend and frontend.
 
 | Role          | Description                                                                                            |
 | :------------ | :----------------------------------------------------------------------------------------------------- |
-| `ADMIN`       | Full administrative access                                                                             |
+| `ADMIN`       | Full administrative access through assigned capabilities                                               |
 | `ORGANIZER`   | Can create webinars, manage their own webinars, enroll in / unenroll from webinars organized by others |
 | `PARTICIPANT` | Can view webinars, enroll in webinars, and unenroll from webinars                                      |
 
-The backend also includes a capability-based authorization model.
+> **Note:** The default role permissions shown above reflect the capabilities assigned through the provided Flyway migrations. Since authorization is capability-based, role behavior can be customized by assigning capabilities without changing the application code.
 
-Examples of capabilities:
+Core capabilities include:
 
 - `VIEW_WEBINARS`
 - `CREATE_WEBINAR`
 - `EDIT_WEBINAR`
 - `DELETE_WEBINAR`
 - `ENROLL_IN_WEBINAR`
+- `MANAGE_WEBINARS`
+- `MANAGE_USERS`
+- `MANAGE_ROLES`
+- `MANAGE_CAPABILITIES`
+- `VIEW_REPORTS`
 
 ### Webinars
 
@@ -141,7 +146,7 @@ Examples of capabilities:
 - Unenroll from webinar
 - View enrolled webinars for the current user
 - View webinars organized by the current user
-- Paginated webinar listings for all webinars, enrolled webinars, and organizer webinars
+- Server-side pagination and sorting for webinar listings, enrolled webinars, and organizer webinars
 
 ### Users
 
@@ -215,7 +220,7 @@ The frontend follows a service-oriented Angular architecture:
 
 - Components handle UI rendering and user interaction.
 - Services handle HTTP communication.
-- Guards protect routes.
+- Guards protect routes using capability-based authorization.
 - Interceptors attach JWT tokens to API requests.
 - Interfaces mirror backend DTOs.
 - Signals manage local page state.
@@ -353,27 +358,27 @@ src/app/
 
 ### Main Frontend Routes
 
-| Route                            | Access            | Description               |
-| :------------------------------- | :---------------- | :------------------------ |
-| `/login`                         | Public            | User login                |
-| `/register`                      | Public            | User registration         |
-| `/webinars`                      | Authenticated     | List webinars             |
-| `/webinars/create`               | Admin / Organizer | Create webinar            |
-| `/webinars/:uuid/edit`           | Authenticated     | Edit webinar              |
-| `/my-webinars`                   | Authenticated     | View enrolled webinars    |
-| `/organizer-webinars`            | Admin / Organizer | View organized webinars   |
-| `/users`                         | Admin             | User management           |
-| `/users/:uuid/access`            | Admin             | Edit user access          |
-| `/profile`                       | Authenticated     | Edit current user profile |
-| `/roles`                         | Admin             | Role management           |
-| `/roles/create`                  | Admin             | Create role               |
-| `/roles/:uuid/edit`              | Admin             | Edit role                 |
-| `/roles/:uuid/capabilities`      | Admin             | Assign capability to role |
-| `/roles/:uuid/capabilities/view` | Admin             | View role capabilities    |
-| `/capabilities`                  | Admin             | Capability management     |
-| `/capabilities/create`           | Admin             | Create capability         |
-| `/capabilities/:uuid/edit`       | Admin             | Edit capability           |
-| `/reports`                       | Admin             | Generate reports          |
+| Route                            | Required capability   | Description               |
+| :------------------------------- | :-------------------- | :------------------------ |
+| `/login`                         | Public                | User login                |
+| `/register`                      | Public                | User registration         |
+| `/webinars`                      | `VIEW_WEBINARS`       | List webinars             |
+| `/webinars/create`               | `CREATE_WEBINAR`      | Create webinar            |
+| `/webinars/:uuid/edit`           | `EDIT_WEBINAR`        | Edit webinar              |
+| `/my-webinars`                   | `ENROLL_IN_WEBINAR`   | View enrolled webinars    |
+| `/organizer-webinars`            | `CREATE_WEBINAR`      | View organized webinars   |
+| `/users`                         | `MANAGE_USERS`        | User management           |
+| `/users/:uuid/access`            | `MANAGE_USERS`        | Edit user access          |
+| `/profile`                       | Authenticated         | Edit current user profile |
+| `/roles`                         | `MANAGE_ROLES`        | Role management           |
+| `/roles/create`                  | `MANAGE_ROLES`        | Create role               |
+| `/roles/:uuid/edit`              | `MANAGE_ROLES`        | Edit role                 |
+| `/roles/:uuid/capabilities`      | `MANAGE_ROLES`        | Assign capability to role |
+| `/roles/:uuid/capabilities/view` | `MANAGE_ROLES`        | View role capabilities    |
+| `/capabilities`                  | `MANAGE_CAPABILITIES` | Capability management     |
+| `/capabilities/create`           | `MANAGE_CAPABILITIES` | Create capability         |
+| `/capabilities/:uuid/edit`       | `MANAGE_CAPABILITIES` | Edit capability           |
+| `/reports`                       | `VIEW_REPORTS`        | Generate reports          |
 
 ## Security Overview
 
@@ -384,8 +389,9 @@ The project implements authentication and authorization on both backend and fron
 - Stateless JWT authentication
 - Spring Security filter chain
 - JWT validation filter
-- Role-based authorization
-- Capability-based authorization
+- Capability-based authorization using Spring Security
+- Method-level authorization with `@PreAuthorize`
+- Business rules enforced in the service layer
 - Protected REST endpoints
 - Public registration and login endpoints
 - CORS configuration for Angular development server
@@ -393,10 +399,10 @@ The project implements authentication and authorization on both backend and fron
 ### Frontend Security
 
 - JWT token storage
-- Auth guard for protected routes
-- Role-aware route protection
+- JWT parsing for user UUID, role, and capabilities
+- Capability-based route protection through the Angular auth guard
+- Capability-based navigation visibility
 - HTTP interceptor for Authorization header
-- Role-based navigation visibility
 - Logout handling
 
 For educational simplicity, JWT tokens are stored in `localStorage` or `sessionStorage`.
