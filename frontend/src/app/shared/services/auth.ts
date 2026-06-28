@@ -130,4 +130,35 @@ export class Auth {
   hasRole(role: string): boolean {
     return this.getCurrentUserRole() === role;
   }
+
+  /**
+   * Returns the capabilities of the currently authenticated user.
+   *
+   * @returns capability names from the JWT token
+   */
+  getCurrentUserCapabilities(): string[] {
+    const payload = this.getTokenPayload();
+
+    return payload?.['capabilities'] ?? [];
+  }
+
+  /**
+   * Checks whether the current user has the given capability.
+   *
+   * @param capability capability name to check
+   * @returns true if the current user has the given capability
+   */
+  hasCapability(capability: string): boolean {
+    return this.getCurrentUserCapabilities().includes(capability);
+  }
+
+  /**
+   * Checks whether the current user has at least one of the given capabilities.
+   *
+   * @param capabilities capability names to check
+   * @returns true if the current user has at least one required capability
+   */
+  hasAnyCapability(capabilities: string[]): boolean {
+    return capabilities.some((capability) => this.hasCapability(capability));
+  }
 }

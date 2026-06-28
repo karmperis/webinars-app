@@ -24,73 +24,119 @@ import { Reports } from './components/reports/reports/reports';
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
-  { path: 'webinars', component: Webinars, canActivate: [authGuard] },
+
+  {
+    path: 'webinars',
+    component: Webinars,
+    canActivate: [authGuard],
+    data: { capabilities: ['VIEW_WEBINARS'] },
+  },
+
   {
     path: 'webinars/create',
     component: CreateWebinar,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN', 'ORGANIZER'] },
+    data: { capabilities: ['CREATE_WEBINAR'] },
   },
-  { path: 'webinars/:uuid/edit', component: EditWebinar, canActivate: [authGuard] },
-  { path: 'my-webinars', component: MyWebinars, canActivate: [authGuard] },
+
+  {
+    path: 'webinars/:uuid/edit',
+    component: EditWebinar,
+    canActivate: [authGuard],
+    data: { capabilities: ['EDIT_WEBINAR'] },
+  },
+
+  {
+    path: 'my-webinars',
+    component: MyWebinars,
+    canActivate: [authGuard],
+    data: { capabilities: ['ENROLL_IN_WEBINAR'] },
+  },
+
   {
     path: 'organizer-webinars',
     component: OrganizerWebinars,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN', 'ORGANIZER'] },
+    data: { capabilities: ['CREATE_WEBINAR'] },
   },
-  { path: 'users', component: Users, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
+
+  {
+    path: 'users',
+    component: Users,
+    canActivate: [authGuard],
+    data: { capabilities: ['MANAGE_USERS'] },
+  },
   {
     path: 'users/:uuid/access',
     component: EditUserAccess,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN'] },
+    data: { capabilities: ['MANAGE_USERS'] },
   },
+
   { path: 'profile', component: EditProfile, canActivate: [authGuard] },
-  { path: 'roles', component: Roles, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
+
+  {
+    path: 'roles',
+    component: Roles,
+    canActivate: [authGuard],
+    data: { capabilities: ['MANAGE_ROLES'] },
+  },
   {
     path: 'roles/create',
     component: CreateRole,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN'] },
+    data: { capabilities: ['MANAGE_ROLES'] },
   },
+
   {
     path: 'roles/:uuid/edit',
     component: EditRole,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN'] },
+    data: { capabilities: ['MANAGE_ROLES'] },
   },
+
   {
     path: 'capabilities',
     component: Capabilities,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN'] },
+    data: { capabilities: ['MANAGE_CAPABILITIES'] },
   },
+
   {
     path: 'capabilities/create',
     component: CreateCapability,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN'] },
+    data: { capabilities: ['MANAGE_CAPABILITIES'] },
   },
+
   {
     path: 'capabilities/:uuid/edit',
     component: EditCapability,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN'] },
+    data: { capabilities: ['MANAGE_CAPABILITIES'] },
   },
+
   {
     path: 'roles/:uuid/capabilities',
     component: AssignCapability,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN'] },
+    data: { capabilities: ['MANAGE_ROLES'] },
   },
+
   {
     path: 'roles/:uuid/capabilities/view',
     component: RoleCapabilities,
     canActivate: [authGuard],
-    data: { roles: ['ADMIN'] },
+    data: { capabilities: ['MANAGE_ROLES'] },
   },
-  { path: 'reports', component: Reports, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
+
+  {
+    path: 'reports',
+    component: Reports,
+    canActivate: [authGuard],
+    data: { capabilities: ['VIEW_REPORTS'] },
+  },
+
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

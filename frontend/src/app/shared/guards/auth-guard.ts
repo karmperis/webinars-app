@@ -3,7 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { Auth } from '../services/auth';
 
 /**
- * Prevents unauthenticated users or users with expired tokens, or users without proper roles from accessing protected routes.
+ * Prevents unauthenticated users or users with expired tokens, or users without proper capabilities from accessing protected routes.
  */
 export const authGuard: CanActivateFn = (route) => {
   const auth = inject(Auth);
@@ -15,15 +15,13 @@ export const authGuard: CanActivateFn = (route) => {
     return false;
   }
 
-  const allowedRoles = route.data?.['roles'] as string[] | undefined;
+  const requiredCapabilities = route.data?.['capabilities'] as string[] | undefined;
 
-  if (!allowedRoles || allowedRoles.length === 0) {
+  if (!requiredCapabilities || requiredCapabilities.length === 0) {
     return true;
   }
 
-  const currentRole = auth.getCurrentUserRole();
-
-  if (currentRole && allowedRoles.includes(currentRole)) {
+  if (auth.hasAnyCapability(requiredCapabilities)) {
     return true;
   }
 

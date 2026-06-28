@@ -21,10 +21,13 @@ export class Navbar implements OnInit {
   private readonly router = inject(Router);
 
   readonly currentUser = signal<UserReadOnly | null>(null);
-
-  readonly isAdmin = computed(() => this.auth.hasRole('ADMIN'));
-  readonly isOrganizer = computed(() => this.auth.hasRole('ORGANIZER'));
-  readonly isParticipant = computed(() => this.auth.hasRole('PARTICIPANT'));
+  readonly canViewWebinars = computed(() => this.auth.hasCapability('VIEW_WEBINARS'));
+  readonly canEnrollInWebinar = computed(() => this.auth.hasCapability('ENROLL_IN_WEBINAR'));
+  readonly canCreateWebinar = computed(() => this.auth.hasCapability('CREATE_WEBINAR'));
+  readonly canManageUsers = computed(() => this.auth.hasCapability('MANAGE_USERS'));
+  readonly canManageRoles = computed(() => this.auth.hasCapability('MANAGE_ROLES'));
+  readonly canManageCapabilities = computed(() => this.auth.hasCapability('MANAGE_CAPABILITIES'));
+  readonly canViewReports = computed(() => this.auth.hasCapability('VIEW_REPORTS'));
 
   ngOnInit(): void {
     this.loadCurrentUser();

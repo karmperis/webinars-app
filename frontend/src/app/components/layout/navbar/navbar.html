@@ -3,15 +3,19 @@
     <h2 class="sidebar-title">Webinars App</h2>
 
     <ul class="sidebar-menu">
-      <li>
-        <a routerLink="/webinars">Σεμινάρια</a>
-      </li>
+      @if (canViewWebinars()) {
+        <li>
+          <a routerLink="/webinars">Σεμινάρια</a>
+        </li>
+      }
 
-      <li>
-        <a routerLink="/my-webinars">Σεμινάρια που παρακολουθώ</a>
-      </li>
+      @if (canEnrollInWebinar()) {
+        <li>
+          <a routerLink="/my-webinars">Σεμινάρια που παρακολουθώ</a>
+        </li>
+      }
 
-      @if (isAdmin() || isOrganizer()) {
+      @if (canCreateWebinar()) {
         <li>
           <a routerLink="/organizer-webinars">Σεμινάρια που διοργανώνω</a>
         </li>
@@ -25,19 +29,25 @@
         <a routerLink="/profile">Προφίλ χρήστη</a>
       </li>
 
-      @if (isAdmin()) {
+      @if (canManageUsers()) {
         <li>
           <a routerLink="/users">Χρήστες</a>
         </li>
+      }
 
+      @if (canManageRoles()) {
         <li>
           <a routerLink="/roles">Ρόλοι</a>
         </li>
+      }
 
+      @if (canManageCapabilities()) {
         <li>
           <a routerLink="/capabilities">Δικαιώματα</a>
         </li>
+      }
 
+      @if (canViewReports()) {
         <li>
           <a routerLink="/reports">Αναφορές</a>
         </li>
