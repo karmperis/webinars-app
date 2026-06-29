@@ -78,6 +78,18 @@ export class Role {
   assignCapabilityToRole(roleUuid: string, capabilityUuid: string): Observable<void> {
     return this.http.post<void>(`${this.rolesUrl}/${roleUuid}/capabilities/${capabilityUuid}`, {});
   }
+
+  /**
+   * Removes a capability from a role.
+   *
+   * @param roleUuid role UUID
+   * @param capabilityUuid capability UUID
+   * @returns completion observable
+   */
+  removeCapabilityFromRole(roleUuid: string, capabilityUuid: string): Observable<void> {
+    return this.http.delete<void>(`${this.rolesUrl}/${roleUuid}/capabilities/${capabilityUuid}`);
+  }
+
   /**
    * Retrieves all capabilities assigned to a role.
    *

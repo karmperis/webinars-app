@@ -8,7 +8,7 @@ import { Role } from '../../../shared/services/role';
 import { CapabilityReadOnly } from '../../../shared/interfaces/capability-read-only';
 
 /**
- * Component responsible for displaying the capabilities assigned to a role.
+ * Component responsible for displaying and removing  the capabilities assigned to a role.
  */
 @Component({
   selector: 'app-role-capabilities',
@@ -23,7 +23,9 @@ export class RoleCapabilities implements OnInit {
 
   readonly capabilities = signal<CapabilityReadOnly[]>([]);
   readonly isLoading = signal(true);
+  readonly isRemoving = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   ngOnInit(): void {
     this.roleUuid = this.route.snapshot.paramMap.get('uuid') ?? '';
@@ -54,6 +56,36 @@ export class RoleCapabilities implements OnInit {
         error: (error) => {
           console.error('Failed to load role capabilities', error);
           this.errorMessage.set('Απέτυχε η φόρτωση των δικαιωμάτων του ρόλου.');
+        },
+      });
+  }
+
+  /**
+   * Removes a capability from the selected role and refreshes the assigned capability list.
+   *
+   * @param capabilityUuid capability UUID to remove from the role
+   */
+  onRemoveCapability(capabilityUuid: string): void {
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+    this.isRemoving.set(true);
+
+    this.roleService
+      .removeCapabilityFromRole(this.roleUuid, capabilityUuid)
+      .pipe(finalize(() => this.isRemoving.set(false)))
+      .subscribe({
+        next: () => {
+          this.successMessage.set('Το δικαίωμα αφαιρέθηκε επιτυχώς από τον ρόλο.');
+
+          setTimeout(() => {
+            this.successMessage.set(null);
+          }, 2000);
+
+          this.loadRoleCapabilities();
+        },
+        error: (error) => {
+          console.error('Failed to remove capability from role', error);
+          this.errorMessage.set('Απέτυχε η αφαίρεση του δικαιώματος από τον ρόλο.');
         },
       });
   }

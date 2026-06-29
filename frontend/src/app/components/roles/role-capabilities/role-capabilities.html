@@ -11,6 +11,12 @@
       <a routerLink="/roles" class="btn btn-outline-dark">Επιστροφή</a>
     </header>
 
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        {{ successMessage() }}
+      </div>
+    }
+
     @if (isLoading()) {
       <div class="empty-state">Φόρτωση δικαιωμάτων ρόλου...</div>
     } @else if (errorMessage()) {
@@ -35,6 +41,16 @@
                 <tr>
                   <td>{{ capability.name }}</td>
                   <td>{{ capability.description }}</td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      [disabled]="isRemoving()"
+                      (click)="onRemoveCapability(capability.uuid)"
+                    >
+                      Αφαίρεση
+                    </button>
+                  </td>
                 </tr>
               }
             </tbody>
