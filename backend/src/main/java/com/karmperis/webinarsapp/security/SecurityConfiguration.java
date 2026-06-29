@@ -63,6 +63,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*").authenticated()
                         .requestMatchers("/api/v1/users/**").hasAuthority("MANAGE_USERS")
                         .requestMatchers("/api/v1/roles/**").hasAuthority("MANAGE_ROLES")
                         .requestMatchers("/api/v1/capabilities/**").hasAuthority("MANAGE_CAPABILITIES")
