@@ -416,7 +416,7 @@ class RoleServiceImplTest {
     }
 
     // ==========================================
-    // TESTS-ASSIGN CAPABILITY TO ROLE
+    // TESTS- ROLE CAPABILITY
     // ==========================================
 
     @Test
@@ -467,6 +467,64 @@ class RoleServiceImplTest {
 
         assertThrows(EntityAlreadyExistsException.class,
                 () -> roleService.assignCapabilityToRole(roleUuid, capabilityUuid));
+
+        verify(roleRepository).findByUuidAndDeletedAtIsNull(roleUuid);
+        verify(capabilityRepository).findByUuidAndDeletedAtIsNull(capabilityUuid);
+    }
+
+    @Test
+    @DisplayName("removeCapabilityFromRole: Should unlink capability from role successfully")
+    void removeCapabilityFromRole_Success() throws Exception {
+        role.addCapability(capability);
+
+        when(roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)).thenReturn(Optional.of(role));
+        when(capabilityRepository.findByUuidAndDeletedAtIsNull(capabilityUuid)).thenReturn(Optional.of(capability));
+
+        roleService.removeCapabilityFromRole(roleUuid, capabilityUuid);
+
+        assertFalse(role.hasCapability(capability));
+
+        verify(roleRepository).findByUuidAndDeletedAtIsNull(roleUuid);
+        verify(capabilityRepository).findByUuidAndDeletedAtIsNull(capabilityUuid);
+        verify(roleRepository).save(role);
+    }
+
+    @Test
+    @DisplayName("removeCapabilityFromRole: Should throw exception when role not found")
+    void removeCapabilityFromRole_ThrowsEntityNotFoundException_WhenRoleNotFound() {
+        when(roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> roleService.removeCapabilityFromRole(roleUuid, capabilityUuid));
+
+        verify(roleRepository).findByUuidAndDeletedAtIsNull(roleUuid);
+        verify(capabilityRepository, never()).findByUuidAndDeletedAtIsNull(any());
+    }
+
+    @Test
+    @DisplayName("removeCapabilityFromRole: Should throw exception when capability is not found")
+    void removeCapabilityFromRole_ThrowsEntityNotFoundException_WhenCapabilityNotFound() {
+        when(roleRepository.findByUuidAndDeletedAtIsNull(roleUuid))
+                .thenReturn(Optional.of(role));
+
+        when(capabilityRepository.findByUuidAndDeletedAtIsNull(capabilityUuid))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> roleService.removeCapabilityFromRole(roleUuid, capabilityUuid));
+
+        verify(roleRepository).findByUuidAndDeletedAtIsNull(roleUuid);
+        verify(capabilityRepository).findByUuidAndDeletedAtIsNull(capabilityUuid);
+    }
+
+    @Test
+    @DisplayName("removeCapabilityFromRole: Should throw exception when capability is not assigned")
+    void removeCapabilityFromRole_ThrowsEntityInvalidArgumentException_WhenCapabilityIsNotAssigned() {
+        when(roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)).thenReturn(Optional.of(role));
+        when(capabilityRepository.findByUuidAndDeletedAtIsNull(capabilityUuid)).thenReturn(Optional.of(capability));
+
+        assertThrows(EntityInvalidArgumentException.class,
+                () -> roleService.removeCapabilityFromRole(roleUuid, capabilityUuid));
 
         verify(roleRepository).findByUuidAndDeletedAtIsNull(roleUuid);
         verify(capabilityRepository).findByUuidAndDeletedAtIsNull(capabilityUuid);

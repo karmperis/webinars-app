@@ -125,6 +125,18 @@ public class RoleRestControllerTest {
     }
 
     @Test
+    @DisplayName("DELETE /api/v1/roles/{roleUuid}/capabilities/{capabilityUuid} - Should return 204 No Content")
+    void removeCapability_ReturnsNoContent() throws Exception {
+        UUID roleUuid = UUID.randomUUID();
+        UUID capabilityUuid = UUID.randomUUID();
+
+        mockMvc.perform(delete("/api/v1/roles/{roleUuid}/capabilities/{capabilityUuid}", roleUuid, capabilityUuid))
+                .andExpect(status().isNoContent());
+
+        verify(roleService).removeCapabilityFromRole(roleUuid, capabilityUuid);
+    }
+
+    @Test
     @DisplayName("GET /api/v1/roles/{roleUuid}/capabilities/view - Should return list of capabilities")
     void getRoleCapabilities_ReturnsList() throws Exception {
         UUID roleUuid = UUID.randomUUID();
