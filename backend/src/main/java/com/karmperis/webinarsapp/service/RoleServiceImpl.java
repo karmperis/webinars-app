@@ -99,14 +99,19 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     @Transactional(readOnly = true)
-    public RoleReadOnlyDTO findRoleByUuid(UUID uuid) throws EntityNotFoundException {
+    public RoleReadOnlyDTO findRoleByUuid(UUID uuid) throws EntityNotFoundException, EntityInvalidArgumentException {
         log.info("Searching for role with UUID: {}", uuid);
+
+        // Defensive programming: Guard clause for internal calls that may pass a null UUID
+        validateUuid(uuid, "Role UUID");
+
         return roleRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .map(roleMapper::mapToRoleReadOnlyDTO)
                 .orElseThrow(() -> {
                     log.warn("Role with UUID {} not found", uuid);
                     return new EntityNotFoundException("Role", "Role with UUID " + uuid + " not found");
                 });
+
     }
 
     /**
@@ -119,9 +124,12 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     @Transactional(readOnly = true)
     public List<CapabilityReadOnlyDTO> findCapabilitiesByRoleUuid(UUID roleUuid)
-            throws EntityNotFoundException {
+            throws EntityNotFoundException, EntityInvalidArgumentException {
 
         log.info("Fetching capabilities for role with UUID: {}", roleUuid);
+
+        // Defensive programming: Guard clauses for internal calls that may pass null UUIDs
+        validateUuid(roleUuid, "Role UUID");
 
         Role role = roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)
                 .orElseThrow(() -> {
@@ -173,6 +181,7 @@ public class RoleServiceImpl implements IRoleService {
 
         roleMapper.mapToRoleEditDTO(role, dto);
         Role updatedRole = roleRepository.save(role);
+
         log.info("Role with UUID {} updated successfully", uuid);
 
         return roleMapper.mapToRoleReadOnlyDTO(updatedRole);
@@ -186,15 +195,18 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public void softDeleteRoleByUuid(UUID uuid) throws EntityNotFoundException {
+    public void softDeleteRoleByUuid(UUID uuid) throws EntityNotFoundException, EntityInvalidArgumentException {
         log.info("Performing soft delete for role with UUID: {}", uuid);
+
+        // Defensive programming: Guard clause for internal calls that may pass a null UUID
+        validateUuid(uuid, "Role UUID");
 
         Role role = roleRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("Role", "Role not found"));
 
         role.softDelete();
-
         roleRepository.save(role);
+
         log.info("Role with UUID {} soft deleted successfully", uuid);
     }
 
@@ -208,8 +220,12 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     @Transactional(rollbackFor = {EntityNotFoundException.class, EntityAlreadyExistsException.class})
-    public void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException, EntityAlreadyExistsException {
+    public void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
         log.info("Assigning capability {} to role {}", capabilityUuid, roleUuid);
+
+        // Defensive programming: Guard clauses for internal calls that may pass null UUIDs
+        validateUuid(roleUuid, "Role UUID");
+        validateUuid(capabilityUuid, "Capability UUID");
 
         Role role = roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)
                 .orElseThrow(() -> {
@@ -236,7 +252,58 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     /**
-     * Helper method for defensive structural validation of role data.
+     * Remove a capability from a role.
+     *
+     * @param roleUuid       the role UUID
+     * @param capabilityUuid the capability UUID
+     * @throws EntityNotFoundException        if the role or capability does not exist or is soft-deleted
+     * @throws EntityInvalidArgumentException if the capability is not assigned to the role
+     */
+    @Override
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
+    public void removeCapabilityFromRole(UUID roleUuid, UUID capabilityUuid)
+            throws EntityNotFoundException, EntityInvalidArgumentException {
+
+        log.info("Removing capability {} from role {}", capabilityUuid, roleUuid);
+
+        // Defensive programming: Guard clauses for internal calls that may pass null UUIDs
+        validateUuid(roleUuid, "Role UUID");
+        validateUuid(capabilityUuid, "Capability UUID");
+
+        Role role = roleRepository.findByUuidAndDeletedAtIsNull(roleUuid)
+                .orElseThrow(() -> {
+                    log.warn("Capability removal failed: Role with UUID {} not found", roleUuid);
+                    return new EntityNotFoundException("Role", "Role with UUID " + roleUuid + " not found");
+                });
+
+        Capability capability = capabilityRepository.findByUuidAndDeletedAtIsNull(capabilityUuid)
+                .orElseThrow(() -> {
+                    log.warn("Capability removal failed: Capability with UUID {} not found", capabilityUuid);
+                    return new EntityNotFoundException("Capability", "Capability with UUID " + capabilityUuid + " not found");
+                });
+
+        if (!role.hasCapability(capability)) {
+            log.warn("Capability {} is not assigned to role {}", capabilityUuid, roleUuid);
+            throw new EntityInvalidArgumentException(
+                    "RoleCapability",
+                    "Capability is not assigned to this role"
+            );
+        }
+
+        role.removeCapability(capability);
+        roleRepository.save(role);
+
+        log.info("Successfully removed capability {} from role {}", capabilityUuid, roleUuid);
+    }
+
+    /**
+     * Validates the structural integrity of role data.
+     * Used as a defensive programming guard for service methods that may be invoked
+     * outside the Web layer, bypassing Bean Validation.
+     *
+     * @param name the role name to validate
+     * @throws EntityInvalidArgumentException if the role name is null, blank,
+     *                                        or its length is outside the allowed range
      */
     private void validateRoleData(String name) throws EntityInvalidArgumentException {
         if (name == null || name.isBlank()) {
@@ -246,6 +313,20 @@ public class RoleServiceImpl implements IRoleService {
         int nameLength = name.trim().length();
         if (nameLength < 4 || nameLength > 50) {
             throw new EntityInvalidArgumentException("Role", "Role name must contain between 4 and 50 characters");
+        }
+    }
+
+    /**
+     * Validates that a UUID parameter is not null.
+     * Used as a defensive programming guard for service methods that receive UUID arguments.
+     *
+     * @param uuid      the UUID to validate
+     * @param fieldName the logical name of the UUID field used in the exception message
+     * @throws EntityInvalidArgumentException if the UUID is null
+     */
+    private void validateUuid(UUID uuid, String fieldName) throws EntityInvalidArgumentException {
+        if (uuid == null) {
+            throw new EntityInvalidArgumentException("Role", fieldName + " cannot be null");
         }
     }
 }

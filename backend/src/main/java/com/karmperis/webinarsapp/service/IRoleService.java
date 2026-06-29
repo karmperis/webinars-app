@@ -40,7 +40,7 @@ public interface IRoleService {
      * @return the matching role
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
-    RoleReadOnlyDTO findRoleByUuid(UUID uuid) throws EntityNotFoundException;
+    RoleReadOnlyDTO findRoleByUuid(UUID uuid) throws EntityNotFoundException, EntityInvalidArgumentException;
 
     /**
      * Retrieve all capabilities assigned to a non-deleted role.
@@ -49,7 +49,7 @@ public interface IRoleService {
      * @return list of capabilities assigned to the role
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
-    List<CapabilityReadOnlyDTO> findCapabilitiesByRoleUuid(UUID roleUuid) throws EntityNotFoundException;
+    List<CapabilityReadOnlyDTO> findCapabilitiesByRoleUuid(UUID roleUuid) throws EntityNotFoundException, EntityInvalidArgumentException;
 
     /**
      * Update an existing role. (Update)
@@ -70,7 +70,7 @@ public interface IRoleService {
      * @param uuid role UUID
      * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
      */
-    void softDeleteRoleByUuid(UUID uuid) throws EntityNotFoundException;
+    void softDeleteRoleByUuid(UUID uuid) throws EntityNotFoundException, EntityInvalidArgumentException;
 
     /**
      * Assign a capability to a role.
@@ -80,5 +80,16 @@ public interface IRoleService {
      * @throws EntityNotFoundException      if the role or capability does not exist or is soft-deleted
      * @throws EntityAlreadyExistsException if the capability is already assigned to the role
      */
-    void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException, EntityAlreadyExistsException;
+    void assignCapabilityToRole(UUID roleUuid, UUID capabilityUuid) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
+
+    /**
+     * Remove a capability from a role.
+     *
+     * @param roleUuid       the role UUID
+     * @param capabilityUuid the capability UUID
+     * @throws EntityNotFoundException        if the role or capability does not exist or is soft-deleted
+     * @throws EntityInvalidArgumentException if the capability is not assigned to the role
+     */
+    void removeCapabilityFromRole(UUID roleUuid, UUID capabilityUuid)
+            throws EntityNotFoundException, EntityInvalidArgumentException;
 }

@@ -291,4 +291,49 @@ public class RoleRestController {
 
         return ResponseEntity.ok(roleService.findCapabilitiesByRoleUuid(roleUuid));
     }
+
+    /**
+     * Removes a capability from a role.
+     *
+     * @param roleUuid       the role UUID
+     * @param capabilityUuid the capability UUID
+     * @return HTTP 204 No Content if successful
+     * @throws EntityNotFoundException        if role or capability does not exist (HTTP 404)
+     * @throws EntityInvalidArgumentException if the capability is not assigned to the role (HTTP 400)
+     */
+    @Operation(
+            summary = "Remove capability from role",
+            description = "Removes an assigned capability from an existing role by their respective UUIDs."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Capability successfully removed from role"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Capability is not assigned to role",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Role or Capability not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+    })
+    @DeleteMapping("/{roleUuid}/capabilities/{capabilityUuid}")
+    public ResponseEntity<Void> removeCapability(
+            @PathVariable UUID roleUuid,
+            @PathVariable UUID capabilityUuid)
+            throws EntityNotFoundException, EntityInvalidArgumentException {
+
+        roleService.removeCapabilityFromRole(roleUuid, capabilityUuid);
+        return ResponseEntity.noContent().build();
+    }
 }
