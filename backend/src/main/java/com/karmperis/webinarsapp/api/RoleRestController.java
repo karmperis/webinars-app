@@ -135,7 +135,7 @@ public class RoleRestController {
     })
     @GetMapping("/{uuid}")
     public ResponseEntity<RoleReadOnlyDTO> getRoleByUUID(@PathVariable UUID uuid)
-            throws EntityNotFoundException {
+            throws EntityNotFoundException, EntityInvalidArgumentException {
 
         return ResponseEntity.ok(roleService.findRoleByUuid(uuid));
     }
@@ -197,7 +197,7 @@ public class RoleRestController {
     )
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteRole(@PathVariable UUID uuid)
-            throws EntityNotFoundException {
+            throws EntityNotFoundException, EntityInvalidArgumentException {
 
         roleService.softDeleteRoleByUuid(uuid);
         return ResponseEntity.noContent().build();
@@ -250,7 +250,7 @@ public class RoleRestController {
     @PostMapping("/{roleUuid}/capabilities/{capabilityUuid}")
     public ResponseEntity<Void> assignCapability(
             @PathVariable UUID roleUuid,
-            @PathVariable UUID capabilityUuid) throws EntityNotFoundException, EntityAlreadyExistsException {
+            @PathVariable UUID capabilityUuid) throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException {
 
         roleService.assignCapabilityToRole(roleUuid, capabilityUuid);
         return ResponseEntity.ok().build();
@@ -287,7 +287,7 @@ public class RoleRestController {
     })
     @GetMapping("/{roleUuid}/capabilities/view")
     public ResponseEntity<List<CapabilityReadOnlyDTO>> getRoleCapabilities(
-            @PathVariable UUID roleUuid) throws EntityNotFoundException {
+            @PathVariable UUID roleUuid) throws EntityNotFoundException, EntityInvalidArgumentException {
 
         return ResponseEntity.ok(roleService.findCapabilitiesByRoleUuid(roleUuid));
     }
