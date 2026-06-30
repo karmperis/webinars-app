@@ -180,22 +180,23 @@ User features include:
 
 ### Roles & Capabilities
 
-| Route                            | Required capability   | Description               |
-| :------------------------------- | :-------------------- | :------------------------ |
-| `/roles`                         | `MANAGE_ROLES`        | List roles                |
-| `/roles/create`                  | `MANAGE_ROLES`        | Create role               |
-| `/roles/:uuid/edit`              | `MANAGE_ROLES`        | Edit role                 |
-| `/roles/:uuid/capabilities`      | `MANAGE_ROLES`        | Assign capability to role |
-| `/roles/:uuid/capabilities/view` | `MANAGE_ROLES`        | View role capabilities    |
-| `/capabilities`                  | `MANAGE_CAPABILITIES` | List capabilities         |
-| `/capabilities/create`           | `MANAGE_CAPABILITIES` | Create capability         |
-| `/capabilities/:uuid/edit`       | `MANAGE_CAPABILITIES` | Edit capability           |
+| Route                            | Required capability   | Description                       |
+| :------------------------------- | :-------------------- | :-------------------------------- |
+| `/roles`                         | `MANAGE_ROLES`        | List roles                        |
+| `/roles/create`                  | `MANAGE_ROLES`        | Create role                       |
+| `/roles/:uuid/edit`              | `MANAGE_ROLES`        | Edit role                         |
+| `/roles/:uuid/capabilities`      | `MANAGE_ROLES`        | Assign capability to role         |
+| `/roles/:uuid/capabilities/view` | `MANAGE_ROLES`        | View and manage role capabilities |
+| `/capabilities`                  | `MANAGE_CAPABILITIES` | List capabilities                 |
+| `/capabilities/create`           | `MANAGE_CAPABILITIES` | Create capability                 |
+| `/capabilities/:uuid/edit`       | `MANAGE_CAPABILITIES` | Edit capability                   |
 
 Role and capability features include:
 
 - Role CRUD operations
 - Capability CRUD operations
 - Capability assignment to roles
+- Capability removal from roles
 - Viewing capabilities assigned to a role
 
 ### Reports

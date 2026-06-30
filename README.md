@@ -164,6 +164,7 @@ Core capabilities include:
 - Create, edit, list, and delete roles
 - Create, edit, list, and delete capabilities
 - Assign capabilities to roles
+- Remove capabilities from roles
 - View capabilities assigned to a specific role
 
 ### Reports
@@ -302,6 +303,7 @@ Role assignment is not provided by the registration request.
 | PUT    | `/roles/{uuid}`                                   | Admin  | Update role                          |
 | DELETE | `/roles/{uuid}`                                   | Admin  | Delete role                          |
 | POST   | `/roles/{roleUuid}/capabilities/{capabilityUuid}` | Admin  | Assign capability to role            |
+| DELETE | `/roles/{roleUuid}/capabilities/{capabilityUuid}` | Admin  | Remove capability from role          |
 | GET    | `/roles/{uuid}/capabilities/view`                 | Admin  | View capabilities assigned to a role |
 
 ### Capabilities
@@ -358,27 +360,27 @@ src/app/
 
 ### Main Frontend Routes
 
-| Route                            | Required capability   | Description               |
-| :------------------------------- | :-------------------- | :------------------------ |
-| `/login`                         | Public                | User login                |
-| `/register`                      | Public                | User registration         |
-| `/webinars`                      | `VIEW_WEBINARS`       | List webinars             |
-| `/webinars/create`               | `CREATE_WEBINAR`      | Create webinar            |
-| `/webinars/:uuid/edit`           | `EDIT_WEBINAR`        | Edit webinar              |
-| `/my-webinars`                   | `ENROLL_IN_WEBINAR`   | View enrolled webinars    |
-| `/organizer-webinars`            | `CREATE_WEBINAR`      | View organized webinars   |
-| `/users`                         | `MANAGE_USERS`        | User management           |
-| `/users/:uuid/access`            | `MANAGE_USERS`        | Edit user access          |
-| `/profile`                       | Authenticated         | Edit current user profile |
-| `/roles`                         | `MANAGE_ROLES`        | Role management           |
-| `/roles/create`                  | `MANAGE_ROLES`        | Create role               |
-| `/roles/:uuid/edit`              | `MANAGE_ROLES`        | Edit role                 |
-| `/roles/:uuid/capabilities`      | `MANAGE_ROLES`        | Assign capability to role |
-| `/roles/:uuid/capabilities/view` | `MANAGE_ROLES`        | View role capabilities    |
-| `/capabilities`                  | `MANAGE_CAPABILITIES` | Capability management     |
-| `/capabilities/create`           | `MANAGE_CAPABILITIES` | Create capability         |
-| `/capabilities/:uuid/edit`       | `MANAGE_CAPABILITIES` | Edit capability           |
-| `/reports`                       | `VIEW_REPORTS`        | Generate reports          |
+| Route                            | Required capability   | Description                       |
+| :------------------------------- | :-------------------- | :-------------------------------- |
+| `/login`                         | Public                | User login                        |
+| `/register`                      | Public                | User registration                 |
+| `/webinars`                      | `VIEW_WEBINARS`       | List webinars                     |
+| `/webinars/create`               | `CREATE_WEBINAR`      | Create webinar                    |
+| `/webinars/:uuid/edit`           | `EDIT_WEBINAR`        | Edit webinar                      |
+| `/my-webinars`                   | `ENROLL_IN_WEBINAR`   | View enrolled webinars            |
+| `/organizer-webinars`            | `CREATE_WEBINAR`      | View organized webinars           |
+| `/users`                         | `MANAGE_USERS`        | User management                   |
+| `/users/:uuid/access`            | `MANAGE_USERS`        | Edit user access                  |
+| `/profile`                       | Authenticated         | Edit current user profile         |
+| `/roles`                         | `MANAGE_ROLES`        | Role management                   |
+| `/roles/create`                  | `MANAGE_ROLES`        | Create role                       |
+| `/roles/:uuid/edit`              | `MANAGE_ROLES`        | Edit role                         |
+| `/roles/:uuid/capabilities`      | `MANAGE_ROLES`        | Assign capability to role         |
+| `/roles/:uuid/capabilities/view` | `MANAGE_ROLES`        | View and manage role capabilities |
+| `/capabilities`                  | `MANAGE_CAPABILITIES` | Capability management             |
+| `/capabilities/create`           | `MANAGE_CAPABILITIES` | Create capability                 |
+| `/capabilities/:uuid/edit`       | `MANAGE_CAPABILITIES` | Edit capability                   |
+| `/reports`                       | `VIEW_REPORTS`        | Generate reports                  |
 
 ## Security Overview
 
