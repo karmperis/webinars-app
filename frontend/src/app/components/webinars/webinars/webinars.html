@@ -56,7 +56,7 @@
 
                   <td>
                     <div class="d-flex justify-content-center gap-2">
-                      @if (canManageWebinar(webinar)) {
+                      @if (canEditWebinar(webinar)) {
                         <button
                           type="button"
                           class="btn btn-sm btn-outline-primary"
@@ -64,7 +64,9 @@
                         >
                           Επεξεργασία
                         </button>
+                      }
 
+                      @if (canDeleteWebinar(webinar)) {
                         <button
                           type="button"
                           class="btn btn-sm btn-outline-danger"

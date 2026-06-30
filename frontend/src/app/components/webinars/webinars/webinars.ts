@@ -65,39 +65,49 @@ export class Webinars implements OnInit {
   }
 
   /**
-   * Checks whether the current user can manage webinars.
+   * Checks whether the current user can manage the given webinar.
    *
    * @param webinar webinar to check
-   * @returns true if the user is ADMIN or owns the webinar as organizer
+   * @returns true if the user has manage permission for this webinar
    */
   canManageWebinar(webinar: WebinarReadOnly): boolean {
     const currentUserUuid = this.authService.getCurrentUserUuid();
-    return this.authService.hasRole('ADMIN') || currentUserUuid === webinar.organizer.uuid;
+    const isOwner = currentUserUuid === webinar.organizer.uuid;
+
+    return this.authService.hasCapability('MANAGE_WEBINARS') || isOwner;
+  }
+
+  /**
+   * Checks whether the current user can edit the given webinar.
+   *
+   * @param webinar webinar to check
+   * @returns true if the user has edit permission for this webinar
+   */
+  canEditWebinar(webinar: WebinarReadOnly): boolean {
+    return this.authService.hasCapability('EDIT_WEBINAR') && this.canManageWebinar(webinar);
+  }
+
+  /**
+   * Checks whether the current user can delete the given webinar.
+   *
+   * @param webinar webinar to check
+   * @returns true if the user has delete permission for this webinar
+   */
+  canDeleteWebinar(webinar: WebinarReadOnly): boolean {
+    return this.authService.hasCapability('DELETE_WEBINAR') && this.canManageWebinar(webinar);
   }
 
   /**
    * Checks whether the current user can enroll in the given webinar.
    *
    * @param webinar webinar to check
-   * @returns true if the user is ADMIN, PARTICIPANT, or an ORGANIZER who does not own the webinar
+   * @returns true if the user has enroll permission and backend business rules allow it
    */
   canEnrollInWebinar(webinar: WebinarReadOnly): boolean {
     const currentUserUuid = this.authService.getCurrentUserUuid();
     const isOwnWebinar = currentUserUuid === webinar.organizer.uuid;
 
-    if (this.authService.hasRole('ADMIN')) {
-      return true;
-    }
-
-    if (this.authService.hasRole('PARTICIPANT')) {
-      return true;
-    }
-
-    if (this.authService.hasRole('ORGANIZER')) {
-      return !isOwnWebinar;
-    }
-
-    return false;
+    return this.authService.hasCapability('ENROLL_IN_WEBINAR') && !isOwnWebinar;
   }
 
   /**
