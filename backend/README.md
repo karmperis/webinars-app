@@ -90,12 +90,14 @@ The application will be available at: `http://localhost:8080`.
 To stop all running containers, run the following command from the `backend/` directory:
 
 ```bash
+cd backend
 docker compose down
 ```
 
 To stop all containers and remove persistent database volumes, run the following command from the `backend/` directory:
 
 ```bash
+cd backend
 docker compose down -v
 ```
 
@@ -104,6 +106,7 @@ docker compose down -v
 If you prefer running the Spring Boot application locally:
 
 ```bash
+cd backend
 ./gradlew bootRun
 ```
 
@@ -112,6 +115,7 @@ The server will be available at `http://localhost:8080`.
 ### 3. Running Tests
 
 ```bash
+cd backend
 ./gradlew test
 ```
 
@@ -189,25 +193,26 @@ Role assignment is not provided by the registration request.
 | DELETE | `/webinars/{webinarUuid}/participants/{userUuid}` | Admin/Same User      | Unenroll a user from a webinar             |
 
 **Enrollment rules:** Organizers may enroll only in webinars created by other organizers, they cannot enroll in their
-own
-webinars. A user may unenroll only from webinars they are currently enrolled in.
+own webinars. A user may unenroll only from webinars they are currently enrolled in.
 
 ### Roles & Capabilities
 
 Administrative endpoints are provided for managing roles and capabilities.
 Roles group capabilities, while authorization decisions are based on assigned capabilities.
+Administrators can assign capabilities to roles and remove assigned capabilities from roles.
 
 #### Roles
 
-| Method | Endpoint                                          | Auth  | Description                   |
-|:-------|:--------------------------------------------------|:------|:------------------------------|
-| POST   | `/roles`                                          | Admin | Create a new role             |
-| GET    | `/roles`                                          | Admin | List all roles                |
-| GET    | `/roles/{uuid}`                                   | Admin | Get role details              |
-| PUT    | `/roles/{uuid}`                                   | Admin | Update role details           |
-| DELETE | `/roles/{uuid}`                                   | Admin | Delete a role                 |
-| GET    | `/roles/{uuid}/capabilities/view`                 | Admin | View role capabilities        |
-| POST   | `/roles/{roleUuid}/capabilities/{capabilityUuid}` | Admin | Assign a capability to a role |
+| Method | Endpoint                                          | Auth  | Description                     |
+|:-------|:--------------------------------------------------|:------|:--------------------------------|
+| POST   | `/roles`                                          | Admin | Create a new role               |
+| GET    | `/roles`                                          | Admin | List all roles                  |
+| GET    | `/roles/{uuid}`                                   | Admin | Get role details                |
+| PUT    | `/roles/{uuid}`                                   | Admin | Update role details             |
+| DELETE | `/roles/{uuid}`                                   | Admin | Delete a role                   |
+| GET    | `/roles/{uuid}/capabilities/view`                 | Admin | View role capabilities          |
+| POST   | `/roles/{roleUuid}/capabilities/{capabilityUuid}` | Admin | Assign a capability to a role   |
+| DELETE | `/roles/{roleUuid}/capabilities/{capabilityUuid}` | Admin | Remove a capability from a role |
 
 #### Capabilities
 
