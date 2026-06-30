@@ -15,11 +15,13 @@
         </li>
       }
 
-      @if (canCreateWebinar()) {
+      @if (canViewOrganizerWebinars()) {
         <li>
           <a routerLink="/organizer-webinars">Σεμινάρια που διοργανώνω</a>
         </li>
+      }
 
+      @if (canCreateWebinar()) {
         <li>
           <a routerLink="/webinars/create">Προσθήκη νέου σεμιναρίου</a>
         </li>

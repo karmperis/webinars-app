@@ -21,9 +21,17 @@ export class Navbar implements OnInit {
   private readonly router = inject(Router);
 
   readonly currentUser = signal<UserReadOnly | null>(null);
-  readonly canViewWebinars = computed(() => this.auth.hasCapability('VIEW_WEBINARS'));
-  readonly canEnrollInWebinar = computed(() => this.auth.hasCapability('ENROLL_IN_WEBINAR'));
   readonly canCreateWebinar = computed(() => this.auth.hasCapability('CREATE_WEBINAR'));
+  readonly canViewWebinars = computed(() => this.auth.hasCapability('VIEW_WEBINARS'));
+  readonly canViewOrganizerWebinars = computed(() =>
+    this.auth.hasAnyCapability([
+      'CREATE_WEBINAR',
+      'EDIT_WEBINAR',
+      'DELETE_WEBINAR',
+      'MANAGE_WEBINARS',
+    ]),
+  );
+  readonly canEnrollInWebinar = computed(() => this.auth.hasCapability('ENROLL_IN_WEBINAR'));
   readonly canManageUsers = computed(() => this.auth.hasCapability('MANAGE_USERS'));
   readonly canManageRoles = computed(() => this.auth.hasCapability('MANAGE_ROLES'));
   readonly canManageCapabilities = computed(() => this.auth.hasCapability('MANAGE_CAPABILITIES'));

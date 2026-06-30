@@ -57,7 +57,7 @@ export const routes: Routes = [
     path: 'organizer-webinars',
     component: OrganizerWebinars,
     canActivate: [authGuard],
-    data: { capabilities: ['CREATE_WEBINAR'] },
+    data: { capabilities: ['CREATE_WEBINAR', 'EDIT_WEBINAR', 'DELETE_WEBINAR', 'MANAGE_WEBINARS'] },
   },
 
   {
