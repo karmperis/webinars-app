@@ -10,6 +10,18 @@
       <a routerLink="/webinars" class="btn btn-outline-dark"> Επιστροφή </a>
     </header>
 
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        {{ successMessage() }}
+      </div>
+    }
+
+    @if (actionErrorMessage()) {
+      <div class="alert alert-danger">
+        {{ actionErrorMessage() }}
+      </div>
+    }
+
     @if (isLoading()) {
       <div class="empty-state">Φόρτωση σεμιναρίων...</div>
     } @else if (loadError()) {
@@ -29,6 +41,7 @@
                 <th>Ημερομηνία</th>
                 <th>Διάρκεια</th>
                 <th>Διοργανωτής</th>
+                <th>Ενέργειες</th>
               </tr>
             </thead>
 
@@ -42,6 +55,29 @@
                   <td>
                     {{ webinar.organizer.firstname }}
                     {{ webinar.organizer.lastname }}
+                  </td>
+                  <td>
+                    <div class="d-flex justify-content-center gap-2">
+                      @if (canEditWebinar()) {
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-primary"
+                          (click)="editWebinar(webinar.uuid)"
+                        >
+                          Επεξεργασία
+                        </button>
+                      }
+
+                      @if (canDeleteWebinar()) {
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger"
+                          (click)="deleteWebinar(webinar.uuid)"
+                        >
+                          Διαγραφή
+                        </button>
+                      }
+                    </div>
                   </td>
                 </tr>
               }

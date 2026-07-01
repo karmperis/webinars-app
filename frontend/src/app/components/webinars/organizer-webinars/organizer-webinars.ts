@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { Navbar } from '../../layout/navbar/navbar';
 
@@ -23,6 +23,7 @@ import { WebinarReadOnly } from '../../../shared/interfaces/webinar-read-only';
 export class OrganizerWebinars implements OnInit {
   private readonly webinarService = inject(Webinar);
   private readonly authService = inject(Auth);
+  private readonly router = inject(Router);
 
   readonly webinars = signal<WebinarReadOnly[]>([]);
   readonly isLoading = signal(true);
@@ -33,6 +34,8 @@ export class OrganizerWebinars implements OnInit {
   readonly totalElements = signal(0);
   readonly sortField = signal('scheduledDate');
   readonly sortDirection = signal<'asc' | 'desc'>('asc');
+  readonly actionErrorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadOrganizerWebinars();
@@ -73,6 +76,68 @@ export class OrganizerWebinars implements OnInit {
           this.loadError.set('Απέτυχε η φόρτωση των σεμιναρίων διοργάνωσης.');
         },
       });
+  }
+
+  /**
+   * Checks whether the current user can edit organizer webinars.
+   *
+   * @returns true if the user has edit webinar capability
+   */
+  canEditWebinar(): boolean {
+    return this.authService.hasCapability('EDIT_WEBINAR');
+  }
+
+  /**
+   * Checks whether the current user can delete organizer webinars.
+   *
+   * @returns true if the user has delete webinar capability
+   */
+  canDeleteWebinar(): boolean {
+    return this.authService.hasCapability('DELETE_WEBINAR');
+  }
+
+  /**
+   * Navigates to the webinar edit page.
+   *
+   * @param uuid webinar UUID
+   */
+  editWebinar(uuid: string): void {
+    this.router.navigate(['/webinars', uuid, 'edit']);
+  }
+
+  /**
+   * Deletes an organizer webinar and refreshes the displayed list.
+   *
+   * @param uuid webinar UUID
+   */
+  deleteWebinar(uuid: string): void {
+    if (!confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το σεμινάριο;')) {
+      return;
+    }
+
+    this.webinarService.deleteWebinar(uuid).subscribe({
+      next: () => {
+        this.successMessage.set('Το σεμινάριο διαγράφηκε επιτυχώς.');
+
+        setTimeout(() => {
+          this.successMessage.set(null);
+        }, 2000);
+
+        if (this.webinars().length === 1 && this.currentPage() > 0) {
+          this.currentPage.update((page) => page - 1);
+        }
+
+        this.loadOrganizerWebinars();
+      },
+      error: (error) => {
+        console.error('Failed to delete organizer webinar', error);
+        this.actionErrorMessage.set('Η διαγραφή του σεμιναρίου απέτυχε.');
+
+        setTimeout(() => {
+          this.actionErrorMessage.set(null);
+        }, 2000);
+      },
+    });
   }
 
   /**
