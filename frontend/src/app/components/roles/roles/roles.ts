@@ -97,7 +97,9 @@ export class Roles implements OnInit {
       },
       error: (error) => {
         console.error('Failed to delete role', error);
-        this.errorMessage.set('Η διαγραφή του ρόλου απέτυχε.');
+        this.showActionError(
+          'Η διαγραφή του ρόλου απέτυχε. Ο ρόλος χρησιμοποιείται από έναν ή περισσότερους ενεργούς χρήστες.',
+        );
       },
     });
   }
