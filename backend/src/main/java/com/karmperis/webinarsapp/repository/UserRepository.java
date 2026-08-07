@@ -63,4 +63,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return {@code true} if an active user with the username exists, otherwise {@code false}
      */
     boolean existsByUsernameAndDeletedAtIsNull(String username);
+
+    /**
+     * Check whether there is at least one enabled (active and non-deleted) user
+     * assigned to the specified role.
+     *
+     * <p>Used before performing a soft delete on a role to ensure that a role assigned
+     * to one or more enabled users cannot be deleted, preserving business rules and
+     * referential integrity at the application level.</p>
+     *
+     * @param roleId the database identifier of the role to check
+     * @return {@code true} if at least one enabled user is assigned to the specified
+     * role; {@code false} otherwise
+     */
+    boolean existsByRole_IdAndActiveTrueAndDeletedAtIsNull(Long roleId);
 }

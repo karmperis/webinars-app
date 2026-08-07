@@ -13,6 +13,7 @@ import com.karmperis.webinarsapp.model.Capability;
 import com.karmperis.webinarsapp.model.Role;
 import com.karmperis.webinarsapp.repository.CapabilityRepository;
 import com.karmperis.webinarsapp.repository.RoleRepository;
+import com.karmperis.webinarsapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +37,7 @@ public class RoleServiceImpl implements IRoleService {
     private final RoleMapper roleMapper;
     private final CapabilityRepository capabilityRepository;
     private final CapabilityMapper capabilityMapper;
+    private final UserRepository userRepository;
 
     /**
      * Create and persist a new role.
@@ -190,11 +192,16 @@ public class RoleServiceImpl implements IRoleService {
     /**
      * Soft-delete a role by setting its deleted timestamp.
      *
+     * <p>Before performing the soft delete, verifies that the role is not assigned
+     * to any enabled (active and non-deleted) users. If the role is currently in use,
+     * the operation is rejected.</p>
+     *
      * @param uuid role UUID
-     * @throws EntityNotFoundException if no non-deleted role with the given UUID exists
+     * @throws EntityNotFoundException        if no non-deleted role with the given UUID exists
+     * @throws EntityInvalidArgumentException if the role is assigned to one or more enabled users
      */
     @Override
-    @Transactional(rollbackFor = EntityNotFoundException.class)
+    @Transactional(rollbackFor = {EntityNotFoundException.class, EntityInvalidArgumentException.class})
     public void softDeleteRoleByUuid(UUID uuid) throws EntityNotFoundException, EntityInvalidArgumentException {
         log.info("Performing soft delete for role with UUID: {}", uuid);
 
@@ -203,6 +210,14 @@ public class RoleServiceImpl implements IRoleService {
 
         Role role = roleRepository.findByUuidAndDeletedAtIsNull(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("Role", "Role not found"));
+
+        if (userRepository.existsByRole_IdAndActiveTrueAndDeletedAtIsNull(role.getId())) {
+            log.warn("Role with UUID {} cannot be deleted because it is assigned to active users", uuid);
+
+            throw new EntityInvalidArgumentException(
+                    "Role",
+                    "Role cannot be deleted because it is assigned to one or more active users");
+        }
 
         role.softDelete();
         roleRepository.save(role);
